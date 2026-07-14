@@ -1,0 +1,355 @@
+@extends('layouts.app')
+
+@section('title', 'ক্যাশ মেমো জেনারেটর - সহজ কাজ')
+
+@section('content')
+<div class="container" style="margin-top: 40px; margin-bottom: 40px;">
+    <h2 style="color: var(--primary-color); margin-bottom: 25px; text-align: center;" class="no-print">প্রফেশনাল ক্যাশ মেমো (Cash Memo) জেনারেটর</h2>
+
+    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+        <!-- Input Form -->
+        <div class="glass no-print" style="flex: 1; min-width: 350px; padding: 30px; height: fit-content;">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">প্রতিষ্ঠানের তথ্য</h3>
+            
+            <div class="form-group">
+                <label class="form-label">লোগো (Logo)</label>
+                <input type="file" id="memo_logo" class="form-control" accept="image/*" onchange="loadLogo(event)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">প্রতিষ্ঠানের নাম</label>
+                <input type="text" id="memo_company" class="form-control" value="আপনার প্রতিষ্ঠানের নাম" oninput="updateMemoHeader()">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ঠিকানা</label>
+                <input type="text" id="memo_address" class="form-control" value="ঠিকানা, শহর, বাংলাদেশ" oninput="updateMemoHeader()">
+            </div>
+            <div class="form-group">
+                <label class="form-label">মোবাইল নম্বর</label>
+                <input type="text" id="memo_phone" class="form-control" value="০১৭XXXXXXXX" oninput="updateMemoHeader()">
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">মেমো ও ক্রেতার তথ্য</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">মেমো নং</label>
+                    <input type="text" id="memo_no" class="form-control" value="INV-{{ rand(1000, 9999) }}" oninput="updateMemoHeader()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">তারিখ</label>
+                    <input type="date" id="memo_date" class="form-control" value="{{ date('Y-m-d') }}" oninput="updateMemoHeader()">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">ক্রেতার নাম</label>
+                <input type="text" id="memo_customer" class="form-control" placeholder="ক্রেতার নাম" oninput="updateMemoHeader()">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ক্রেতার মোবাইল (ঐচ্ছিক)</label>
+                <input type="text" id="memo_customer_phone" class="form-control" placeholder="মোবাইল নম্বর" oninput="updateMemoHeader()">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ক্রেতার ঠিকানা (ঐচ্ছিক)</label>
+                <input type="text" id="memo_customer_address" class="form-control" placeholder="ঠিকানা" oninput="updateMemoHeader()">
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">হিসাব / আইটেম</h3>
+            
+            <div class="form-group">
+                <input type="text" id="item_desc" class="form-control" placeholder="পণ্যের নাম বা বিবরণ" style="margin-bottom: 10px;">
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="item_qty" class="form-control" placeholder="পরিমাণ" min="1">
+                    <input type="number" step="0.01" id="item_rate" class="form-control" placeholder="দর (টাকা)">
+                </div>
+            </div>
+            <button onclick="addItem()" class="btn btn-primary" style="width: 100%; margin-bottom: 15px;">+ আইটেম যোগ করুন</button>
+
+            <div class="form-group">
+                <label class="form-label">ডিসকাউন্ট (টাকা)</label>
+                <input type="number" step="0.01" id="memo_discount" class="form-control" value="0" oninput="renderItems()">
+            </div>
+
+            <button onclick="window.print()" class="btn" style="background: #10b981; color: #fff; width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 12px;"><i class="material-icons-round" style="vertical-align: middle;">print</i> প্রিন্ট / PDF সেভ করুন</button>
+        </div>
+
+        <!-- Preview Area -->
+        <div style="flex: 2; min-width: 450px; display: flex; justify-content: center; align-items: flex-start;">
+            <div id="memo-print-area" style="background: #fff; color: #000; width: 100%; max-width: 794px; padding: 40px; border: 1px solid #ddd; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-family: 'Kalpurush', Arial, sans-serif; position: relative;">
+                
+                <!-- Watermark Logo (Optional) -->
+                <div id="watermark_logo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; display: none; pointer-events: none;">
+                    <img src="" id="watermark_img" style="width: 300px; height: 300px; object-fit: contain;">
+                </div>
+
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111827; padding-bottom: 15px; margin-bottom: 25px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img id="view_logo" src="" style="width: 80px; height: 80px; object-fit: contain; display: none;">
+                        <div>
+                            <h2 id="view_company" style="margin: 0; font-size: 2rem; font-weight: bold; color: #111827;">আপনার প্রতিষ্ঠানের নাম</h2>
+                            <p id="view_address" style="margin: 5px 0 0 0; font-size: 1rem; color: #374151;">ঠিকানা, শহর, বাংলাদেশ</p>
+                            <p id="view_phone" style="margin: 2px 0 0 0; font-size: 0.95rem; color: #374151;">মোবাইল: ০১৭XXXXXXXX</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="display: inline-block; background: #111827; color: #fff; padding: 6px 15px; font-weight: bold; font-size: 1.2rem; border-radius: 4px; letter-spacing: 1px;">ক্যাশ মেমো</div>
+                    </div>
+                </div>
+
+                <!-- Title & Meta -->
+                <div style="display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 1.05rem;">
+                    <div>
+                        <table style="text-align: left;">
+                            <tr><td style="font-weight: bold; padding-right: 10px;">নাম:</td><td id="view_customer">...................................</td></tr>
+                            <tr><td style="font-weight: bold; padding-right: 10px;">ঠিকানা:</td><td id="view_customer_address">...................................</td></tr>
+                            <tr><td style="font-weight: bold; padding-right: 10px;">মোবাইল:</td><td id="view_customer_phone">...................................</td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <table style="text-align: left;">
+                            <tr><td style="font-weight: bold; padding-right: 10px;">মেমো নং:</td><td id="view_no">INV-XXXX</td></tr>
+                            <tr><td style="font-weight: bold; padding-right: 10px;">তারিখ:</td><td id="view_date">{{ date('d/m/Y') }}</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; border: 1px solid #111827;" border="1">
+                    <thead>
+                        <tr style="background: #f3f4f6;">
+                            <th style="padding: 10px; width: 8%; border: 1px solid #111827;">নং</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #111827;">পণ্যের বিবরণ</th>
+                            <th style="padding: 10px; width: 12%; border: 1px solid #111827;">পরিমাণ</th>
+                            <th style="padding: 10px; width: 15%; border: 1px solid #111827;">দর (৳)</th>
+                            <th style="padding: 10px; width: 20%; text-align: right; border: 1px solid #111827;">মোট টাকা</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memo_items_body">
+                        <!-- Items injected here -->
+                        <tr>
+                            <td colspan="5" style="padding: 20px; text-align: center; color: #9ca3af;">কোনো আইটেম যুক্ত করা হয়নি</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="padding: 10px; text-align: right; font-weight: bold; border: 1px solid #111827;">মোট মূল্য:</td>
+                            <td id="view_subtotal" style="padding: 10px; text-align: right; font-weight: bold; border: 1px solid #111827;">৳0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 10px; text-align: right; font-weight: bold; border: 1px solid #111827;">ডিসকাউন্ট:</td>
+                            <td id="view_discount" style="padding: 10px; text-align: right; font-weight: bold; border: 1px solid #111827;">৳0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 12px 10px; text-align: right; font-weight: bold; font-size: 1.15rem; background: #f3f4f6; border: 1px solid #111827;">সর্বমোট প্রদেয়:</td>
+                            <td id="view_total" style="padding: 12px 10px; text-align: right; font-weight: bold; font-size: 1.15rem; background: #f3f4f6; border: 1px solid #111827;">৳0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div style="margin-bottom: 60px;">
+                    <strong>কথায়:</strong> <span id="view_in_words" style="border-bottom: 1px dotted #000; display: inline-block; width: 80%; font-weight: 500;">শূন্য টাকা মাত্র</span>
+                </div>
+
+                <!-- Footer Signatures -->
+                <div style="display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px;">
+                    <div style="text-align: center; width: 180px;">
+                        <div style="border-bottom: 1px solid #000; margin-bottom: 5px;"></div>
+                        <p style="font-size: 0.95rem; font-weight: 500;">ক্রেতার স্বাক্ষর</p>
+                    </div>
+                    <div style="text-align: center; width: 180px;">
+                        <div style="border-bottom: 1px solid #000; margin-bottom: 5px;"></div>
+                        <p style="font-size: 0.95rem; font-weight: 500;">কর্তৃপক্ষের স্বাক্ষর</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; font-size: 0.85rem; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 10px;">
+                    সফটওয়্যার তৈরি করেছে: Smart Stationary
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        @page { margin: 10mm; }
+        body * {
+            visibility: hidden;
+        }
+        #memo-print-area, #memo-print-area * {
+            visibility: visible;
+        }
+        #memo-print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+        .no-print {
+            display: none !important;
+        }
+        .navbar, .sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
+<script>
+    let items = [];
+    
+    // Number to Bengali Words converter (Basic implementation)
+    function numberToBengaliWords(num) {
+        const units = ['', 'এক', 'দুই', 'তিন', 'চার', 'পাঁচ', 'ছয়', 'সাত', 'আট', 'নয়', 'দশ', 'এগারো', 'বারো', 'তেরো', 'চোদ্দ', 'পনেরো', 'ষোলো', 'সতেরো', 'আঠারো', 'উনিশ'];
+        const tens = ['', '', 'বিশ', 'ত্রিশ', 'চল্লিশ', 'পঞ্চাশ', 'ষাট', 'সত্তর', 'আশি', 'নব্বই'];
+        
+        if (num === 0) return 'শূন্য';
+        
+        function convertLessThanOneThousand(n) {
+            if (n === 0) return '';
+            let res = '';
+            if (n >= 100) {
+                res += units[Math.floor(n / 100)] + ' শত ';
+                n %= 100;
+            }
+            if (n > 0) {
+                if (n < 20) res += units[n];
+                else {
+                    res += tens[Math.floor(n / 10)] + ' ';
+                    res += units[n % 10];
+                }
+            }
+            return res.trim();
+        }
+        
+        let words = '';
+        if (num >= 10000000) {
+            words += convertLessThanOneThousand(Math.floor(num / 10000000)) + ' কোটি ';
+            num %= 10000000;
+        }
+        if (num >= 100000) {
+            words += convertLessThanOneThousand(Math.floor(num / 100000)) + ' লাখ ';
+            num %= 100000;
+        }
+        if (num >= 1000) {
+            words += convertLessThanOneThousand(Math.floor(num / 1000)) + ' হাজার ';
+            num %= 1000;
+        }
+        if (num > 0) {
+            words += convertLessThanOneThousand(num);
+        }
+        return words.trim() + ' টাকা মাত্র';
+    }
+
+    function loadLogo(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('view_logo');
+                const watermark = document.getElementById('watermark_img');
+                
+                img.src = e.target.result;
+                img.style.display = 'block';
+                
+                watermark.src = e.target.result;
+                document.getElementById('watermark_logo').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('view_logo').style.display = 'none';
+            document.getElementById('watermark_logo').style.display = 'none';
+        }
+    }
+
+    function updateMemoHeader() {
+        document.getElementById('view_company').innerText = document.getElementById('memo_company').value || 'আপনার প্রতিষ্ঠানের নাম';
+        document.getElementById('view_address').innerText = document.getElementById('memo_address').value || 'ঠিকানা, শহর, বাংলাদেশ';
+        document.getElementById('view_phone').innerText = 'মোবাইল: ' + (document.getElementById('memo_phone').value || '০১৭XXXXXXXX');
+        
+        document.getElementById('view_no').innerText = document.getElementById('memo_no').value || 'INV-XXXX';
+        
+        const rawDate = document.getElementById('memo_date').value;
+        if(rawDate) {
+            const dateObj = new Date(rawDate);
+            document.getElementById('view_date').innerText = dateObj.toLocaleDateString('bn-BD');
+        }
+
+        document.getElementById('view_customer').innerText = document.getElementById('memo_customer').value || '...................................';
+        document.getElementById('view_customer_phone').innerText = document.getElementById('memo_customer_phone').value || '...................................';
+        document.getElementById('view_customer_address').innerText = document.getElementById('memo_customer_address').value || '...................................';
+    }
+
+    function addItem() {
+        const desc = document.getElementById('item_desc').value;
+        const qty = parseInt(document.getElementById('item_qty').value);
+        const rate = parseFloat(document.getElementById('item_rate').value);
+
+        if(!desc || isNaN(qty) || isNaN(rate)) {
+            alert('অনুগ্রহ করে সঠিক তথ্য দিন।');
+            return;
+        }
+
+        items.push({ desc, qty, rate });
+        
+        // Reset fields
+        document.getElementById('item_desc').value = '';
+        document.getElementById('item_qty').value = '';
+        document.getElementById('item_rate').value = '';
+
+        renderItems();
+    }
+
+    function removeItem(index) {
+        items.splice(index, 1);
+        renderItems();
+    }
+
+    function renderItems() {
+        const tbody = document.getElementById('memo_items_body');
+        tbody.innerHTML = '';
+        
+        let subtotal = 0;
+
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #9ca3af;">কোনো আইটেম যুক্ত করা হয়নি</td></tr>';
+        } else {
+            items.forEach((item, index) => {
+                const itemTotal = item.qty * item.rate;
+                subtotal += itemTotal;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 10px; text-align: center; border: 1px solid #111827;">${index + 1}</td>
+                    <td style="padding: 10px; border: 1px solid #111827;">
+                        ${item.desc}
+                        <button onclick="removeItem(${index})" class="no-print" style="margin-left: 10px; background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;">(মুছুন)</button>
+                    </td>
+                    <td style="padding: 10px; text-align: center; border: 1px solid #111827;">${item.qty}</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #111827;">${item.rate.toFixed(2)}</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #111827;">${itemTotal.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        const discount = parseFloat(document.getElementById('memo_discount').value) || 0;
+        const total = subtotal - discount;
+
+        document.getElementById('view_subtotal').innerText = '৳' + subtotal.toFixed(2);
+        document.getElementById('view_discount').innerText = '৳' + discount.toFixed(2);
+        document.getElementById('view_total').innerText = '৳' + total.toFixed(2);
+        
+        if (total > 0) {
+            document.getElementById('view_in_words').innerText = numberToBengaliWords(Math.round(total));
+        } else {
+            document.getElementById('view_in_words').innerText = 'শূন্য টাকা মাত্র';
+        }
+    }
+    
+    // Initial render
+    updateMemoHeader();
+</script>
+@endsection
