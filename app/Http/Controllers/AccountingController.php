@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\AccountingTransaction;
 use App\Models\DailyCashRecord;
+use App\Models\Due;
 use Illuminate\Support\Facades\Auth;
 
 class AccountingController extends Controller
@@ -116,5 +117,58 @@ class AccountingController extends Controller
     public function memoGenerator()
     {
         return view('accounting.memo');
+    }
+
+    // --- Dues (Bakir Hishab) Methods ---
+    
+    public function dues()
+    {
+        $userId = Auth::id();
+        $dues = Due::where('user_id', $userId)->orderBy('created_at', 'desc')->get();
+        
+        $receivable = $dues->where('type', 'receivable')->where('is_paid', false)->sum('amount');
+        $payable = $dues->where('type', 'payable')->where('is_paid', false)->sum('amount');
+        
+        return view('accounting.dues', compact('dues', 'receivable', 'payable'));
+    }
+
+    public function storeDue(Request $request)
+    {
+        $request->validate([
+            'person_name' => 'required|string|max:255',
+            'type' => 'required|in:receivable,payable',
+            'amount' => 'required|numeric|min:1',
+            'purpose' => 'nullable|string|max:255',
+            'due_date' => 'nullable|date',
+        ]);
+
+        Due::create([
+            'user_id' => Auth::id(),
+            'person_name' => $request->person_name,
+            'type' => $request->type,
+            'amount' => $request->amount,
+            'purpose' => $request->purpose,
+            'due_date' => $request->due_date,
+            'is_paid' => false,
+        ]);
+
+        return back()->with('success', 'বাকি হিসাব সফলভাবে যোগ করা হয়েছে।');
+    }
+
+    public function markDuePaid($id)
+    {
+        $due = Due::where('user_id', Auth::id())->findOrFail($id);
+        $due->is_paid = true;
+        $due->save();
+        
+        return back()->with('success', 'হিসাব পরিশোধিত হিসেবে মার্ক করা হয়েছে।');
+    }
+
+    public function destroyDue($id)
+    {
+        $due = Due::where('user_id', Auth::id())->findOrFail($id);
+        $due->delete();
+        
+        return back()->with('success', 'হিসাব মুছে ফেলা হয়েছে।');
     }
 }

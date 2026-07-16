@@ -35,29 +35,29 @@
         overflow: auto;
     }
     .tool-section {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
         padding: 15px;
     }
     .tool-title {
-        font-weight: 600;
-        margin-bottom: 10px;
+        font-weight: 700;
+        margin-bottom: 15px;
         font-size: 0.95rem;
-        color: var(--primary-color);
+        color: #fff;
     }
 </style>
 
 <div class="editor-container">
     <!-- Toolbox -->
     <div class="toolbox">
-        <div class="glass" style="padding: 20px;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color);">ডিজাইন প্যানেল</h3>
+        <div class="glass" style="padding: 20px; border-radius: 15px;">
+            <h3 style="margin-bottom: 20px; color: #fff; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">ডিজাইন প্যানেল</h3>
 
             <!-- Templates -->
             <div class="tool-section mb-4">
                 <div class="tool-title">ডিজাইন টেমপ্লেট</div>
-                <button onclick="loadTemplate('fb-post')" class="btn" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: #fff; margin-bottom: 10px;">
+                <button onclick="loadTemplate('fb-post')" class="btn" style="width: 100%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; margin-bottom: 10px; font-weight: 600;">
                     ফেসবুক পোস্ট (বাংলা)
                 </button>
             </div>
@@ -66,8 +66,8 @@
             <div class="tool-section mb-4">
                 <div class="tool-title">উপাদান যোগ করুন</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button onclick="addText()" class="btn" style="padding: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.1); color: #fff;">+ টেক্সট</button>
-                    <button onclick="addRect()" class="btn" style="padding: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.1); color: #fff;">+ আয়তক্ষেত্র</button>
+                    <button onclick="addText()" class="btn" style="padding: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">+ টেক্সট</button>
+                    <button onclick="addRect()" class="btn" style="padding: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">+ আয়তক্ষেত্র</button>
                 </div>
             </div>
 
@@ -75,21 +75,21 @@
             <div class="tool-section mb-4">
                 <div class="tool-title">টেক্সট সেটিংস</div>
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 0.8rem;">ফন্ট ফ্যামিলি</label>
-                    <select id="fontFamily" class="form-control" onchange="changeFont()">
-                        <option value="Hind Siliguri">Hind Siliguri (বাংলা)</option>
-                        <option value="Noto Serif Bengali">Noto Serif Bengali (বাংলা)</option>
-                        <option value="Arial">Arial</option>
+                    <label class="form-label" style="font-size: 0.8rem; color: var(--text-muted);">ফন্ট ফ্যামিলি</label>
+                    <select id="fontFamily" class="form-control" onchange="changeFont()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
+                        <option value="Hind Siliguri" style="color: #000;">Hind Siliguri (বাংলা)</option>
+                        <option value="Noto Serif Bengali" style="color: #000;">Noto Serif Bengali (বাংলা)</option>
+                        <option value="Arial" style="color: #000;">Arial</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 0.8rem;">রং (Color)</label>
-                    <input type="color" id="textColor" class="form-control" style="height: 40px; padding: 5px;" onchange="changeColor()">
+                    <label class="form-label" style="font-size: 0.8rem; color: var(--text-muted);">রং (Color)</label>
+                    <input type="color" id="textColor" class="form-control" style="height: 40px; padding: 5px; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);" onchange="changeColor()">
                 </div>
             </div>
 
             <!-- Export -->
-            <button onclick="downloadDesign()" class="btn btn-primary" style="width: 100%;">ডিজাইন ডাউনলোড করুন</button>
+            <button onclick="downloadDesign()" class="btn btn-primary" style="width: 100%; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #10b981, #059669);"><i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">download</i> ডিজাইন ডাউনলোড</button>
         </div>
     </div>
 

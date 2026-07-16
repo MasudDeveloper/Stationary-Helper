@@ -4,32 +4,44 @@
 
 @section('content')
 <div class="container" style="margin-top: 40px; margin-bottom: 40px;">
-    <h2 style="color: var(--primary-color); margin-bottom: 10px; text-align: center;">এআই সার্ভিস হাব (AI Service Hub)</h2>
-    <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">কৃত্রিম বুদ্ধিমত্তা সম্পন্ন টুলস ব্যবহার করুন</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+        <div>
+            <h2 style="color: #fff; font-size: 1.8rem; font-weight: 700; border-left: 4px solid #818cf8; padding-left: 12px; margin-bottom: 8px;">এআই সার্ভিস হাব (AI Service Hub)</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">কৃত্রিম বুদ্ধিমত্তা সম্পন্ন টুলস ব্যবহার করে আপনার কাজকে সহজ করুন</p>
+        </div>
+    </div>
 
     <!-- Pricing Alert Info -->
-    <div class="glass" style="padding: 15px; margin-bottom: 30px; border-left: 5px solid var(--primary-color); display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <strong>ক্রেডিট রেট:</strong> পাবলিক অ্যাকাউন্ট (৫ ক্রেডিট/ছবি), বিজনেস অ্যাকাউন্ট (১ ক্রেডিট/ছবি)।
+    <div class="glass" style="padding: 15px 25px; margin-bottom: 30px; border-radius: 12px; border-left: 5px solid #818cf8; display: flex; justify-content: space-between; align-items: center; font-weight: 500;">
+        <div style="color: #e2e8f0;">
+            <i class="material-icons-round" style="vertical-align: middle; color: #818cf8; margin-right: 5px;">info</i>
+            <span style="color: #fff; font-weight: 600;">ক্রেডিট রেট:</span> পাবলিক অ্যাকাউন্ট (৫ ক্রেডিট/ছবি), বিজনেস অ্যাকাউন্ট (১ ক্রেডিট/ছবি)।
         </div>
-        <div>
-            <strong>আপনার ব্যালেন্স:</strong> ৳<span id="credit-balance">{{ Auth::user()->credits }}</span>
+        <div style="background: rgba(99, 102, 241, 0.1); padding: 8px 15px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.2);">
+            <strong style="color: #cbd5e1;">আপনার ব্যালেন্স:</strong> <span style="color: #818cf8; font-weight: 800; font-size: 1.1rem;">৳<span id="credit-balance">{{ Auth::user()->credits }}</span></span>
         </div>
     </div>
 
     <div style="display: flex; gap: 30px; flex-wrap: wrap;">
         
         <!-- AI Image Generator -->
-        <div class="glass" style="flex: 1; min-width: 350px; padding: 30px;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color);">১. এআই ইমেজ জেনারেটর</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">আপনার মনের কল্পনা লিখে ছবি তৈরি করুন</p>
-            
-            <div class="form-group">
-                <label class="form-label">ইমেজ প্রম্পট (ইংরেজি)</label>
-                <textarea id="image-prompt" class="form-control" rows="3" placeholder="যেমন: A beautiful futuristic city with flying cars, highly detailed, neon lights"></textarea>
+        <div class="glass" style="flex: 1; min-width: 350px; padding: 30px; border-radius: 15px;">
+            <div style="display: flex; align-items: center; margin-bottom: 20px; gap: 15px;">
+                <div style="background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    <i class="material-icons-round" style="font-size: 2.5rem;">auto_awesome</i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: #fff; font-weight: 700;">১. এআই ইমেজ জেনারেটর</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 5px 0 0 0;">আপনার মনের কল্পনা লিখে ছবি তৈরি করুন</p>
+                </div>
             </div>
             
-            <button onclick="generateImage()" id="btn-generate" class="btn btn-primary" style="width: 100%;">ইমেজ জেনারেট করুন</button>
+            <div class="form-group">
+                <label class="form-label" style="font-weight: 500;">ইমেজ প্রম্পট (ইংরেজি)</label>
+                <textarea id="image-prompt" class="form-control" rows="3" placeholder="যেমন: A beautiful futuristic city with flying cars, highly detailed, neon lights" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); resize: none;"></textarea>
+            </div>
+            
+            <button onclick="generateImage()" id="btn-generate" class="btn" style="width: 100%; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff; border: none; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);">ইমেজ জেনারেট করুন</button>
 
             <!-- Result Area -->
             <div id="gen-result-container" style="margin-top: 25px; text-align: center; display: none;">
@@ -46,21 +58,28 @@
         </div>
 
         <!-- AI Background Remover -->
-        <div class="glass" style="flex: 1; min-width: 350px; padding: 30px;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color);">২. ছবির ব্যাকগ্রাউন্ড রিমুভার</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">আপনার ছবির ব্যাকগ্রাউন্ড স্বয়ংক্রিয়ভাবে মুছে ফেলুন</p>
+        <div class="glass" style="flex: 1; min-width: 350px; padding: 30px; border-radius: 15px;">
+            <div style="display: flex; align-items: center; margin-bottom: 20px; gap: 15px;">
+                <div style="background: linear-gradient(135deg, #06b6d4, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    <i class="material-icons-round" style="font-size: 2.5rem;">layers_clear</i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: #fff; font-weight: 700;">২. ব্যাকগ্রাউন্ড রিমুভার</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 5px 0 0 0;">আপনার ছবির ব্যাকগ্রাউন্ড স্বয়ংক্রিয়ভাবে মুছে ফেলুন</p>
+                </div>
+            </div>
             
             <div class="form-group">
-                <label class="form-label">ছবি আপলোড করুন</label>
-                <input type="file" id="bg-image-input" class="form-control" accept="image/*" onchange="previewBgImage()">
+                <label class="form-label" style="font-weight: 500;">ছবি আপলোড করুন</label>
+                <input type="file" id="bg-image-input" class="form-control" accept="image/*" onchange="previewBgImage()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); padding: 10px;">
             </div>
 
             <!-- Preview/Upload Area -->
-            <div id="bg-preview-container" style="margin-top: 15px; text-align: center; display: none;">
-                <img id="bg-preview-img" src="" alt="Uploaded" style="max-width: 150px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div id="bg-preview-container" style="margin-top: 15px; text-align: center; display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px;">
+                <img id="bg-preview-img" src="" alt="Uploaded" style="max-width: 150px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
             </div>
             
-            <button onclick="removeBackground()" id="btn-bg-remove" class="btn" style="width: 100%; margin-top: 15px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border-color);" disabled>ব্যাকগ্রাউন্ড রিমুভ করুন</button>
+            <button onclick="removeBackground()" id="btn-bg-remove" class="btn" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff; border: none; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);" disabled>ব্যাকগ্রাউন্ড রিমুভ করুন</button>
 
             <!-- Result Area -->
             <div id="bg-result-container" style="margin-top: 25px; text-align: center; display: none;">

@@ -35,8 +35,11 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function showRegister()
+    public function showRegister(Request $request)
     {
+        if ($request->has('ref')) {
+            $request->session()->put('referral_code', $request->get('ref'));
+        }
         return view('auth.register');
     }
 
@@ -47,6 +50,14 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed'
         ]);
+        
+        $referredBy = null;
+        if ($request->session()->has('referral_code')) {
+            $referrer = User::where('referral_code', $request->session()->get('referral_code'))->first();
+            if ($referrer) {
+                $referredBy = $referrer->id;
+            }
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -54,7 +65,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'public',
             'credits' => 0,
+            'referred_by' => $referredBy,
         ]);
+        
+        $request->session()->forget('referral_code');
 
         Auth::login($user);
 

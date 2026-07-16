@@ -9,14 +9,16 @@
     <style>
         /* Admin custom overrides for distinct branding */
         :root {
-            --primary-color: #3b82f6; /* Admin theme color - sleek blue */
-            --primary-hover: #2563eb;
-            --primary-glow: rgba(59, 130, 246, 0.15);
+            --primary-color: #818cf8; /* Admin theme color - sleek blue/indigo */
+            --primary-hover: #6366f1;
+            --primary-glow: rgba(129, 140, 248, 0.15);
+            --bg-color: #090d16;
         }
         
         .admin-sidebar {
             width: 280px;
-            background-color: #0f172a;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
@@ -45,7 +47,7 @@
         }
 
         .admin-link:hover, .admin-link.active {
-            background-color: rgba(59, 130, 246, 0.08);
+            background-color: rgba(129, 140, 248, 0.1);
             color: var(--primary-color);
         }
 
@@ -120,8 +122,8 @@
         </aside>
 
         <!-- Admin Content Area -->
-        <div class="app-content" style="background-color: #0b0f19;">
-            <header class="top-navbar no-print" style="background-color: rgba(15, 23, 42, 0.8);">
+        <div class="app-content" style="background-color: var(--bg-color);">
+            <header class="top-navbar no-print" style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05);">
                 <div style="font-weight: 600; color: var(--primary-color); display: flex; align-items: center; gap: 8px;">
                     <i class="material-icons-round">security</i> অ্যাডমিন মোড
                 </div>

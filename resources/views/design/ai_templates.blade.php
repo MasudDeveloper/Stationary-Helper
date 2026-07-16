@@ -266,9 +266,9 @@
     }
 </style>
 
-<div style="margin-bottom: 30px;">
-    <h2 style="color: var(--primary-color); font-weight: 800; font-size: 2.2rem; margin-bottom: 8px;">এআই টেমপ্লেট (AI Templates)</h2>
-    <p style="color: var(--text-muted); font-size: 1.05rem;">পছন্দের স্টাইল বেছে নিন, আপনার ছবি আপলোড করুন — কয়েক সেকেন্ডেই একই লুকের ছবি পেয়ে যাবেন।</p>
+<div style="margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+    <h2 style="color: #fff; font-weight: 800; font-size: 2.2rem; margin-bottom: 8px; border-left: 4px solid #818cf8; padding-left: 12px;">এআই টেমপ্লেট (AI Templates)</h2>
+    <p style="color: var(--text-muted); font-size: 1.05rem; margin: 0;">পছন্দের স্টাইল বেছে নিন, আপনার ছবি আপলোড করুন — কয়েক সেকেন্ডেই একই লুকের ছবি পেয়ে যাবেন।</p>
 </div>
 
 <div class="ai-templates-layout">
@@ -391,15 +391,15 @@
                         </span>
                         <h4 class="card-title">{{ $tmpl->title }}</h4>
                         
-                        <div style="margin-top: auto; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color);">
-                            <span style="font-weight: 700; color: var(--primary-color); font-size: 0.9rem;">
+                        <div style="margin-top: auto; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05);">
+                            <span style="font-weight: 700; color: #818cf8; font-size: 0.9rem;">
                                 @if ($tmpl->is_premium)
-                                    ৳{{ $tmpl->credits_cost }} ক্রেডিট
+                                    <i class="material-icons-round" style="font-size: 1rem; vertical-align: middle; margin-right: 2px;">stars</i>৳{{ $tmpl->credits_cost }} ক্রেডিট
                                 @else
-                                    ফ্রি
+                                    <span style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 2px 8px; border-radius: 4px;">ফ্রি</span>
                                 @endif
                             </span>
-                            <a href="{{ route('design.ai_templates.customize', $tmpl->id) }}" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">
+                            <a href="{{ route('design.ai_templates.customize', $tmpl->id) }}" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); font-weight: 600; border-radius: 6px;">
                                 স্টাইল তৈরি করুন
                             </a>
                         </div>

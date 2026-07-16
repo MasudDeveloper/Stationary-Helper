@@ -79,38 +79,38 @@
 <div class="pdf-editor-wrapper">
     <!-- Sidebar -->
     <div class="pdf-editor-sidebar">
-        <div class="glass" style="padding: 25px; position: sticky; top: 20px;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;">
-                <i class="material-icons-round">edit_document</i> পিডিএফ এডিটর
+        <div class="glass" style="padding: 25px; position: sticky; top: 20px; border-radius: 15px;">
+            <h3 style="margin-bottom: 20px; color: #fff; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                <i class="material-icons-round" style="color: #818cf8;">edit_document</i> পিডিএফ এডিটর
             </h3>
 
             <div class="form-group">
                 <label class="form-label">পিডিএফ আপলোড করুন</label>
-                <input type="file" id="pdf-upload" class="form-control" accept="application/pdf" onchange="loadPdfFile()">
+                <input type="file" id="pdf-upload" class="form-control" accept="application/pdf" onchange="loadPdfFile()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); padding: 10px;">
             </div>
 
             <div id="editor-controls" style="display: none;">
-                <hr style="border-color: var(--border-color); margin: 20px 0;">
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
                 
-                <h4 style="margin-bottom: 15px; color: var(--text-main);">এডিটিং টুলস</h4>
+                <h4 style="margin-bottom: 15px; color: #fff; font-weight: 600;">এডিটিং টুলস</h4>
                 <div class="form-group">
                     <label class="form-label">টার্গেট পেজ</label>
-                    <select id="target-page-select" class="form-control" style="margin-bottom: 15px;"></select>
+                    <select id="target-page-select" class="form-control" style="margin-bottom: 15px; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);"></select>
                 </div>
                 
                 <div class="form-group">
-                    <input type="text" id="add-text-input" class="form-control" placeholder="নতুন টেক্সট লিখুন...">
+                    <input type="text" id="add-text-input" class="form-control" placeholder="নতুন টেক্সট লিখুন..." style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
                 </div>
-                <button onclick="addTextOverlay()" class="btn btn-primary" style="width: 100%; margin-bottom: 15px;">
-                    <i class="material-icons-round">title</i> টেক্সট যোগ করুন
+                <button onclick="addTextOverlay()" class="btn btn-primary" style="width: 100%; margin-bottom: 15px; font-weight: 600; background: linear-gradient(135deg, #6366f1, #06b6d4);">
+                    <i class="material-icons-round" style="vertical-align: middle;">title</i> টেক্সট যোগ করুন
                 </button>
 
                 <div style="text-align: center; margin-bottom: 15px; color: var(--text-muted); font-size: 0.85rem;">
                     পুরোনো লেখা মুছতে হোয়াইটআউট ব্যবহার করুন
                 </div>
                 
-                <button onclick="addWhiteoutOverlay()" class="btn btn-secondary" style="width: 100%; margin-bottom: 20px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5;">
-                    <i class="material-icons-round">cleaning_services</i> হোয়াইটআউট (ইরেজার)
+                <button onclick="addWhiteoutOverlay()" class="btn" style="width: 100%; margin-bottom: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
+                    <i class="material-icons-round" style="vertical-align: middle;">cleaning_services</i> হোয়াইটআউট (ইরেজার)
                 </button>
 
                 <hr style="border-color: var(--border-color); margin: 20px 0;">

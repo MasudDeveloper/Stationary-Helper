@@ -8,68 +8,68 @@
 
     <div style="display: flex; gap: 30px; flex-wrap: wrap;">
         <!-- Input Form -->
-        <div class="glass no-print" style="flex: 1; min-width: 350px; padding: 30px; height: fit-content;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">প্রতিষ্ঠানের তথ্য</h3>
+        <div class="glass no-print" style="flex: 1; min-width: 350px; padding: 30px; height: fit-content; border-radius: 15px;">
+            <h3 style="margin-bottom: 20px; color: #fff; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-weight: 700;">প্রতিষ্ঠানের তথ্য</h3>
             
             <div class="form-group">
                 <label class="form-label">লোগো (Logo)</label>
-                <input type="file" id="memo_logo" class="form-control" accept="image/*" onchange="loadLogo(event)">
+                <input type="file" id="memo_logo" class="form-control" accept="image/*" onchange="loadLogo(event)" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">প্রতিষ্ঠানের নাম</label>
-                <input type="text" id="memo_company" class="form-control" value="আপনার প্রতিষ্ঠানের নাম" oninput="updateMemoHeader()">
+                <input type="text" id="memo_company" class="form-control" value="আপনার প্রতিষ্ঠানের নাম" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">ঠিকানা</label>
-                <input type="text" id="memo_address" class="form-control" value="ঠিকানা, শহর, বাংলাদেশ" oninput="updateMemoHeader()">
+                <input type="text" id="memo_address" class="form-control" value="ঠিকানা, শহর, বাংলাদেশ" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">মোবাইল নম্বর</label>
-                <input type="text" id="memo_phone" class="form-control" value="০১৭XXXXXXXX" oninput="updateMemoHeader()">
+                <input type="text" id="memo_phone" class="form-control" value="০১৭XXXXXXXX" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
 
-            <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">মেমো ও ক্রেতার তথ্য</h3>
+            <h3 style="margin-top: 30px; margin-bottom: 20px; color: #fff; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-weight: 700;">মেমো ও ক্রেতার তথ্য</h3>
             <div class="grid-2">
                 <div class="form-group">
                     <label class="form-label">মেমো নং</label>
-                    <input type="text" id="memo_no" class="form-control" value="INV-{{ rand(1000, 9999) }}" oninput="updateMemoHeader()">
+                    <input type="text" id="memo_no" class="form-control" value="INV-{{ rand(1000, 9999) }}" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
                 </div>
                 <div class="form-group">
                     <label class="form-label">তারিখ</label>
-                    <input type="date" id="memo_date" class="form-control" value="{{ date('Y-m-d') }}" oninput="updateMemoHeader()">
+                    <input type="date" id="memo_date" class="form-control" value="{{ date('Y-m-d') }}" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color-scheme: dark;">
                 </div>
             </div>
             
             <div class="form-group">
                 <label class="form-label">ক্রেতার নাম</label>
-                <input type="text" id="memo_customer" class="form-control" placeholder="ক্রেতার নাম" oninput="updateMemoHeader()">
+                <input type="text" id="memo_customer" class="form-control" placeholder="ক্রেতার নাম" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">ক্রেতার মোবাইল (ঐচ্ছিক)</label>
-                <input type="text" id="memo_customer_phone" class="form-control" placeholder="মোবাইল নম্বর" oninput="updateMemoHeader()">
+                <input type="text" id="memo_customer_phone" class="form-control" placeholder="মোবাইল নম্বর" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">ক্রেতার ঠিকানা (ঐচ্ছিক)</label>
-                <input type="text" id="memo_customer_address" class="form-control" placeholder="ঠিকানা" oninput="updateMemoHeader()">
+                <input type="text" id="memo_customer_address" class="form-control" placeholder="ঠিকানা" oninput="updateMemoHeader()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
 
-            <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">হিসাব / আইটেম</h3>
+            <h3 style="margin-top: 30px; margin-bottom: 20px; color: #fff; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-weight: 700;">হিসাব / আইটেম</h3>
             
             <div class="form-group">
-                <input type="text" id="item_desc" class="form-control" placeholder="পণ্যের নাম বা বিবরণ" style="margin-bottom: 10px;">
+                <input type="text" id="item_desc" class="form-control" placeholder="পণ্যের নাম বা বিবরণ" style="margin-bottom: 10px; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
                 <div style="display: flex; gap: 10px;">
-                    <input type="number" id="item_qty" class="form-control" placeholder="পরিমাণ" min="1">
-                    <input type="number" step="0.01" id="item_rate" class="form-control" placeholder="দর (টাকা)">
+                    <input type="number" id="item_qty" class="form-control" placeholder="পরিমাণ" min="1" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
+                    <input type="number" step="0.01" id="item_rate" class="form-control" placeholder="দর (টাকা)" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
                 </div>
             </div>
-            <button onclick="addItem()" class="btn btn-primary" style="width: 100%; margin-bottom: 15px;">+ আইটেম যোগ করুন</button>
+            <button onclick="addItem()" class="btn" style="background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); width: 100%; margin-bottom: 15px; padding: 10px; border-radius: 8px; font-weight: 600; transition: all 0.3s;">+ আইটেম যোগ করুন</button>
 
             <div class="form-group">
                 <label class="form-label">ডিসকাউন্ট (টাকা)</label>
-                <input type="number" step="0.01" id="memo_discount" class="form-control" value="0" oninput="renderItems()">
+                <input type="number" step="0.01" id="memo_discount" class="form-control" value="0" oninput="renderItems()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
 
-            <button onclick="window.print()" class="btn" style="background: #10b981; color: #fff; width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 12px;"><i class="material-icons-round" style="vertical-align: middle;">print</i> প্রিন্ট / PDF সেভ করুন</button>
+            <button onclick="window.print()" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #10b981, #059669);"><i class="material-icons-round" style="vertical-align: middle;">print</i> প্রিন্ট / PDF সেভ করুন</button>
         </div>
 
         <!-- Preview Area -->

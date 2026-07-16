@@ -6,144 +6,190 @@
 <div style="margin-top: 10px;">
     
     <!-- Welcome Banner -->
-    <div class="glass" style="padding: 40px; margin-bottom: 40px; background: linear-gradient(135deg, rgba(20, 25, 40, 0.8) 0%, rgba(30, 36, 56, 0.4) 100%); border-left: 4px solid var(--primary-color);">
-        <h2 style="color: #fff; margin-bottom: 12px; font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;">
-            স্বাগতম, <span class="text-gradient">{{ Auth::user()->name }}</span>!
+    <div class="glass" style="padding: 40px; margin-bottom: 30px;">
+        <h2 style="color: #fff; margin-bottom: 12px; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em;">
+            স্বাগতম, {{ Auth::user()->name }}!
         </h2>
-        <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; line-height: 1.6;">
-            Smart Stationary-এর সম্পূর্ণ ড্যাশবোর্ড কন্ট্রোল প্যানেল। এখান থেকে আপনি আপনার সকল টুলস এবং সার্ভিস একসেস করতে পারবেন।
+        <p style="color: var(--text-muted); font-size: 1rem; max-width: 700px; line-height: 1.6; margin-bottom: 25px;">
+            SmartStation কন্ট্রোল প্যানেলে আপনাকে স্বাগতম। এখান থেকে আপনি আপনার সমস্ত ডিজিটাল টুলস এবং সার্ভিসগুলো অত্যন্ত দক্ষতার সাথে পরিচালনা করতে পারবেন।
         </p>
+        <div style="display: flex; gap: 15px;">
+            <a href="#" class="btn btn-outline-primary" style="background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 10px 20px; font-weight: 500; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                <i class="material-icons-round" style="font-size: 1.1rem;">bolt</i> Quick Start Guide
+            </a>
+            <a href="#" class="btn btn-outline-secondary" style="background: transparent; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; font-weight: 500; font-size: 0.9rem;">
+                View System Logs
+            </a>
+        </div>
     </div>
         
-    <div class="grid-2" style="margin-bottom: 50px;">
+    <div class="grid-2" style="margin-bottom: 40px;">
         <!-- Account Info -->
-        <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
             <div>
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
-                    <div style="background: rgba(99, 102, 241, 0.15); padding: 12px; border-radius: 12px; color: var(--primary-hover);">
-                        <i class="material-icons-round">badge</i>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h3 style="color: #fff; font-weight: 700; font-size: 1.2rem; margin: 0;">অ্যাকাউন্ট ডিটেইলস</h3>
+                    <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Active</div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; color: var(--text-muted);">
+                        <i class="material-icons-round" style="font-size: 1.2rem;">mail_outline</i>
                     </div>
-                    <h3 style="color: var(--text-main); font-weight: 700; margin: 0;">অ্যাকাউন্টের তথ্য</h3>
-                </div>
-                
-                <div style="background: rgba(0,0,0,0.2); padding: 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.03);">
-                    <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">ইমেইল</p>
-                    <p style="color: #fff; font-weight: 500;">{{ Auth::user()->email }}</p>
-                </div>
-                
-                <div style="background: rgba(0,0,0,0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <p style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">অ্যাকাউন্ট টাইপ</p>
-                        <p style="color: #fff; font-weight: 500; text-transform: capitalize;">{{ Auth::user()->role }} User</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 6px 12px; border-radius: 8px; color: #fff; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 10px var(--primary-glow);">
-                        Active
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 4px 0;">ইমেইল ঠিকানা</p>
+                        <p style="color: #fff; font-weight: 500; font-size: 1rem; margin: 0;">{{ Auth::user()->email }}</p>
                     </div>
                 </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 15px;">
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 10px; color: #10b981;">
+                        <i class="material-icons-round" style="font-size: 1.2rem;">verified_user</i>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 4px 0;">ব্যবহারকারীর ধরন</p>
+                        <p style="color: #fff; font-weight: 500; font-size: 1rem; margin: 0; text-transform: capitalize;">Active {{ Auth::user()->role }} User</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <a href="#" style="color: #818cf8; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    Edit Profile Details <i class="material-icons-round" style="font-size: 1rem;">arrow_forward</i>
+                </a>
             </div>
         </div>
         
         <!-- Credit Balance -->
-        <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1), transparent);">
-            <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 50%; color: var(--primary-color); margin-bottom: 20px; box-shadow: 0 0 30px var(--primary-glow);">
-                <i class="material-icons-round" style="font-size: 2.5rem;">account_balance_wallet</i>
+        <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: #fff; font-weight: 700; font-size: 1.2rem; margin: 0;">আপনার ক্রেডিট ব্যালেন্স</h3>
+                    <div style="background: rgba(6, 182, 212, 0.15); color: #22d3ee; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="material-icons-round" style="font-size: 1.2rem;">payments</i>
+                    </div>
+                </div>
+                
+                <h1 style="font-size: 3rem; color: #a5b4fc; margin: 0 0 8px 0; font-weight: 700; line-height: 1;">
+                    ৳{{ number_format(Auth::user()->credits, 2) }}
+                </h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">ব্যালেন্স মেয়াদের কোনো সীমাবদ্ধতা নেই</p>
             </div>
             
-            <h3 style="margin-bottom: 12px; color: var(--text-muted); font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">আপনার ক্রেডিট ব্যালেন্স</h3>
-            <h1 style="font-size: 4rem; color: #fff; margin-bottom: 24px; font-weight: 800; line-height: 1;">
-                ৳<span class="text-gradient">{{ Auth::user()->credits }}</span>
-            </h1>
-            <a href="{{ route('recharge') }}" class="btn btn-primary" style="padding: 14px 32px; border-radius: 30px;">
-                <i class="material-icons-round" style="font-size: 1.1rem;">add_circle</i> ক্রেডিট রিচার্জ করুন
-            </a>
+            <div style="margin-top: 30px;">
+                <a href="{{ route('recharge') }}" class="btn w-100" style="background: linear-gradient(135deg, #6366f1, #06b6d4); color: #fff; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem;">
+                    <i class="material-icons-round" style="font-size: 1.2rem;">add_circle_outline</i> ক্রেডিট রিচার্জ করুন
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refer & Earn -->
+    <div class="glass" style="margin-bottom: 40px; padding: 30px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
+        <div style="flex: 1; min-width: 300px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <div style="background: rgba(234, 179, 8, 0.15); color: #eab308; padding: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="material-icons-round" style="font-size: 1.5rem;">celebration</i>
+                </div>
+                <h3 style="color: #fff; font-weight: 700; font-size: 1.3rem; margin: 0;">রেফার করুন এবং আয় করুন</h3>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0 0 15px 0;">
+                আপনার রেফারেল লিংক ব্যবহার করে কেউ অ্যাকাউন্ট খুললে এবং রিচার্জ করলে আপনি পাবেন নিশ্চিত কমিশন। আপনার রেফারেল লিংকটি বন্ধুদের সাথে শেয়ার করুন!
+            </p>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <div style="background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); color: #a5b4fc; font-family: monospace; font-size: 1.1rem;">
+                    {{ url('/register?ref=' . Auth::user()->referral_code) }}
+                </div>
+                <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . Auth::user()->referral_code) }}').then(() => alert('লিংক কপি হয়েছে!'))" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 8px; font-weight: 600;">
+                    <i class="material-icons-round" style="font-size: 1.1rem; vertical-align: middle;">content_copy</i> কপি লিংক
+                </button>
+            </div>
+        </div>
+        <div style="background: rgba(0,0,0,0.15); padding: 25px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); min-width: 250px; text-align: center;">
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 5px 0;">মোট রেফার করেছেন</p>
+            <h2 style="color: #10b981; font-size: 2.5rem; margin: 0; font-weight: 700;">{{ Auth::user()->referrals()->count() }}</h2>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 5px 0 0 0;">জন ইউজার</p>
         </div>
     </div>
     
     <div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
-            <div>
-                <h3 style="font-weight: 800; font-size: 1.5rem; color: #fff; margin-bottom: 8px;">দ্রুত অ্যাক্সেস টুলস</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">আপনার প্রয়োজনীয় সকল প্রোডাক্টিভিটি টুলস এক জায়গায়</p>
-            </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h3 style="font-weight: 700; font-size: 1.3rem; color: #fff; margin: 0; border-left: 3px solid #818cf8; padding-left: 10px;">দ্রুত অ্যাক্সেস টুলস</h3>
+            <a href="#" style="color: var(--text-muted); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                সকল টুলস দেখুন <i class="material-icons-round" style="font-size: 1rem;">open_in_new</i>
+            </a>
         </div>
         
-        <div class="grid-3">
+        <div class="grid-3" style="gap: 20px;">
             
             <!-- Document Editor -->
-            <a href="{{ route('document.index') }}" style="text-decoration: none;">
-                <div class="glass glass-interactive" style="height: 100%; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(99, 102, 241, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-hover);">
-                        <i class="material-icons-round" style="font-size: 1.8rem;">description</i>
+            <a href="{{ route('document.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(99, 102, 241, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #818cf8; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">description</i>
                     </div>
-                    <div>
-                        <h4 style="color: var(--text-main); margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700;">ডকুমেন্ট এডিটিং</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6;">A4, A3, Legal, Letter ইত্যাদি সাইজে প্রফেশনাল পেজ তৈরি করুন</p>
-                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Document Editor</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">প্রফেশনাল ডকুমেন্ট তৈরি এবং এডিট করার উন্নত টুল।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
 
             <!-- PDF Tools -->
-            <a href="{{ route('pdf.tools') }}" style="text-decoration: none;">
-                <div class="glass glass-interactive" style="height: 100%; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(239, 68, 68, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #f87171;">
-                        <i class="material-icons-round" style="font-size: 1.8rem;">picture_as_pdf</i>
+            <a href="{{ route('pdf.tools') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(6, 182, 212, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #22d3ee; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">picture_as_pdf</i>
                     </div>
-                    <div>
-                        <h4 style="color: var(--text-main); margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700;">পিডিএফ টুলস</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6;">পিডিএফ মার্জ, কমপ্রেস, ও নির্দিষ্ট পেজ আলাদা বা স্প্লিট করুন</p>
-                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">PDF Tools</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">PDF ফাইল কনভার্ট, মার্জ এবং কম্প্রেস করার সমাধান।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
 
             <!-- Accounting -->
-            <a href="{{ route('accounting.index') }}" style="text-decoration: none;">
-                <div class="glass glass-interactive" style="height: 100%; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(16, 185, 129, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #34d399;">
-                        <i class="material-icons-round" style="font-size: 1.8rem;">point_of_sale</i>
+            <a href="{{ route('accounting.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(236, 72, 153, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #f472b6; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">account_balance</i>
                     </div>
-                    <div>
-                        <h4 style="color: var(--text-main); margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700;">আয়-ব্যয় হিসাব</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6;">প্রতিদিনের আয় ও ব্যয়ের ডিজিটাল বুককিপিং খাতা পরিচালনা করুন</p>
-                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Income-Expense</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">আপনার আয় ও ব্যয়ের হিসাব রাখুন ডিজিটাল পদ্ধতিতে।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
 
             <!-- Graphic Design -->
-            <a href="{{ route('design.editor') }}" style="text-decoration: none;">
-                <div class="glass glass-interactive" style="height: 100%; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(236, 72, 153, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #f472b6;">
-                        <i class="material-icons-round" style="font-size: 1.8rem;">palette</i>
+            <a href="{{ route('design.editor') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(245, 158, 11, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fbbf24; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">palette</i>
                     </div>
-                    <div>
-                        <h4 style="color: var(--text-main); margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700;">ডিজাইন এডিটর</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6;">ব্যানার এবং ফেসবুক পোস্ট কাস্টমাইজ ও ডাউনলোড করুন</p>
-                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Design Editor</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">সহজেই আকর্ষণীয় গ্রাফিক ডিজাইন তৈরি করুন এখানে।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
 
             <!-- AI Service Hub -->
-            <a href="{{ route('design.ai_hub') }}" style="text-decoration: none;">
-                <div class="glass glass-interactive" style="height: 100%; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(6, 182, 212, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #22d3ee;">
-                        <i class="material-icons-round" style="font-size: 1.8rem;">psychology</i>
+            <a href="{{ route('design.ai_hub') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(16, 185, 129, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #34d399; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">psychology</i>
                     </div>
-                    <div>
-                        <h4 style="color: var(--text-main); margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700;">এআই হাব</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6;">এআই ইমেজ জেনারেশন ও ছবির অ্যাডভান্সড ব্যাকগ্রাউন্ড রিমুভার</p>
-                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">AI Hub</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">কৃত্রিম বুদ্ধিমত্তার সাহায্যে কাজগুলো করুন মুহূর্তেই।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
 
             <!-- Question Creator -->
-            <a href="{{ route('questions.index') }}" style="text-decoration: none;">
-                <div class="glass glass-interactive" style="height: 100%; display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: rgba(245, 158, 11, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fbbf24;">
-                        <i class="material-icons-round" style="font-size: 1.8rem;">quiz</i>
+            <a href="{{ route('questions.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(239, 68, 68, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #f87171; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">quiz</i>
                     </div>
-                    <div>
-                        <h4 style="color: var(--text-main); margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700;">প্রশ্নপত্র মেকার</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.6;">গণিত ও সমীকরণসহ সৃজনশীল ও MCQ প্রশ্নপত্র তৈরি করুন</p>
-                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Question Maker</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">স্বয়ংক্রিয়ভাবে পরীক্ষার প্রশ্নপত্র তৈরির আধুনিক টুল।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
 

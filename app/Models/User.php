@@ -48,4 +48,37 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the user's favorite document templates.
+     */
+    public function favoriteDocuments()
+    {
+        return $this->belongsToMany(DocumentTemplate::class)->withTimestamps();
+    }
+
+    /**
+     * Get the user who referred this user.
+     */
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    /**
+     * Get the users referred by this user.
+     */
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->referral_code = \Illuminate\Support\Str::random(10);
+        });
+    }
 }

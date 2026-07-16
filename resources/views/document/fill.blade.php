@@ -6,6 +6,7 @@
     <title>{{ $template->name }} - Smart Stationary</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         /* Base Reset */
@@ -182,8 +183,27 @@
                 color: #000000 !important;
             }
             .placeholder-highlight { background-color: transparent !important; color: #000000 !important; padding: 0 !important; border: none !important; }
+            
+            .watermark {
+                display: block !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 9999;
+                pointer-events: none;
+                opacity: 0.15;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" transform="rotate(-45 150 150)" font-family="Arial" font-size="40" fill="black" font-weight="bold">Smart Stationary</text></svg>');
+                background-repeat: repeat;
+            }
+            
+            body.no-watermark .watermark {
+                display: none !important;
+            }
         }
     </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 
@@ -231,9 +251,14 @@
             </div>
             
             <div class="sidebar-footer">
-                <button onclick="window.print()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; font-weight: 600;">
-                    <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> প্রিন্ট / PDF সেভ করুন
-                </button>
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <button onclick="printDemo()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #6b7280;">
+                        <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">visibility</i> ডেমো দেখুন (জলছাপ সহ)
+                    </button>
+                    <button onclick="finalPrint({{ $template->id }}, {{ $template->credit_cost ?? 5 }})" id="finalPrintBtn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
+                        <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ (ক্রেডিট লাগবে)
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -280,7 +305,76 @@
         document.querySelectorAll('.dynamic-input').forEach(input => {
             if(input.value) updatePreview(input);
         });
+        
+        // Add watermark div
+        const watermarkDiv = document.createElement('div');
+        watermarkDiv.className = 'watermark';
+        document.body.appendChild(watermarkDiv);
     });
+
+    function printDemo() {
+        document.body.classList.remove('no-watermark');
+        window.print();
+    }
+
+    async function finalPrint(id, creditCost) {
+        const result = await Swal.fire({
+            title: 'আপনি কি নিশ্চিত?',
+            text: `ফাইনাল প্রিন্ট করার জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'হ্যাঁ, প্রিন্ট করুন',
+            cancelButtonText: 'বাতিল'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+
+        const btn = document.getElementById('finalPrintBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'অপেক্ষা করুন...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(`/documents/${id}/deduct-credit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Ensure watermark is hidden
+                document.body.classList.add('no-watermark');
+                
+                // Show success alert briefly
+                await Swal.fire({
+                    title: 'সফল!',
+                    text: data.message,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                // Trigger print
+                window.print();
+            } else {
+                Swal.fire('দুঃখিত!', data.message || 'ক্রেডিট কাটাতে সমস্যা হয়েছে।', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('ত্রুটি!', 'সার্ভার এরর। আবার চেষ্টা করুন।', 'error');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
 </script>
 </body>
 </html>

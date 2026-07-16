@@ -4,7 +4,25 @@
 
 @section('content')
 <div class="container" style="margin-top: 40px; margin-bottom: 40px;">
-    <h2 style="color: var(--primary-color); margin-bottom: 25px;">প্রতিদিনের ক্যাশ হিসাব ক্যালকুলেটর</h2>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+        <div>
+            <h2 style="color: #fff; font-size: 1.8rem; font-weight: 700; border-left: 4px solid #818cf8; padding-left: 12px; margin-bottom: 8px;">অ্যাকাউন্টিং মডিউল</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">আপনার আয়-ব্যয়, ক্যাশ ও বাকির হিসাব রাখুন</p>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; overflow-x: auto;">
+        <a href="{{ route('accounting.index') }}" class="btn" style="background: transparent; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; font-weight: 500; text-decoration: none;">
+            <i class="material-icons-round" style="vertical-align: middle; font-size: 1.1rem; margin-right: 5px;">account_balance_wallet</i> আয়-ব্যয়
+        </a>
+        <a href="{{ route('accounting.calculator') }}" class="btn" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 8px 16px; border-radius: 8px; font-weight: 600; text-decoration: none;">
+            <i class="material-icons-round" style="vertical-align: middle; font-size: 1.1rem; margin-right: 5px;">calculate</i> ক্যাশ ক্যালকুলেটর
+        </a>
+        <a href="{{ route('accounting.dues') }}" class="btn" style="background: transparent; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; font-weight: 500; text-decoration: none;">
+            <i class="material-icons-round" style="vertical-align: middle; font-size: 1.1rem; margin-right: 5px;">menu_book</i> বাকির খাতা
+        </a>
+    </div>
 
     @if (session('success'))
         <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #10b981; padding: 15px; border-radius: 8px; margin-bottom: 20px;">

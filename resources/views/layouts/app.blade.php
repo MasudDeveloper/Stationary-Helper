@@ -18,10 +18,10 @@
         <!-- Sidebar -->
         <aside class="app-sidebar no-print" id="appSidebar">
             <a href="{{ route('dashboard') }}" class="sidebar-logo">
-                <div class="icon-wrapper">
-                    <i class="material-icons-round" style="font-size: 2rem;">storefront</i>
+                <div class="sidebar-logo-title">
+                    <span class="text-white">Smart</span><span class="text-gradient">Station</span>
                 </div>
-                <span class="text-gradient">Smart Stationary</span>
+                <div class="sidebar-logo-subtitle">ADMIN CONSOLE</div>
             </a>
             
             <ul class="sidebar-menu">
@@ -51,11 +51,7 @@
                         <i class="material-icons-round">account_balance_wallet</i><span>আয়-ব্যয় হিসাব</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('accounting.calculator') }}" class="sidebar-link {{ request()->routeIs('accounting.calculator') ? 'active' : '' }}">
-                        <i class="material-icons-round">calculate</i><span>ক্যাশ ক্যালকুলেটর</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="{{ route('accounting.receipt') }}" class="sidebar-link {{ request()->routeIs('accounting.receipt') ? 'active' : '' }}">
                         <i class="material-icons-round">receipt</i><span>মানি রিসিট</span>
@@ -107,19 +103,10 @@
                 @endif
             </ul>
 
-            <div class="sidebar-user">
-                <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
-                <div style="flex: 1; min-width: 0;">
-                    <p style="font-weight: 600; font-size: 0.95rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0;">{{ Auth::user()->name }}</p>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin: 0; letter-spacing: 0.05em;">{{ Auth::user()->role }}</p>
-                </div>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: var(--danger); display: flex; align-items: center; padding: 8px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='transparent'">
-                    <i class="material-icons-round">logout</i>
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </div>
+            <!-- Logout form for when user logs out -->
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </aside>
 
         <div class="app-content">
@@ -128,9 +115,31 @@
                     <i class="material-icons-round">menu</i>
                 </button>
                 
-                <div class="credit-badge">
-                    <i class="material-icons-round" style="font-size: 1.2rem;">stars</i> 
-                    <span>৳{{ Auth::user()->credits }} ক্রেডিট</span>
+                <div style="flex: 1; display: flex; justify-content: flex-start; padding-left: 20px;">
+                    <div style="position: relative; width: 100%; max-width: 400px;">
+                        <i class="material-icons-round" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.2rem;">search</i>
+                        <input type="text" placeholder="Search tools or files..." style="width: 100%; padding: 10px 20px 10px 45px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.03); color: #fff; font-size: 0.9rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='rgba(255,255,255,0.05)'">
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="credit-badge" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--secondary-color);">
+                        <i class="material-icons-round" style="font-size: 1.1rem;">account_balance_wallet</i> 
+                        <span>Credits: {{ number_format(Auth::user()->credits) }}</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 15px; color: var(--text-muted);">
+                        <i class="material-icons-round" style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">notifications_none</i>
+                        <i class="material-icons-round" style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">help_outline</i>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1);" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) document.getElementById('logout-form').submit();" title="Logout">
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem; font-weight: 600; color: #fff;">{{ Auth::user()->name }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ ucfirst(Auth::user()->role) }}</div>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=2d3748&color=fff&size=40" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                    </div>
                 </div>
             </header>
 

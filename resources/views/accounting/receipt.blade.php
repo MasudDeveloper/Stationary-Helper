@@ -9,34 +9,34 @@
     <div style="display: flex; gap: 30px; flex-wrap: wrap;">
         <!-- Input Form -->
         <div class="glass no-print" style="flex: 1; min-width: 320px; padding: 30px; height: fit-content;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color);">রিসিট তথ্য</h3>
+            <h3 style="margin-bottom: 20px; color: #fff; font-weight: 700;">রিসিট তথ্য</h3>
             
             <div class="form-group">
                 <label class="form-label">রিসিট নং</label>
-                <input type="text" id="rec_no" class="form-control" value="MR-{{ rand(1000, 9999) }}" oninput="updateReceipt()">
+                <input type="text" id="rec_no" class="form-control" value="MR-{{ rand(1000, 9999) }}" oninput="updateReceipt()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">তারিখ</label>
-                <input type="date" id="rec_date" class="form-control" value="{{ date('Y-m-d') }}" oninput="updateReceipt()">
+                <input type="date" id="rec_date" class="form-control" value="{{ date('Y-m-d') }}" oninput="updateReceipt()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color-scheme: dark;">
             </div>
             <div class="form-group">
                 <label class="form-label">গ্রহীতা / প্রতিষ্ঠানের নাম</label>
-                <input type="text" id="rec_company" class="form-control" value="সহজ কাজ ডট কম" oninput="updateReceipt()">
+                <input type="text" id="rec_company" class="form-control" value="সহজ কাজ ডট কম" oninput="updateReceipt()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">কার কাছ থেকে পাওয়া গেল (Received From)</label>
-                <input type="text" id="rec_from" class="form-control" placeholder="গ্রাহকের নাম" oninput="updateReceipt()">
+                <input type="text" id="rec_from" class="form-control" placeholder="গ্রাহকের নাম" oninput="updateReceipt()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">টাকার পরিমাণ (Amount)</label>
-                <input type="number" id="rec_amount" class="form-control" placeholder="0.00" oninput="updateReceipt()">
+                <input type="number" id="rec_amount" class="form-control" placeholder="0.00" oninput="updateReceipt()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
             <div class="form-group">
                 <label class="form-label">বাবদ (Purpose)</label>
-                <input type="text" id="rec_purpose" class="form-control" placeholder="যেমন: সার্ভিস চার্জ, পণ্য ক্রয়" oninput="updateReceipt()">
+                <input type="text" id="rec_purpose" class="form-control" placeholder="যেমন: সার্ভিস চার্জ, পণ্য ক্রয়" oninput="updateReceipt()" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1);">
             </div>
 
-            <button onclick="window.print()" class="btn btn-primary" style="width: 100%; margin-top: 15px;">প্রিন্ট / ডাউনলোড করুন</button>
+            <button onclick="window.print()" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #6366f1, #06b6d4);">প্রিন্ট / ডাউনলোড করুন</button>
         </div>
 
         <!-- Preview Area -->

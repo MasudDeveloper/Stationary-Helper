@@ -8,6 +8,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Public Exam Routes
+Route::get('/exams/{id}/participate', [\App\Http\Controllers\ExamController::class, 'participate'])->name('exams.participate');
+Route::post('/exams/{id}/submit', [\App\Http\Controllers\ExamController::class, 'submitExam'])->name('exams.submit');
+Route::get('/exams/results/{submission_id}', [\App\Http\Controllers\ExamController::class, 'results'])->name('exams.results');
+
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('login', [AuthController::class, 'login']);
@@ -42,12 +47,21 @@ Route::middleware('auth')->group(function () {
 
     // Document & CV Maker Routes
     Route::get('/documents', [DocumentController::class, 'index'])->name('document.index');
+    Route::get('/documents/favorites', [DocumentController::class, 'favorites'])->name('document.favorites');
+    Route::post('/documents/{id}/favorite', [DocumentController::class, 'toggleFavorite'])->name('document.favorite.toggle');
+    Route::post('/documents/{id}/deduct-credit', [DocumentController::class, 'deductCredit'])->name('document.deduct.credit');
     Route::get('/documents/{id}/fill', [DocumentController::class, 'fill'])->name('document.fill');
 
     // Accounting Routes
     Route::get('/accounting', [AccountingController::class, 'index'])->name('accounting.index');
     Route::post('/accounting/store', [AccountingController::class, 'storeTransaction'])->name('accounting.store');
-    Route::post('/accounting/delete/{id}', [AccountingController::class, 'destroyTransaction'])->name('accounting.delete');
+    Route::post('/accounting/transaction/{id}/delete', [AccountingController::class, 'destroyTransaction'])->name('accounting.transaction.delete');
+    
+    // Dues (Bakir Hishab) Routes
+    Route::get('/accounting/dues', [AccountingController::class, 'dues'])->name('accounting.dues');
+    Route::post('/accounting/dues', [AccountingController::class, 'storeDue'])->name('accounting.dues.store');
+    Route::post('/accounting/dues/{id}/mark-paid', [AccountingController::class, 'markDuePaid'])->name('accounting.dues.mark_paid');
+    Route::post('/accounting/dues/{id}/delete', [AccountingController::class, 'destroyDue'])->name('accounting.dues.delete');
 
     // Daily Cash Calculator
     Route::get('/cash-calculator', [AccountingController::class, 'cashCalculator'])->name('accounting.calculator');
@@ -110,6 +124,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/pdf/tools/image-convert', [PdfController::class, 'imageConvert'])->name('pdf.tools.image_convert');
     Route::get('/pdf/tools/qr-generator', [PdfController::class, 'qrGenerator'])->name('pdf.tools.qr_generator');
     Route::get('/pdf/tools/image-resize', [PdfController::class, 'imageResize'])->name('pdf.tools.image_resize');
+
+    // Exam System Routes
+    Route::get('/exams', [\App\Http\Controllers\ExamController::class, 'index'])->name('exams.index');
+    Route::get('/exams/create', [\App\Http\Controllers\ExamController::class, 'create'])->name('exams.create');
+    Route::post('/exams/store', [\App\Http\Controllers\ExamController::class, 'store'])->name('exams.store');
+    Route::get('/exams/{id}', [\App\Http\Controllers\ExamController::class, 'show'])->name('exams.show');
+    Route::post('/exams/{id}/delete', [\App\Http\Controllers\ExamController::class, 'destroy'])->name('exams.delete');
 
     // AI Template Generator Routes
     Route::get('/design/ai-templates', [AiTemplateController::class, 'index'])->name('design.ai_templates');

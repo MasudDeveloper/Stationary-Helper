@@ -1,134 +1,291 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রশ্নপত্র তৈরি - সহজ কাজ</title>
+    <!-- Basic Bootstrap for grid and forms -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <!-- MathJax for rendering LaTeX/Math formulas -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: #0f172a; /* Dark background */
+            color: #f8fafc;
+        }
 
-@section('title', 'প্রশ্নপত্র তৈরি - সহজ কাজ')
+        .builder-fullscreen {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        .builder-sidebar {
+            width: 450px;
+            flex-shrink: 0;
+            background: #1e293b;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
 
-@section('content')
-<!-- MathJax for rendering LaTeX/Math formulas -->
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.1);
+        }
 
-<style>
-    .builder-container {
-        display: flex;
-        gap: 20px;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    .builder-sidebar {
-        width: 400px;
-        flex-shrink: 0;
-    }
-    
-    .builder-preview {
-        flex: 1;
-        background: #e5e7eb;
-        padding: 40px 20px;
-        border-radius: 8px;
-        overflow-y: auto;
-        max-height: calc(100vh - 150px);
-        display: flex;
-        justify-content: center;
-    }
+        .sidebar-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .builder-preview {
+            flex: 1;
+            background: #020617; /* darker background for preview area */
+            padding: 40px 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
 
-    .question-sheet {
-        background: #fff;
-        color: #000;
-        width: 100%;
-        max-width: 210mm;
-        min-height: 297mm;
-        padding: 20mm;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        font-family: 'Times New Roman', Times, serif;
-    }
-</style>
+        .preview-paper {
+            background: #fff;
+            color: #000;
+            width: 100%;
+            max-width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: 'Times New Roman', Times, serif;
+            position: relative;
+        }
 
-<div class="builder-container">
+        .question-card {
+            padding: 10px;
+            margin-bottom: 15px;
+            position: relative;
+            border: 1px dashed transparent;
+            transition: all 0.2s;
+        }
+        
+        .question-card:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .action-btns {
+            position: absolute;
+            right: 0;
+            top: 0;
+            display: none;
+            gap: 5px;
+        }
+
+        .question-card:hover .action-btns {
+            display: flex;
+        }
+
+        .btn-action {
+            background: #e2e8f0;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #475569;
+            transition: 0.2s;
+        }
+        
+        .btn-action:hover { background: #3b82f6; color: #fff; }
+        .btn-action.delete:hover { background: #ef4444; color: #fff; }
+
+        /* Form styling */
+        .form-label { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 5px; font-weight: 500; }
+        .form-control, .form-select { 
+            background: rgba(0,0,0,0.2); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            color: #fff; 
+            font-size: 0.95rem;
+        }
+        .form-control:focus, .form-select:focus { 
+            background: rgba(0,0,0,0.3); 
+            border-color: #3b82f6; 
+            color: #fff; 
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25); 
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.3); }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            border: none;
+            font-weight: 600;
+        }
+        .btn-gradient:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color:#fff; 
+            border:none; 
+            padding: 12px; 
+            font-weight: bold; 
+            font-size: 1.1rem; 
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-save:hover { background: linear-gradient(135deg, #059669, #047857); color: #fff; }
+
+        /* Custom Scrollbar for Sidebar */
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .sidebar-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="builder-fullscreen">
     <!-- Sidebar / Inputs -->
     <div class="builder-sidebar">
-        <div class="glass" style="padding: 25px; position: sticky; top: 20px; max-height: calc(100vh - 80px); overflow-y: auto;">
-            <h3 style="margin-bottom: 20px; color: var(--primary-color);">
+        <div class="sidebar-header">
+            <h5 style="margin: 0; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                <i class="material-icons-round" style="color: #3b82f6;">edit_document</i> 
                 {{ strtoupper($type) }} প্রশ্ন মেকার
-            </h3>
-            
-            <div class="form-group">
+            </h5>
+            <a href="{{ route('questions.index') }}" class="btn btn-sm btn-outline-light" style="border-color: rgba(255,255,255,0.2); padding: 4px 10px;">
+                <i class="material-icons-round" style="font-size: 16px; vertical-align: text-bottom;">close</i> বন্ধ করুন
+            </a>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="form-group mb-3">
                 <label class="form-label">পরীক্ষার নাম / শিরোনাম</label>
                 <input type="text" id="paper_title" class="form-control" value="বার্ষিক পরীক্ষা" oninput="updateSheetHeader()">
             </div>
-            <div class="form-group" style="display: flex; gap: 10px;">
-                <div style="flex: 1;">
+            
+            <div class="row mb-4 g-2">
+                <div class="col-6">
                     <label class="form-label">শ্রেণী</label>
                     <input type="text" id="paper_class" class="form-control" value="দশম" oninput="updateSheetHeader()">
                 </div>
-                <div style="flex: 1;">
+                <div class="col-6">
                     <label class="form-label">বিষয়</label>
                     <input type="text" id="paper_subject" class="form-control" value="উচ্চতর গণিত" oninput="updateSheetHeader()">
                 </div>
             </div>
 
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 0 0 20px 0;">
 
             <div id="editor-fields">
                 @if ($type == 'mcq')
-                    <h4>নতুন MCQ প্রশ্ন যোগ করুন</h4>
-                    <div class="form-group">
+                    <h6 class="text-white mb-3 d-flex align-items-center gap-2">
+                        <i class="material-icons-round" style="font-size: 18px; color: #8b5cf6;">add_circle</i>
+                        <span id="form_title">নতুন MCQ প্রশ্ন যোগ করুন</span>
+                    </h6>
+                    <div class="form-group mb-3">
                         <label class="form-label">প্রশ্ন (LaTeX সমর্থন করে, যেমন: $x^2 + y^2 = r^2$)</label>
                         <textarea id="mcq_question" class="form-control" rows="3" placeholder="প্রশ্ন লিখুন..."></textarea>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="opt_a" class="form-control" placeholder="ক)">
-                        <input type="text" id="opt_b" class="form-control" placeholder="খ)">
-                        <input type="text" id="opt_c" class="form-control" placeholder="গ)">
-                        <input type="text" id="opt_d" class="form-control" placeholder="ঘ)">
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <input type="text" id="opt_a" class="form-control" placeholder="ক)">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="opt_b" class="form-control" placeholder="খ)">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="opt_c" class="form-control" placeholder="গ)">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="opt_d" class="form-control" placeholder="ঘ)">
+                        </div>
                     </div>
-                    <button onclick="addMcqQuestion()" class="btn btn-primary" style="width: 100%;">প্রশ্ন যোগ করুন</button>
+                    
+                    <input type="hidden" id="edit_index" value="-1">
+                    <div class="d-flex gap-2">
+                        <button onclick="saveOrUpdateMcqQuestion()" class="btn btn-gradient w-100" id="btn_save_q">
+                            + প্রশ্ন যোগ করুন
+                        </button>
+                        <button onclick="cancelEdit()" class="btn btn-secondary" id="btn_cancel_q" style="display: none;">
+                            বাতিল করুন
+                        </button>
+                    </div>
                 @else
-                    <h4>নতুন CQ (সৃজনশীল) প্রশ্ন যোগ করুন</h4>
-                    <div class="form-group">
+                    <h6 class="text-white mb-3 d-flex align-items-center gap-2">
+                        <i class="material-icons-round" style="font-size: 18px; color: #ec4899;">add_circle</i>
+                        <span id="form_title">নতুন CQ (সৃজনশীল) প্রশ্ন যোগ করুন</span>
+                    </h6>
+                    <div class="form-group mb-3">
                         <label class="form-label">উদ্দীপক (Stem)</label>
                         <textarea id="cq_stem" class="form-control" rows="4" placeholder="উদ্দীপক লিখুন..."></textarea>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-2">
                         <input type="text" id="cq_a" class="form-control" placeholder="ক) প্রশ্ন (১ নম্বর)">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-2">
                         <input type="text" id="cq_b" class="form-control" placeholder="খ) প্রশ্ন (২ নম্বর)">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-2">
                         <input type="text" id="cq_c" class="form-control" placeholder="গ) প্রশ্ন (৩ নম্বর)">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <input type="text" id="cq_d" class="form-control" placeholder="ঘ) প্রশ্ন (৪ নম্বর)">
                     </div>
-                    <button onclick="addCqQuestion()" class="btn btn-primary" style="width: 100%;">প্রশ্ন যোগ করুন</button>
+                    
+                    <input type="hidden" id="edit_index" value="-1">
+                    <div class="d-flex gap-2">
+                        <button onclick="saveOrUpdateCqQuestion()" class="btn btn-gradient w-100" id="btn_save_q" style="background: linear-gradient(135deg, #ec4899, #be185d);">
+                            + প্রশ্ন যোগ করুন
+                        </button>
+                        <button onclick="cancelEdit()" class="btn btn-secondary" id="btn_cancel_q" style="display: none;">
+                            বাতিল করুন
+                        </button>
+                    </div>
                 @endif
             </div>
 
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 25px 0;">
             
-            <button onclick="saveQuestionPaper()" class="btn" style="width: 100%; background: #10b981; color:#fff;">
-                ডাটাবেসে সেভ করুন
+            <button onclick="saveQuestionPaper()" class="btn w-100 btn-save">
+                <i class="material-icons-round" style="font-size: 18px; vertical-align: text-bottom;">cloud_upload</i> ডাটাবেসে সেভ করুন
             </button>
         </div>
     </div>
 
-    <!-- Preview Area / Exam Sheet -->
+    <!-- Preview Area -->
     <div class="builder-preview">
-        <div id="print-sheet" class="question-sheet">
-            <!-- Header Info -->
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2 id="view_title" style="margin: 0; font-size: 1.6rem; font-weight: bold;">বার্ষিক পরীক্ষা</h2>
-                <h4 style="margin: 5px 0; font-weight: normal;">বিষয়: <span id="view_subject">উচ্চতর গণিত</span></h4>
-                <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-top: 15px; border-bottom: 2px solid #000; padding-bottom: 5px;">
+        <div class="preview-paper">
+            <div style="text-align: center; margin-bottom: 25px; padding-bottom: 15px;">
+                <h2 id="view_title" style="font-weight: bold; margin: 0 0 5px 0; font-size: 1.8rem;">বার্ষিক পরীক্ষা</h2>
+                <h4 style="font-weight: normal; margin: 0 0 10px 0; font-size: 1.2rem;">বিষয়: <span id="view_subject">উচ্চতর গণিত</span></h4>
+                <div style="display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 5px;">
                     <div>শ্রেণী: <span id="view_class">দশম</span></div>
                     <div>সময়: ২ ঘণ্টা ৩০ মিনিট</div>
                     <div>পূর্ণমান: ১০০</div>
                 </div>
             </div>
 
-            <!-- Questions Area -->
-            <div id="questions-list-area" style="line-height: 1.6; font-size: 1.05rem;">
-                <!-- Injected via JavaScript -->
+            <div id="questions-list-area" style="font-size: 1.1rem; line-height: 1.5;">
+                <!-- Questions injected via JS -->
+                <div class="text-center" style="color: #9ca3af; padding: 100px 0;" id="empty-state">
+                    <i class="material-icons-round" style="font-size: 4rem; opacity: 0.5;">assignment</i>
+                    <h5 class="mt-3">প্রশ্নপত্র ফাঁকা</h5>
+                    <p style="font-size: 0.9rem;">বাম পাশের প্যানেল থেকে প্রশ্ন যোগ করুন।</p>
+                </div>
             </div>
         </div>
     </div>
@@ -143,89 +300,157 @@
         document.getElementById('view_class').innerText = document.getElementById('paper_class').value || 'শ্রেণী';
     }
 
-    function addMcqQuestion() {
+    function saveOrUpdateMcqQuestion() {
         const text = document.getElementById('mcq_question').value;
         const a = document.getElementById('opt_a').value;
         const b = document.getElementById('opt_b').value;
         const c = document.getElementById('opt_c').value;
         const d = document.getElementById('opt_d').value;
+        const editIndex = parseInt(document.getElementById('edit_index').value);
 
         if(!text || !a || !b || !c || !d) {
             alert('দয়া করে প্রশ্ন ও ৪টি অপশনই পূরণ করুন।');
             return;
         }
 
-        questions.push({ text, options: { a, b, c, d } });
+        const qData = { text, options: { a, b, c, d } };
 
-        // Reset
-        document.getElementById('mcq_question').value = '';
-        document.getElementById('opt_a').value = '';
-        document.getElementById('opt_b').value = '';
-        document.getElementById('opt_c').value = '';
-        document.getElementById('opt_d').value = '';
+        if (editIndex >= 0) {
+            questions[editIndex] = qData; // Update existing
+        } else {
+            questions.push(qData); // Add new
+        }
 
+        cancelEdit();
         renderQuestions();
     }
 
-    function addCqQuestion() {
+    function saveOrUpdateCqQuestion() {
         const stem = document.getElementById('cq_stem').value;
         const a = document.getElementById('cq_a').value;
         const b = document.getElementById('cq_b').value;
         const c = document.getElementById('cq_c').value;
         const d = document.getElementById('cq_d').value;
+        const editIndex = parseInt(document.getElementById('edit_index').value);
 
         if(!stem || !a || !b || !c || !d) {
             alert('দয়া করে উদ্দীপক এবং ক, খ, গ, ঘ সব প্রশ্ন পূরণ করুন।');
             return;
         }
 
-        questions.push({ stem, a, b, c, d });
+        const qData = { stem, a, b, c, d };
 
-        // Reset
-        document.getElementById('cq_stem').value = '';
-        document.getElementById('cq_a').value = '';
-        document.getElementById('cq_b').value = '';
-        document.getElementById('cq_c').value = '';
-        document.getElementById('cq_d').value = '';
+        if (editIndex >= 0) {
+            questions[editIndex] = qData;
+        } else {
+            questions.push(qData);
+        }
 
+        cancelEdit();
         renderQuestions();
     }
 
+    function editQuestion(index) {
+        const q = questions[index];
+        document.getElementById('edit_index').value = index;
+        document.getElementById('form_title').innerText = 'প্রশ্ন আপডেট করুন';
+        document.getElementById('btn_save_q').innerText = 'আপডেট করুন';
+        document.getElementById('btn_cancel_q').style.display = 'block';
+
+        if ('options' in q) {
+            // MCQ
+            document.getElementById('mcq_question').value = q.text;
+            document.getElementById('opt_a').value = q.options.a;
+            document.getElementById('opt_b').value = q.options.b;
+            document.getElementById('opt_c').value = q.options.c;
+            document.getElementById('opt_d').value = q.options.d;
+        } else {
+            // CQ
+            document.getElementById('cq_stem').value = q.stem;
+            document.getElementById('cq_a').value = q.a;
+            document.getElementById('cq_b').value = q.b;
+            document.getElementById('cq_c').value = q.c;
+            document.getElementById('cq_d').value = q.d;
+        }
+    }
+
+    function cancelEdit() {
+        document.getElementById('edit_index').value = '-1';
+        document.getElementById('form_title').innerText = 'নতুন প্রশ্ন যোগ করুন';
+        document.getElementById('btn_save_q').innerHTML = '+ প্রশ্ন যোগ করুন';
+        document.getElementById('btn_cancel_q').style.display = 'none';
+
+        // Clear form
+        if (document.getElementById('mcq_question')) {
+            document.getElementById('mcq_question').value = '';
+            document.getElementById('opt_a').value = '';
+            document.getElementById('opt_b').value = '';
+            document.getElementById('opt_c').value = '';
+            document.getElementById('opt_d').value = '';
+        } else {
+            document.getElementById('cq_stem').value = '';
+            document.getElementById('cq_a').value = '';
+            document.getElementById('cq_b').value = '';
+            document.getElementById('cq_c').value = '';
+            document.getElementById('cq_d').value = '';
+        }
+    }
+
     function removeQuestion(index) {
-        questions.splice(index, 1);
-        renderQuestions();
+        if(confirm('আপনি কি এই প্রশ্নটি মুছে ফেলতে চান?')) {
+            questions.splice(index, 1);
+            if(document.getElementById('edit_index').value == index) {
+                cancelEdit();
+            }
+            renderQuestions();
+        }
     }
 
     function renderQuestions() {
         const area = document.getElementById('questions-list-area');
         area.innerHTML = '';
 
+        if (questions.length === 0) {
+            area.innerHTML = `
+            <div class="text-center" style="color: #9ca3af; padding: 100px 0;">
+                <i class="material-icons-round" style="font-size: 4rem; opacity: 0.5;">assignment</i>
+                <h5 class="mt-3">প্রশ্নপত্র ফাঁকা</h5>
+                <p style="font-size: 0.9rem;">বাম পাশের প্যানেল থেকে প্রশ্ন যোগ করুন।</p>
+            </div>`;
+            return;
+        }
+
         questions.forEach((q, idx) => {
             const wrapper = document.createElement('div');
-            wrapper.style.position = 'relative';
-            wrapper.style.marginBottom = '25px';
+            wrapper.className = 'question-card';
 
-            // Delete control (hidden in print)
+            // Action Buttons
+            const actions = document.createElement('div');
+            actions.className = 'action-btns no-print';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-action';
+            editBtn.innerHTML = '<i class="material-icons-round" style="font-size: 16px;">edit</i>';
+            editBtn.title = 'Edit';
+            editBtn.onclick = () => editQuestion(idx);
+
             const delBtn = document.createElement('button');
-            delBtn.innerText = 'মুছুন';
-            delBtn.style.position = 'absolute';
-            delBtn.style.right = '-60px';
-            delBtn.style.top = '0';
-            delBtn.style.background = '#ef4444';
-            delBtn.style.color = '#fff';
-            delBtn.style.border = 'none';
-            delBtn.style.padding = '4px 8px';
-            delBtn.style.borderRadius = '4px';
-            delBtn.style.cursor = 'pointer';
-            delBtn.className = 'no-print';
+            delBtn.className = 'btn-action delete';
+            delBtn.innerHTML = '<i class="material-icons-round" style="font-size: 16px;">delete</i>';
+            delBtn.title = 'Delete';
             delBtn.onclick = () => removeQuestion(idx);
-            wrapper.appendChild(delBtn);
+
+            actions.appendChild(editBtn);
+            actions.appendChild(delBtn);
+            wrapper.appendChild(actions);
 
             if ('options' in q) {
                 // MCQ
                 const mcqHtml = `
-                    <div><strong>${idx + 1}. ${q.text}</strong></div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; margin-left: 15px; margin-top: 5px;">
+                    <div style="margin-bottom: 10px; padding-right: 70px;">
+                        <strong>${idx + 1}.</strong> ${q.text}
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-left: 15px;">
                         <div>ক) ${q.options.a}</div>
                         <div>খ) ${q.options.b}</div>
                         <div>গ) ${q.options.c}</div>
@@ -236,14 +461,15 @@
             } else {
                 // CQ
                 const cqHtml = `
-                    <div style="text-align: justify; margin-bottom: 10px;"><strong>${idx + 1}. ${q.stem}</strong></div>
-                    <div style="margin-left: 20px;">
+                    <div style="margin-bottom: 10px; padding-right: 70px; text-align: justify;">
+                        <strong>${idx + 1}.</strong> ${q.stem}
+                    </div>
+                    <div style="padding-left: 20px;">
                         <div>ক) ${q.a} <span style="float: right;">১</span></div>
                         <div>খ) ${q.b} <span style="float: right;">২</span></div>
                         <div>গ) ${q.c} <span style="float: right;">৩</span></div>
                         <div>ঘ) ${q.d} <span style="float: right;">৪</span></div>
                     </div>
-                    <div style="clear: both;"></div>
                 `;
                 wrapper.innerHTML += cqHtml;
             }
@@ -301,18 +527,12 @@
     @media print {
         .builder-sidebar { display: none !important; }
         .no-print { display: none !important; }
-        body * { visibility: hidden; }
-        #print-sheet, #print-sheet * { visibility: visible; }
-        #print-sheet {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-        }
-        .navbar { display: none !important; }
+        body { background: #fff !important; }
+        .builder-preview { padding: 0 !important; background: #fff !important; }
+        .preview-paper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; border: none !important; }
+        .question-card { border: none !important; margin-bottom: 20px !important; }
     }
 </style>
-@endsection
+
+</body>
+</html>
