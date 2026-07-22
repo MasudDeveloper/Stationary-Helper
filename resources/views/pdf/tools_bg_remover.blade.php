@@ -58,7 +58,13 @@
         <div id="loading" style="display: none; color: var(--primary-color); margin: 30px 0; text-align: center;">
             <i class="material-icons-round" style="font-size: 3rem; animation: spin 2s linear infinite;">autorenew</i>
             <h3 style="margin-top: 10px;">ব্যাকগ্রাউন্ড রিমুভ করা হচ্ছে...</h3>
-            <p style="color: var(--text-muted);"><small>প্রথমবার ব্যবহারে মডেল লোড হতে কিছুটা সময় লাগতে পারে।</small></p>
+            
+            <!-- Progress Bar -->
+            <div style="width: 100%; max-width: 400px; margin: 20px auto; background: rgba(255,255,255,0.1); border-radius: 10px; height: 10px; overflow: hidden;">
+                <div id="progress-bar" style="height: 100%; width: 0%; background: var(--primary-color); transition: width 0.3s ease;"></div>
+            </div>
+            
+            <p style="color: var(--text-muted);"><small>মডেল লোড ও প্রসেস হতে কিছুটা সময় লাগতে পারে। দয়া করে অপেক্ষা করুন।</small></p>
         </div>
 
         <div class="preview-container" id="preview-container">
@@ -68,6 +74,15 @@
             <button class="btn btn-primary" onclick="downloadImage()" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 30px;">
                 <i class="material-icons-round">download</i> ডাউনলোড করুন (PNG)
             </button>
+
+            <!-- Link to Passport Auto Arrange -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px;">
+                <p style="color: #fff; margin-bottom: 10px; font-size: 0.9rem;">ছবিটি পাসপোর্ট সাইজে প্রিন্ট করতে চান?</p>
+                <button onclick="arrangePassportPhoto()" class="btn" style="width: 100%; background: #f59e0b; color: #fff; border: none;">
+                    <i class="material-icons-round" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">auto_awesome_mosaic</i> অটো-অ্যারেঞ্জ (4R / A4)
+                </button>
+            </div>
+
             <button class="btn btn-outline" onclick="resetTool()" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 15px;">
                 আরেকটি ছবি আপলোড করুন
             </button>
@@ -89,32 +104,83 @@
         if (!input.files || !input.files[0]) return;
         
         const file = input.files[0];
+        
+        // 1. Confirm Credit Deduction
+        Swal.fire({
+            title: 'নিশ্চিত করুন',
+            text: "ব্যাকগ্রাউন্ড রিমুভ করতে ৫ ক্রেডিট কাটা হবে। আপনি কি রাজি?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'হ্যাঁ, শুরু করুন',
+            cancelButtonText: 'বাতিল'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Deduct via AJAX
+                fetch("{{ route('pdf.tools.bg_remover.deduct') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update balance on UI
+                        const balanceSpans = document.querySelectorAll('.credit-badge span');
+                        if (balanceSpans.length > 0) {
+                            balanceSpans[0].innerText = 'Credits: ' + data.new_balance;
+                        }
+                        
+                        // Proceed to Process
+                        startProcessing(file);
+                    } else {
+                        Swal.fire('দুঃখিত', data.message, 'error');
+                        input.value = '';
+                    }
+                })
+                .catch(err => {
+                    Swal.fire('ত্রুটি', 'সার্ভারে যোগাযোগ করা যাচ্ছে না।', 'error');
+                    input.value = '';
+                });
+            } else {
+                input.value = ''; // Reset input
+            }
+        });
+    }
+
+    async function startProcessing(file) {
         originalFilename = file.name.split('.')[0] + '_transparent.png';
 
         document.getElementById('upload-area').style.display = 'none';
         document.getElementById('loading').style.display = 'block';
         document.getElementById('preview-container').style.display = 'none';
+        document.getElementById('progress-bar').style.width = '0%';
 
         try {
-            // Dynamically import the library using esm.sh (reliable for browser imports)
             const module = await import('https://esm.sh/@imgly/background-removal@1.4.5');
             const removeBg = module.default || module.removeBackground;
 
-            if (!removeBg) {
-                throw new Error("লাইব্রেরি লোড হতে ব্যর্থ হয়েছে।");
-            }
+            if (!removeBg) throw new Error("লাইব্রেরি লোড হতে ব্যর্থ হয়েছে।");
 
             const config = {
-                publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/'
+                publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
+                progress: (key, current, total) => {
+                    let percent = Math.round((current / total) * 100);
+                    if (percent > 100) percent = 100;
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                }
             };
 
-            // Create object URL for the image
             const imageUrl = URL.createObjectURL(file);
-
-            // Process image
-            currentBlob = await removeBg(imageUrl, config);
+            let rawBlob = await removeBg(imageUrl, config);
             
-            // Create Result URL
+            // Clean Edges (Defringe/Burn for white artifacts near hair)
+            currentBlob = await cleanEdges(rawBlob);
+            
             const resultUrl = URL.createObjectURL(currentBlob);
             
             document.getElementById('result-img').src = resultUrl;
@@ -123,9 +189,41 @@
 
         } catch (error) {
             console.error(error);
-            Swal.fire('ব্যাকগ্রাউন্ড রিমুভ করতে সমস্যা হয়েছে: ' + error.message);
+            Swal.fire('ত্রুটি', 'ব্যাকগ্রাউন্ড রিমুভ করতে সমস্যা হয়েছে: ' + error.message, 'error');
             resetTool();
         }
+    }
+
+    // AI artifacts often leave a white fringe. We darken semi-transparent pixels to act like a burn tool.
+    function cleanEdges(blob) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const alpha = data[i + 3];
+                    // Semi-transparent pixels (usually edges/hair fringes)
+                    if (alpha > 0 && alpha < 250) {
+                        // Darken them (burn effect) to remove white halo
+                        data[i] = Math.max(0, data[i] - 60);     // R
+                        data[i+1] = Math.max(0, data[i+1] - 60); // G
+                        data[i+2] = Math.max(0, data[i+2] - 60); // B
+                        // Slightly reduce alpha to feather it
+                        data[i+3] = Math.max(0, alpha - 20);
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                canvas.toBlob(resolve, 'image/png');
+            };
+            img.src = URL.createObjectURL(blob);
+        });
     }
 
     function downloadImage() {
@@ -136,6 +234,17 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+    
+    function arrangePassportPhoto() {
+        if (!currentBlob) return;
+        // Convert to data URL for transfer
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem('transfer_job_photo', e.target.result);
+            window.location.href = "{{ route('pdf.tools.passport_print') }}";
+        };
+        reader.readAsDataURL(currentBlob);
     }
 
     function resetTool() {

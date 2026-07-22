@@ -55,15 +55,19 @@
 </div>
 
 <style>
-    .word { margin-right: 8px; display: inline-block; }
-    .char { display: inline-block; border-bottom: 2px solid transparent; }
-    .char.correct { color: #1f2937; }
-    .char.incorrect { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-    .char.current { border-bottom-color: #3b82f6; animation: blink 1s infinite; }
+    .correct { color: #10b981; }
+    .incorrect { color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 2px; }
+    .current { border-bottom: 2px solid #3b82f6; animation: blink 1s infinite; }
+    .remaining { color: #9ca3af; }
     
     @keyframes blink {
         0%, 100% { border-bottom-color: transparent; }
         50% { border-bottom-color: #3b82f6; }
+    }
+    
+    #text-display {
+        white-space: pre-wrap;
+        word-break: break-word;
     }
 </style>
 
@@ -79,45 +83,19 @@
     const restartBtn = document.getElementById('restart-btn');
 
     let text = {!! json_encode($paragraph->content) !!};
-    let chars = [];
-    let charElements = [];
     
-    let currentIndex = 0;
     let timer = 0;
     let timerInterval = null;
     let isTestActive = false;
     let errors = 0;
     let totalTyped = 0;
+    let lastInputLength = 0;
 
     function initTest() {
-        textDisplay.innerHTML = '';
-        chars = text.split('');
-        charElements = [];
-        
-        let wordSpan = document.createElement('span');
-        wordSpan.className = 'word';
-        
-        chars.forEach((char, index) => {
-            const charSpan = document.createElement('span');
-            charSpan.innerText = char;
-            charSpan.className = 'char';
-            if (index === 0) charSpan.classList.add('current');
-            charElements.push(charSpan);
-            
-            wordSpan.appendChild(charSpan);
-            
-            if (char === ' ') {
-                textDisplay.appendChild(wordSpan);
-                wordSpan = document.createElement('span');
-                wordSpan.className = 'word';
-            }
-        });
-        textDisplay.appendChild(wordSpan); // Append the last word
-
-        currentIndex = 0;
         timer = 0;
         errors = 0;
         totalTyped = 0;
+        lastInputLength = 0;
         isTestActive = false;
         clearInterval(timerInterval);
         
@@ -125,8 +103,55 @@
         wpmDisplay.innerText = '0';
         accuracyDisplay.innerText = '100%';
         errorsDisplay.innerText = '0';
+        
         typingInput.value = '';
+        typingInput.maxLength = text.length;
         focusOverlay.style.display = 'flex';
+        
+        updateTextDisplay();
+    }
+
+    function updateTextDisplay() {
+        const val = typingInput.value;
+        
+        let correctStr = '';
+        let incorrectStr = '';
+        let currentStr = '';
+        let remainingStr = '';
+        
+        let i = 0;
+        while (i < val.length && val[i] === text[i]) {
+            correctStr += text[i];
+            i++;
+        }
+        
+        let incorrectLength = val.length - i;
+        if (i + incorrectLength > text.length) {
+            incorrectLength = text.length - i;
+        }
+        
+        incorrectStr = text.substr(i, incorrectLength);
+        
+        if (i + incorrectLength < text.length) {
+            currentStr = text.substr(i + incorrectLength, 1);
+        }
+        
+        remainingStr = text.substr(i + incorrectLength + 1);
+        
+        textDisplay.innerHTML = 
+            (correctStr ? `<span class="correct">${correctStr}</span>` : '') +
+            (incorrectStr ? `<span class="incorrect">${incorrectStr}</span>` : '') +
+            (currentStr ? `<span class="current">${currentStr}</span>` : '') +
+            (remainingStr ? `<span class="remaining">${remainingStr}</span>` : '');
+            
+        // Auto scroll
+        const currentEl = textDisplay.querySelector('.current');
+        if (currentEl) {
+            const container = textDisplay;
+            if (currentEl.offsetTop > container.scrollTop + container.clientHeight - 50) {
+                container.scrollTop = currentEl.offsetTop - 50;
+            }
+        }
     }
 
     function startTimer() {
@@ -143,8 +168,7 @@
     }
 
     function calculateMetrics() {
-        // WPM = (total correct characters / 5) / time in minutes
-        let correctChars = document.querySelectorAll('.char.correct').length;
+        let correctChars = document.querySelectorAll('.correct').length > 0 ? document.querySelector('.correct').innerText.length : 0;
         let timeInMinutes = timer / 60;
         let wpm = timeInMinutes > 0 ? Math.round((correctChars / 5) / timeInMinutes) : 0;
         
@@ -181,49 +205,23 @@
     }
 
     typingInput.addEventListener('input', (e) => {
-        if (currentIndex >= chars.length) return;
+        if (!isTestActive && typingInput.value.length > 0) startTimer();
         
-        const inputValue = typingInput.value;
-        const currentChar = inputValue[inputValue.length - 1]; // Get last typed char
+        const currentLength = typingInput.value.length;
         
-        if (!isTestActive) startTimer();
-        totalTyped++;
-        
-        charElements[currentIndex].classList.remove('current');
-
-        if (currentChar === chars[currentIndex]) {
-            charElements[currentIndex].classList.add('correct');
-        } else {
-            charElements[currentIndex].classList.add('incorrect');
-            errors++;
-        }
-        
-        currentIndex++;
-        
-        if (currentIndex < chars.length) {
-            charElements[currentIndex].classList.add('current');
-        } else {
-            endTest();
-        }
-    });
-
-    typingInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && currentIndex > 0) {
-            e.preventDefault();
-            
-            charElements[currentIndex]?.classList.remove('current');
-            currentIndex--;
-            
-            if(charElements[currentIndex].classList.contains('incorrect')) {
-                // If we want to decrement errors on backspace, we could, but standard tests usually keep total errors.
-                // errors--; 
+        // Track keystrokes and errors only when length increases (typing forward)
+        if (currentLength > lastInputLength) {
+            totalTyped++;
+            if (typingInput.value[currentLength - 1] !== text[currentLength - 1]) {
+                errors++;
             }
-            
-            charElements[currentIndex].classList.remove('correct', 'incorrect');
-            charElements[currentIndex].classList.add('current');
-            
-            // Sync input value
-            typingInput.value = typingInput.value.slice(0, -1);
+        }
+        lastInputLength = currentLength;
+        
+        updateTextDisplay();
+        
+        if (currentLength >= text.length) {
+            endTest();
         }
     });
 
@@ -233,7 +231,7 @@
     });
 
     document.addEventListener('keydown', (e) => {
-        if (focusOverlay.style.display !== 'none' && e.key.length === 1) {
+        if (focusOverlay.style.display !== 'none' && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
             focusOverlay.style.display = 'none';
             typingInput.focus();
         }

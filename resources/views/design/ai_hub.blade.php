@@ -36,9 +36,20 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <label class="form-label" style="font-weight: 500;">ইমেজ প্রম্পট (ইংরেজি)</label>
-                <textarea id="image-prompt" class="form-control" rows="3" placeholder="যেমন: A beautiful futuristic city with flying cars, highly detailed, neon lights" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); resize: none;"></textarea>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label" style="font-weight: 600; font-size: 1rem;">ইমেজ প্রম্পট লিখুন (ইংরেজিতে)</label>
+                <textarea id="image-prompt" class="form-control" rows="4" placeholder="Describe the image you want in detail...&#10;Example: A futuristic cyberpunk city at night with neon lights and flying cars, highly detailed, 8k resolution" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); resize: none;"></textarea>
+                
+                <!-- Instructions -->
+                <div style="background: rgba(168, 85, 247, 0.1); border-left: 3px solid #a855f7; padding: 12px; margin-top: 15px; border-radius: 4px; font-size: 0.85rem; color: #e2e8f0;">
+                    <strong style="color: #c084fc;">ভালো ছবি পাওয়ার কিছু টিপস:</strong>
+                    <ul style="margin: 5px 0 0 0; padding-left: 20px; line-height: 1.6;">
+                        <li>কী চান তা <b>ইংরেজিতে</b> বিস্তারিত লিখুন (Subject, Action, Background)।</li>
+                        <li>ছবিতে কী ধরনের কালার বা লাইটিং চান তা উল্লেখ করুন (e.g., cinematic lighting, neon lights)।</li>
+                        <li>স্টাইল বলে দিন (e.g., photorealistic, 3d render, anime style, oil painting)।</li>
+                        <li>কোয়ালিটি ওয়ার্ড ব্যবহার করুন (e.g., highly detailed, 4k, masterpiece)।</li>
+                    </ul>
+                </div>
             </div>
             
             <button onclick="generateImage()" id="btn-generate" class="btn" style="width: 100%; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff; border: none; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);">ইমেজ জেনারেট করুন</button>

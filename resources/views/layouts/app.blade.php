@@ -112,6 +112,11 @@
                         <i class="material-icons-round">payment</i><span>ক্রেডিট রিচার্জ</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('typing-test.index') }}" class="sidebar-link {{ request()->routeIs('typing-test.*') ? 'active' : '' }}">
+                        <i class="material-icons-round">keyboard</i><span>টাইপিং স্পিড টেস্ট</span>
+                    </a>
+                </li>
 
                 @if (Auth::user()->role === 'admin')
                 <li class="sidebar-section-title">অ্যাডমিন মোড</li>

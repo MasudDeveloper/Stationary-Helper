@@ -61,7 +61,16 @@
                 </div>
                 <img id="result-photo" class="result-img" src="" alt="Photo Result">
                 <p id="info-photo" class="info-text"></p>
-                <button id="btn-photo" class="btn btn-primary" onclick="downloadFile('photo')" style="width: 100%; margin-top: 15px; display: none;">ডাউনলোড ছবি</button>
+                <div id="action-photo" style="display: none; margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="downloadFile('photo')" style="width: 100%; margin-bottom: 10px;">ডাউনলোড ছবি</button>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <p style="color: #fff; margin-bottom: 10px; font-size: 0.9rem;">এটাকে কি পেইজে সাজাতে চাচ্ছেন?</p>
+                        <button onclick="arrangePassportPhoto()" class="btn" style="width: 100%; background: #f59e0b; color: #fff; border: none;">
+                            <i class="material-icons-round" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">auto_awesome_mosaic</i> অটো-অ্যারেঞ্জ (4R / A4)
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Signature Section -->
@@ -118,24 +127,44 @@
                 let sizeBytes = Math.ceil((dataUrl.length - 22) * 0.75);
 
                 while (sizeBytes > maxBytes && quality > 0.1) {
-                    quality -= 0.05;
-                    dataUrl = canvas.toDataURL('image/jpeg', quality);
-                    sizeBytes = Math.ceil((dataUrl.length - 22) * 0.75);
-                }
+                const compress = (quality) => {
+                    return new Promise((resolve) => {
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, 'image/jpeg', quality);
+                    });
+                };
 
-                // Show result
-                const resImg = document.getElementById('result-' + type);
-                resImg.src = dataUrl;
-                resImg.style.display = 'inline-block';
-                
-                const infoTxt = document.getElementById('info-' + type);
-                infoTxt.innerText = `Size: ${Math.round(sizeBytes/1024)} KB (${targetW}x${targetH})`;
-                infoTxt.style.display = 'block';
+                const findQuality = async (quality = 0.9) => {
+                    let blob = await compress(quality);
+                    if (blob.size > maxBytes && quality > 0.1) {
+                        return findQuality(quality - 0.05);
+                    }
+                    return blob;
+                };
 
-                document.getElementById('btn-' + type).style.display = 'block';
-                document.getElementById('box-' + type).style.display = 'none';
+                findQuality().then(blob => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        finalDataUrls[type] = e.target.result;
+                        document.getElementById('box-' + type).style.display = 'none';
 
-                finalDataUrls[type] = dataUrl;
+                        const displayImg = document.getElementById('result-' + type);
+                        displayImg.src = finalDataUrls[type];
+                        displayImg.style.display = 'block';
+
+                        const infoText = document.getElementById('info-' + type);
+                        infoText.innerText = `Final Size: ${Math.round(blob.size / 1024)} KB`;
+                        infoText.style.display = 'block';
+
+                        if (type === 'photo') {
+                            document.getElementById('action-photo').style.display = 'block';
+                        } else {
+                            document.getElementById('btn-sig').style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(blob);
+                });
             }
         }
         reader.readAsDataURL(file);
@@ -143,12 +172,18 @@
 
     function downloadFile(type) {
         if (!finalDataUrls[type]) return;
-        const link = document.createElement('a');
-        link.href = finalDataUrls[type];
-        link.download = filenames[type];
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const a = document.createElement('a');
+        a.href = finalDataUrls[type];
+        a.download = filenames[type];
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    function arrangePassportPhoto() {
+        if (!finalDataUrls['photo']) return;
+        localStorage.setItem('transfer_job_photo', finalDataUrls['photo']);
+        window.location.href = "{{ route('pdf.tools.passport_print') }}";
     }
 </script>
 @endsection

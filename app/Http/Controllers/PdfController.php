@@ -72,9 +72,41 @@ class PdfController extends Controller
         return view('pdf.tools_bg_remover');
     }
 
+    public function deductBgRemoverCredit(Request $request)
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $cost = 5;
+
+        if ($user->credits < $cost) {
+            return response()->json(['success' => false, 'message' => 'অপর্যাপ্ত ক্রেডিট! দয়া করে রিচার্জ করুন।']);
+        }
+
+        $user->credits -= $cost;
+        $user->save();
+
+        // Log transaction
+        \App\Models\Transaction::create([
+            'user_id' => $user->id,
+            'type' => 'debit',
+            'amount' => $cost,
+            'description' => 'Background Removal Tool Usage',
+            'date' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'new_balance' => number_format($user->credits)
+        ]);
+    }
+
     public function jobPhoto()
     {
         return view('pdf.tools_job_photo');
+    }
+
+    public function passportPrint()
+    {
+        return view('pdf.tools_passport_print');
     }
 
     public function passportToPdf()

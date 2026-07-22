@@ -228,6 +228,30 @@
                 </div>
             </a>
 
+            <!-- Typing Test -->
+            <a href="{{ route('typing-test.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(139, 92, 246, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #a78bfa; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">keyboard</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Typing Test</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">টাইপিং স্পিড এবং অ্যাকুরেসি লাইভ চেক করুন।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+
+            <!-- Passport Print Auto Arrange -->
+            <a href="{{ route('pdf.tools.passport_print') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(59, 130, 246, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #60a5fa; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">auto_awesome_mosaic</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Passport Layout</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">পাসপোর্ট ছবি 4R/A4 পেপারে অটোমেটিক সাজান।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+
         </div>
     </div>
 </div>

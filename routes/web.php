@@ -149,7 +149,9 @@ Route::middleware('auth')->group(function () {
 
     // Feature 11 & 12
     Route::get('/pdf/tools/bg-remover', [PdfController::class, 'bgRemover'])->name('pdf.tools.bg_remover');
+    Route::post('/pdf/tools/bg-remover/deduct', [PdfController::class, 'deductBgRemoverCredit'])->name('pdf.tools.bg_remover.deduct');
     Route::get('/pdf/tools/job-photo', [PdfController::class, 'jobPhoto'])->name('pdf.tools.job_photo');
+    Route::get('/pdf/tools/passport-print', [PdfController::class, 'passportPrint'])->name('pdf.tools.passport_print');
 
     // Feature 13 to 16
     Route::get('/pdf/tools/passport-to-pdf', [PdfController::class, 'passportToPdf'])->name('pdf.tools.passport_to_pdf');
