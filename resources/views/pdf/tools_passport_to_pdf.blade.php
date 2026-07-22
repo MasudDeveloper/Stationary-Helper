@@ -62,7 +62,7 @@
         let image;
         if (file.type === 'image/jpeg') image = await pdfDoc.embedJpg(arrayBuffer);
         else if (file.type === 'image/png') image = await pdfDoc.embedPng(arrayBuffer);
-        else return alert('Only JPG/PNG allowed');
+        else return Swal.fire('Only JPG/PNG allowed');
 
         // Passport size is typically 40x50 mm -> ~113x141 points
         // Draw 4 copies on top

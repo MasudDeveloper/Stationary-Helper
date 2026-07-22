@@ -28,6 +28,13 @@ class DocumentTemplateController extends Controller
             'category_id' => 'required|exists:document_categories,id',
             'language' => 'required|string',
             'content' => 'required|string',
+            'credit_cost' => 'nullable|numeric|min:0',
+            'page_size' => 'nullable|string',
+            'page_orientation' => 'nullable|string',
+            'margin_top' => 'nullable|numeric',
+            'margin_bottom' => 'nullable|numeric',
+            'margin_left' => 'nullable|numeric',
+            'margin_right' => 'nullable|numeric',
         ]);
 
         // Auto-extract placeholders (words inside square brackets)
@@ -42,6 +49,13 @@ class DocumentTemplateController extends Controller
         $template->content = $request->content;
         $template->total_fields = count($fields);
         $template->fields_data = json_encode($fields);
+        $template->credit_cost = $request->credit_cost ?? 5;
+        $template->page_size = $request->page_size ?? 'a4';
+        $template->page_orientation = $request->page_orientation ?? 'portrait';
+        $template->margin_top = $request->margin_top ?? 10;
+        $template->margin_bottom = $request->margin_bottom ?? 20;
+        $template->margin_left = $request->margin_left ?? 20;
+        $template->margin_right = $request->margin_right ?? 20;
         $template->save();
 
         return redirect()->route('admin.templates.index')->with('success', 'Template created successfully');
@@ -60,6 +74,13 @@ class DocumentTemplateController extends Controller
             'category_id' => 'required|exists:document_categories,id',
             'language' => 'required|string',
             'content' => 'required|string',
+            'credit_cost' => 'nullable|numeric|min:0',
+            'page_size' => 'nullable|string',
+            'page_orientation' => 'nullable|string',
+            'margin_top' => 'nullable|numeric',
+            'margin_bottom' => 'nullable|numeric',
+            'margin_left' => 'nullable|numeric',
+            'margin_right' => 'nullable|numeric',
         ]);
 
         preg_match_all('/\[(.*?)\]/', $request->content, $matches);
@@ -73,6 +94,13 @@ class DocumentTemplateController extends Controller
         $template->total_fields = count($fields);
         $template->fields_data = json_encode($fields);
         $template->is_active = $request->has('is_active');
+        if ($request->has('credit_cost')) $template->credit_cost = $request->credit_cost;
+        if ($request->has('page_size')) $template->page_size = $request->page_size;
+        if ($request->has('page_orientation')) $template->page_orientation = $request->page_orientation;
+        if ($request->has('margin_top')) $template->margin_top = $request->margin_top;
+        if ($request->has('margin_bottom')) $template->margin_bottom = $request->margin_bottom;
+        if ($request->has('margin_left')) $template->margin_left = $request->margin_left;
+        if ($request->has('margin_right')) $template->margin_right = $request->margin_right;
         $template->save();
 
         return redirect()->route('admin.templates.index')->with('success', 'Template updated successfully');

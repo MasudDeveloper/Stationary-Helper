@@ -44,7 +44,7 @@
         const file = fileInput.files[0];
 
         if (!file) {
-            alert('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
+            Swal.fire('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
             return;
         }
 
@@ -106,11 +106,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে কনভার্ট করা হয়েছে! ফাইলটি Microsoft Word দিয়ে ওপেন করুন।');
+            Swal.fire('সফলভাবে কনভার্ট করা হয়েছে! ফাইলটি Microsoft Word দিয়ে ওপেন করুন।');
 
         } catch (error) {
             console.error(error);
-            alert('পিডিএফ কনভার্ট করতে সমস্যা হয়েছে!');
+            Swal.fire('পিডিএফ কনভার্ট করতে সমস্যা হয়েছে!');
         } finally {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';

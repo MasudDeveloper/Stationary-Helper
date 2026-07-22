@@ -147,7 +147,7 @@
 
         } catch (err) {
             console.error(err);
-            alert('ফাইল লোড করতে সমস্যা হয়েছে!');
+            Swal.fire('ফাইল লোড করতে সমস্যা হয়েছে!');
             document.getElementById('loading').style.display = 'none';
         }
     }
@@ -164,12 +164,12 @@
 
     async function removeSelectedPages() {
         if (selectedPages.size === 0) {
-            alert('আপনি কোনো পেজ সিলেক্ট করেননি!');
+            Swal.fire('আপনি কোনো পেজ সিলেক্ট করেননি!');
             return;
         }
 
         if (selectedPages.size === totalPages) {
-            alert('আপনি সবগুলো পেজ সিলেক্ট করেছেন। অন্তত একটি পেজ রাখতে হবে।');
+            Swal.fire('আপনি সবগুলো পেজ সিলেক্ট করেছেন। অন্তত একটি পেজ রাখতে হবে।');
             return;
         }
 
@@ -198,11 +198,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে পেজ রিমুভ করে পিডিএফ ডাউনলোড করা হয়েছে!');
+            Swal.fire('সফলভাবে পেজ রিমুভ করে পিডিএফ ডাউনলোড করা হয়েছে!');
 
         } catch (err) {
             console.error(err);
-            alert('পিডিএফ সেভ করতে সমস্যা হয়েছে!');
+            Swal.fire('পিডিএফ সেভ করতে সমস্যা হয়েছে!');
         }
     }
 </script>

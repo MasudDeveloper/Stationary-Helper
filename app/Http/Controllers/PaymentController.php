@@ -12,24 +12,24 @@ class PaymentController extends Controller
 {
     public function recharge()
     {
-        return view('payment.recharge');
+        $packages = \App\Models\RechargePackage::where('is_active', true)->orderBy('sort_order')->get();
+        return view('payment.recharge', compact('packages'));
     }
 
     public function submitRecharge(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:10',
+            'package_id' => 'required|exists:recharge_packages,id',
             'sender_number' => 'required|string',
             'transaction_id' => 'required|string|unique:payment_requests',
         ]);
 
-        // Assuming 1 Taka = 1 Credit for simplicity, can be adjusted based on account type
-        $credits = $request->amount;
+        $package = \App\Models\RechargePackage::findOrFail($request->package_id);
 
         PaymentRequest::create([
             'user_id' => Auth::id(),
-            'amount' => $request->amount,
-            'credits' => $credits,
+            'amount' => $package->price,
+            'credits' => $package->credits,
             'payment_method' => 'bkash',
             'sender_number' => $request->sender_number,
             'transaction_id' => $request->transaction_id,
@@ -57,6 +57,16 @@ class PaymentController extends Controller
             $user = $paymentRequest->user;
             $user->credits += $paymentRequest->credits;
             $user->save();
+            
+            // Give commission to referrer (10% of recharged credits)
+            if ($user->referred_by) {
+                $referrer = User::find($user->referred_by);
+                if ($referrer) {
+                    $commission = $paymentRequest->credits * 0.10; // 10% commission
+                    $referrer->credits += $commission;
+                    $referrer->save();
+                }
+            }
             
             return back()->with('success', 'পেমেন্ট অ্যাপ্রুভ করা হয়েছে।');
         }

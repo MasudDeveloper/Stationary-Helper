@@ -67,7 +67,7 @@ function copyLink(id) {
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
-    alert("Copied the link: " + copyText.value);
+    Swal.fire("Copied the link: " + copyText.value);
 }
 </script>
 

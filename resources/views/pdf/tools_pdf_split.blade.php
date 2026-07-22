@@ -73,7 +73,7 @@
 
     async function splitPdf() {
         if (!fileBytes) {
-            alert('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
+            Swal.fire('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
             return;
         }
 
@@ -81,7 +81,7 @@
         let end = parseInt(document.getElementById('end-page').value);
 
         if (start < 1 || end > totalPages || start > end) {
-            alert('অনুগ্রহ করে সঠিক পেজ রেঞ্জ দিন।');
+            Swal.fire('অনুগ্রহ করে সঠিক পেজ রেঞ্জ দিন।');
             return;
         }
 
@@ -114,10 +114,10 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে স্প্লিট করা হয়েছে!');
+            Swal.fire('সফলভাবে স্প্লিট করা হয়েছে!');
         } catch (error) {
             console.error(error);
-            alert('পিডিএফ স্প্লিট করতে সমস্যা হয়েছে!');
+            Swal.fire('পিডিএফ স্প্লিট করতে সমস্যা হয়েছে!');
         } finally {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';

@@ -17,6 +17,12 @@ class DocumentTemplate extends Model
         'fields_data',
         'is_active',
         'credit_cost',
+        'page_size',
+        'page_orientation',
+        'margin_top',
+        'margin_bottom',
+        'margin_left',
+        'margin_right',
     ];
 
     public function category()

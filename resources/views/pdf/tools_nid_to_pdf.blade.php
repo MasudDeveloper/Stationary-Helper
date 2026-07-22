@@ -99,7 +99,7 @@
         const backFile = document.getElementById('nid-back').files[0];
 
         if (!frontFile || !backFile) {
-            alert('অনুগ্রহ করে এনআইডির দুই পাশের ছবিই আপলোড করুন।');
+            Swal.fire('অনুগ্রহ করে এনআইডির দুই পাশের ছবিই আপলোড করুন।');
             return;
         }
 
@@ -164,11 +164,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে পিডিএফ তৈরি করা হয়েছে!');
+            Swal.fire('সফলভাবে পিডিএফ তৈরি করা হয়েছে!');
 
         } catch (error) {
             console.error(error);
-            alert('পিডিএফ তৈরি করতে সমস্যা হয়েছে! দয়া করে শুধু JPG বা PNG ছবি আপলোড করুন।');
+            Swal.fire('পিডিএফ তৈরি করতে সমস্যা হয়েছে! দয়া করে শুধু JPG বা PNG ছবি আপলোড করুন।');
         } finally {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';

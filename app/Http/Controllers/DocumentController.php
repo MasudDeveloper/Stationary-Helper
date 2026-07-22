@@ -69,4 +69,72 @@ class DocumentController extends Controller
             'remaining_credits' => $user->credits
         ]);
     }
+
+    public function sendWhatsApp(Request $request, $id)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+            'pdf_base64' => 'required|string',
+            'filename' => 'required|string'
+        ]);
+
+        $template = DocumentTemplate::findOrFail($id);
+        $user = Auth::user();
+
+        // Optional: Deduct credit for sending via WhatsApp
+        $cost = $template->credit_cost ?? 5;
+        if ($user->credits < $cost) {
+            return response()->json([
+                'success' => false,
+                'message' => 'পর্যাপ্ত ক্রেডিট নেই! আপনার অ্যাকাউন্টে আরো ক্রেডিট যোগ করুন।'
+            ], 403);
+        }
+
+        try {
+            // Check status first
+            $statusResp = \Illuminate\Support\Facades\Http::timeout(5)->get("http://localhost:3001/status/{$user->id}");
+            if (!$statusResp->successful() || $statusResp->json('status') !== 'CONNECTED') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'আপনার WhatsApp কানেক্ট করা নেই। দয়া করে ড্যাশবোর্ড থেকে WhatsApp কানেক্ট করুন।'
+                ], 400);
+            }
+
+            // Clean base64 string safely
+            $parts = explode(',', $request->pdf_base64);
+            $base64 = end($parts);
+
+            $response = \Illuminate\Support\Facades\Http::post("http://localhost:3001/send", [
+                'userId' => $user->id,
+                'phone' => $request->phone,
+                'message' => 'আপনার রিকুয়েস্ট করা ডকুমেন্টটি পাঠানো হয়েছে।',
+                'mediaBase64' => $base64,
+                'mediaMime' => 'application/pdf',
+                'mediaName' => $request->filename . '.pdf'
+            ]);
+
+            if ($response->successful() && $response->json('success')) {
+                // Deduct credit since it was successfully sent
+                $user->credits -= $cost;
+                $user->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'WhatsApp-এ ফাইল পাঠানো সফল হয়েছে!',
+                    'remaining_credits' => $user->credits
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'ফাইল পাঠানো সম্ভব হয়নি। WhatsApp কানেকশন চেক করুন।'
+            ], 500);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'সার্ভারের সাথে কানেক্ট করা যাচ্ছে না।'
+            ], 500);
+        }
+    }
 }

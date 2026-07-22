@@ -203,7 +203,7 @@
 
         } catch (err) {
             console.error(err);
-            alert('পিডিএফ ফাইল লোড করতে সমস্যা হয়েছে।');
+            Swal.fire('পিডিএফ ফাইল লোড করতে সমস্যা হয়েছে।');
         }
     }
 
@@ -391,11 +391,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('এডিটেড পিডিএফ ডাউনলোড সম্পূর্ণ হয়েছে!');
+            Swal.fire('এডিটেড পিডিএফ ডাউনলোড সম্পূর্ণ হয়েছে!');
 
         } catch (err) {
             console.error(err);
-            alert('পিডিএফ সেভ করতে সমস্যা হয়েছে।');
+            Swal.fire('পিডিএফ সেভ করতে সমস্যা হয়েছে।');
         }
     }
 </script>

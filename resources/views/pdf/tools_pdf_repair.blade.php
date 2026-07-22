@@ -47,7 +47,7 @@
         const file = fileInput.files[0];
 
         if (!file) {
-            alert('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
+            Swal.fire('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
             return;
         }
 
@@ -74,11 +74,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে পিডিএফ রিপেয়ার করা হয়েছে!');
+            Swal.fire('সফলভাবে পিডিএফ রিপেয়ার করা হয়েছে!');
 
         } catch (error) {
             console.error(error);
-            alert('দুঃখিত, এই পিডিএফ ফাইলটি অনেক বেশি নষ্ট হয়ে গেছে যা অটোমেটিক রিপেয়ার করা সম্ভব নয়।');
+            Swal.fire('দুঃখিত, এই পিডিএফ ফাইলটি অনেক বেশি নষ্ট হয়ে গেছে যা অটোমেটিক রিপেয়ার করা সম্ভব নয়।');
         } finally {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';

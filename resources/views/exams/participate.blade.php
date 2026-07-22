@@ -193,7 +193,7 @@
     function startExam() {
         const name = document.getElementById('student_name').value;
         if (!name) {
-            alert('Please enter your full name.');
+            Swal.fire('Please enter your full name.');
             return;
         }
 
@@ -210,7 +210,7 @@
             durationSeconds--;
             if (durationSeconds <= 0) {
                 clearInterval(timerInterval);
-                alert('Time is up! Submitting your exam automatically.');
+                Swal.fire('Time is up! Submitting your exam automatically.');
                 document.getElementById('exam-form').submit();
             } else {
                 updateTimerDisplay();

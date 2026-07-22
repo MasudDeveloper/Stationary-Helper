@@ -309,7 +309,7 @@
         const editIndex = parseInt(document.getElementById('edit_index').value);
 
         if(!text || !a || !b || !c || !d) {
-            alert('দয়া করে প্রশ্ন ও ৪টি অপশনই পূরণ করুন।');
+            Swal.fire('দয়া করে প্রশ্ন ও ৪টি অপশনই পূরণ করুন।');
             return;
         }
 
@@ -334,7 +334,7 @@
         const editIndex = parseInt(document.getElementById('edit_index').value);
 
         if(!stem || !a || !b || !c || !d) {
-            alert('দয়া করে উদ্দীপক এবং ক, খ, গ, ঘ সব প্রশ্ন পূরণ করুন।');
+            Swal.fire('দয়া করে উদ্দীপক এবং ক, খ, গ, ঘ সব প্রশ্ন পূরণ করুন।');
             return;
         }
 
@@ -485,7 +485,7 @@
 
     function saveQuestionPaper() {
         if (questions.length === 0) {
-            alert('প্রশ্নপত্র ফাঁকা! প্রথমে প্রশ্ন যোগ করুন।');
+            Swal.fire('প্রশ্নপত্র ফাঁকা! প্রথমে প্রশ্ন যোগ করুন।');
             return;
         }
 
@@ -511,14 +511,14 @@
         .then(res => res.json())
         .then(data => {
             if(data.success) {
-                alert('প্রশ্নপত্র সফলভাবে সেভ করা হয়েছে!');
+                Swal.fire('প্রশ্নপত্র সফলভাবে সেভ করা হয়েছে!');
                 window.location.href = data.redirect;
             } else {
-                alert('সেভ করার সময় কোনো সমস্যা হয়েছে।');
+                Swal.fire('সেভ করার সময় কোনো সমস্যা হয়েছে।');
             }
         })
         .catch(err => {
-            alert('সার্ভার ত্রুটি ঘটেছে।');
+            Swal.fire('সার্ভার ত্রুটি ঘটেছে।');
         });
     }
 </script>

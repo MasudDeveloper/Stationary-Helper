@@ -21,3 +21,4 @@ class TicketMessage extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
+}

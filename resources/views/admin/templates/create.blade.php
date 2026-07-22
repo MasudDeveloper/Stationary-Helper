@@ -62,6 +62,52 @@
                 <textarea id="templateContent" name="content"></textarea>
             </div>
 
+            <hr style="border-top-color: rgba(255,255,255,0.1); margin: 30px 0;">
+            <h4 style="margin-bottom: 20px; color: #fff;">Page Settings (For Printing & PDF)</h4>
+
+            <div class="grid-2" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Page Size</label>
+                    <select name="page_size" class="form-control">
+                        <option value="a4">A4</option>
+                        <option value="legal">Legal</option>
+                        <option value="letter">Letter</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Orientation</label>
+                    <select name="page_orientation" class="form-control">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                <div class="form-group">
+                    <label class="form-label">Top Margin (mm)</label>
+                    <input type="number" name="margin_top" class="form-control" value="10" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bottom Margin (mm)</label>
+                    <input type="number" name="margin_bottom" class="form-control" value="20" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Left Margin (mm)</label>
+                    <input type="number" name="margin_left" class="form-control" value="20" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Right Margin (mm)</label>
+                    <input type="number" name="margin_right" class="form-control" value="20" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label class="form-label">Credit Cost</label>
+                <input type="number" name="credit_cost" class="form-control" value="5" min="0" style="width: 200px;">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">কত ক্রেডিট কাটবে প্রতি ডাউনলোডে/প্রিন্টে</small>
+            </div>
+
             <button type="submit" class="btn btn-primary" style="padding: 12px 30px;">Save Template</button>
         </form>
     </div>

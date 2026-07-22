@@ -121,7 +121,7 @@
 
         } catch (error) {
             console.error(error);
-            alert('পিডিএফ থেকে ছবি এক্সট্রাক্ট করতে সমস্যা হয়েছে!');
+            Swal.fire('পিডিএফ থেকে ছবি এক্সট্রাক্ট করতে সমস্যা হয়েছে!');
             document.getElementById('loading').style.display = 'none';
         }
     }

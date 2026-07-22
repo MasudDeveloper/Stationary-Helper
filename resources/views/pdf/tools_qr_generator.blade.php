@@ -43,7 +43,7 @@
 
     function generateQR() {
         const text = document.getElementById('qr-text').value;
-        if (!text) return alert('টেক্সট বা লিংক দিন');
+        if (!text) return Swal.fire('টেক্সট বা লিংক দিন');
         
         const container = document.getElementById('qrcode');
         container.innerHTML = '';

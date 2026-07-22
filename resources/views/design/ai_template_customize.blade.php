@@ -244,12 +244,12 @@
                 link.click();
                 document.body.removeChild(link);
 
-                alert('আপনার কাস্টম পোস্টার সফলভাবে জেনারেট ও ডাউনলোড করা হয়েছে!');
+                Swal.fire('আপনার কাস্টম পোস্টার সফলভাবে জেনারেট ও ডাউনলোড করা হয়েছে!');
                 window.location.reload();
             }
         })
         .catch(err => {
-            alert(err.message || 'পোস্টার জেনারেট করার সময় কোনো সমস্যা হয়েছে।');
+            Swal.fire(err.message || 'পোস্টার জেনারেট করার সময় কোনো সমস্যা হয়েছে।');
         });
     }
 </script>

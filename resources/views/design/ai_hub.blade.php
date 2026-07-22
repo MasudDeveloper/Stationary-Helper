@@ -113,7 +113,7 @@
     function generateImage() {
         const prompt = document.getElementById('image-prompt').value;
         if (!prompt) {
-            alert('অনুগ্রহ করে প্রম্পট লিখুন।');
+            Swal.fire('অনুগ্রহ করে প্রম্পট লিখুন।');
             return;
         }
 
@@ -135,7 +135,7 @@
             document.getElementById('btn-generate').disabled = false;
 
             if (data.error) {
-                alert(data.error);
+                Swal.fire(data.error);
             } else {
                 // Show Image
                 const genImg = document.getElementById('gen-image');
@@ -150,7 +150,7 @@
         .catch(err => {
             document.getElementById('gen-loader').style.display = 'none';
             document.getElementById('btn-generate').disabled = false;
-            alert('জেনারেট করার সময় ত্রুটি ঘটেছে।');
+            Swal.fire('জেনারেট করার সময় ত্রুটি ঘটেছে।');
         });
     }
 
@@ -193,7 +193,7 @@
             if (data.error) {
                 document.getElementById('bg-loader').style.display = 'none';
                 document.getElementById('btn-bg-remove').disabled = false;
-                alert(data.error);
+                Swal.fire(data.error);
                 return;
             }
 
@@ -246,7 +246,7 @@
         .catch(err => {
             document.getElementById('bg-loader').style.display = 'none';
             document.getElementById('btn-bg-remove').disabled = false;
-            alert('ব্যাকগ্রাউন্ড রিমুভ করার সময় ত্রুটি ঘটেছে।');
+            Swal.fire('ব্যাকগ্রাউন্ড রিমুভ করার সময় ত্রুটি ঘটেছে।');
         });
     }
 

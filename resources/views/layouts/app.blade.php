@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <!-- Material Icons for Modern Design -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <!-- SweetAlert2 for beautiful popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     @auth
@@ -33,12 +35,26 @@
                 </li>
                 <li>
                     <a href="{{ route('document.index') }}" class="sidebar-link {{ request()->routeIs('document.index') ? 'active' : '' }}">
-                        <i class="material-icons-round">description</i><span>ডকুমেন্ট এডিটর</span>
+                        <i class="material-icons-round">description</i> ডকুমেন্ট এডিটর
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('cv.index') }}" class="sidebar-link {{ request()->routeIs('cv.index') ? 'active' : '' }}">
+                        <i class="material-icons-round">contact_page</i> সিভি মেকার
+                    </a>
+
+                    <a href="{{ route('share.index') }}" class="sidebar-link {{ request()->routeIs('share.index') ? 'active' : '' }}">
+                        <i class="material-icons-round">share</i> কুইক শেয়ার
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('pdf.editor') }}" class="sidebar-link {{ request()->routeIs('pdf.editor') ? 'active' : '' }}">
                         <i class="material-icons-round">edit_note</i><span>পিডিএফ এডিটর</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('photo.index') }}" class="sidebar-link {{ request()->routeIs('photo.index') ? 'active' : '' }}">
+                        <i class="material-icons-round">portrait</i><span>ছবি মেকার</span>
                     </a>
                 </li>
                 <li>
@@ -74,7 +90,11 @@
                 </li>
                 <li>
                     <a href="{{ route('design.ai_hub') }}" class="sidebar-link {{ request()->routeIs('design.ai_hub') ? 'active' : '' }}">
-                        <i class="material-icons-round">psychology</i><span>এআই হাব</span>
+                        <i class="material-icons-round">auto_awesome</i> AI Hub
+                    </a>
+
+                    <a href="{{ route('ocr.index') }}" class="sidebar-link {{ request()->routeIs('ocr.index') ? 'active' : '' }}">
+                        <i class="material-icons-round">document_scanner</i> AI Document OCR
                     </a>
                 </li>
                 <li>
@@ -185,6 +205,13 @@
             document.getElementById('appSidebar').classList.toggle('active');
             document.getElementById('mobileOverlay').classList.toggle('active');
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let activeLink = document.querySelector('.sidebar-link.active');
+            if(activeLink) {
+                activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
     </script>
 </body>
 </html>

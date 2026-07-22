@@ -70,6 +70,9 @@
             </div>
 
             <button onclick="window.print()" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #10b981, #059669);"><i class="material-icons-round" style="vertical-align: middle;">print</i> প্রিন্ট / PDF সেভ করুন</button>
+            <button onclick="sendViaWhatsApp()" class="btn btn-success" id="wa-btn" style="width: 100%; margin-top: 10px; font-weight: 600; padding: 12px; background: #25D366; border: none;">
+                <i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান
+            </button>
         </div>
 
         <!-- Preview Area -->
@@ -288,7 +291,7 @@
         const rate = parseFloat(document.getElementById('item_rate').value);
 
         if(!desc || isNaN(qty) || isNaN(rate)) {
-            alert('অনুগ্রহ করে সঠিক তথ্য দিন।');
+            Swal.fire('অনুগ্রহ করে সঠিক তথ্য দিন।');
             return;
         }
 
@@ -351,5 +354,70 @@
     
     // Initial render
     updateMemoHeader();
+
+    async function sendViaWhatsApp() {
+        const phone = await Swal.fire({
+            title: 'WhatsApp Number',
+            input: 'text',
+            inputLabel: 'গ্রাহকের হোয়াটসঅ্যাপ নম্বর দিন',
+            inputPlaceholder: 'যেমন: 017XXXXXXXX',
+            inputValue: document.getElementById('memo_customer_phone').value || '',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) return 'নম্বর দিতে হবে!';
+            }
+        });
+
+        if (phone.isConfirmed && phone.value) {
+            const no = document.getElementById('view_no').innerText;
+            const date = document.getElementById('view_date').innerText;
+            const company = document.getElementById('view_company').innerText;
+            const customer = document.getElementById('memo_customer').value || '-';
+            const total = document.getElementById('view_total').innerText;
+
+            let itemsText = '';
+            items.forEach((item, index) => {
+                itemsText += `${index + 1}. ${item.desc} - ${item.qty} x ${item.rate} = ${item.qty * item.rate}\n`;
+            });
+
+            const text = `*ক্যাশ মেমো*\n\nমেমো নং: ${no}\nতারিখ: ${date}\nপ্রতিষ্ঠান: ${company}\n\nক্রেতার নাম: ${customer}\n\n*আইটেমসমূহ:*\n${itemsText}\n*সর্বমোট প্রদেয়: ${total}*\n\nধন্যবাদ!`;
+
+            const btn = document.getElementById('wa-btn');
+            btn.innerHTML = '<i class="material-icons-round spin">sync</i> পাঠানো হচ্ছে...';
+            btn.disabled = true;
+
+            fetch('{{ route("accounting.whatsapp.send") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ phone: phone.value, message: text })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = '<i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান';
+                btn.disabled = false;
+
+                if (data.success) {
+                    Swal.fire('সফল!', 'WhatsApp-এ মেমো পাঠানো হয়েছে।', 'success');
+                } else if (data.fallback) {
+                    let formatPhone = phone.value.replace(/[^0-9]/g, '');
+                    if (formatPhone.length === 11 && formatPhone.startsWith('01')) {
+                        formatPhone = '88' + formatPhone;
+                    }
+                    window.open(`https://wa.me/${formatPhone}?text=${encodeURIComponent(text)}`, '_blank');
+                    Swal.fire('নির্দেশনা', 'আপনার WhatsApp ওপেন করা হয়েছে, সেখান থেকে সেন্ড করুন।', 'info');
+                } else {
+                    Swal.fire('ত্রুটি', data.error || 'পাঠানো সম্ভব হয়নি!', 'error');
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = '<i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান';
+                btn.disabled = false;
+                Swal.fire('ত্রুটি', 'সার্ভারের সাথে সমস্যা হচ্ছে।', 'error');
+            });
+        }
+    }
 </script>
 @endsection

@@ -79,12 +79,12 @@
         const angle = parseInt(document.getElementById('angle').value);
 
         if (!fileInput.files[0]) {
-            alert('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
+            Swal.fire('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
             return;
         }
 
         if (!textInput) {
-            alert('ওয়াটারমার্ক টেক্সট দিন।');
+            Swal.fire('ওয়াটারমার্ক টেক্সট দিন।');
             return;
         }
 
@@ -124,11 +124,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে ওয়াটারমার্ক যুক্ত করা হয়েছে!');
+            Swal.fire('সফলভাবে ওয়াটারমার্ক যুক্ত করা হয়েছে!');
 
         } catch (err) {
             console.error(err);
-            alert('ওয়াটারমার্ক যুক্ত করতে সমস্যা হয়েছে।');
+            Swal.fire('ওয়াটারমার্ক যুক্ত করতে সমস্যা হয়েছে।');
         }
     }
 </script>

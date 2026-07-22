@@ -119,6 +119,48 @@ class AccountingController extends Controller
         return view('accounting.memo');
     }
 
+    public function sendWhatsApp(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+            'message' => 'required|string',
+        ]);
+
+        $provider = \App\Models\Setting::where('key', 'whatsapp_provider')->value('value');
+
+        if ($provider === 'ultramsg') {
+            $instance = \App\Models\Setting::where('key', 'whatsapp_instance_id')->value('value');
+            $token = \App\Models\Setting::where('key', 'whatsapp_token')->value('value');
+
+            if (!$instance || !$token) {
+                return response()->json(['success' => false, 'error' => 'Ultramsg API credentials are not set in Admin Settings.', 'fallback' => true]);
+            }
+
+            // Format phone number (must be international format without +)
+            $phone = preg_replace('/[^0-9]/', '', $request->phone);
+            if (strlen($phone) == 11 && str_starts_with($phone, '01')) {
+                $phone = '88' . $phone;
+            }
+
+            try {
+                $response = \Illuminate\Support\Facades\Http::post("https://api.ultramsg.com/{$instance}/messages/chat", [
+                    'token' => $token,
+                    'to' => $phone,
+                    'body' => $request->message,
+                ]);
+
+                if ($response->successful()) {
+                    return response()->json(['success' => true]);
+                }
+            } catch (\Exception $e) {
+                // Return fallback true to open wa.me
+            }
+        }
+
+        // Return fallback to open wa.me
+        return response()->json(['success' => false, 'fallback' => true]);
+    }
+
     // --- Dues (Bakir Hishab) Methods ---
     
     public function dues()

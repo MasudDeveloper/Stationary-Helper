@@ -78,7 +78,7 @@
                 })
                 .catch(function(error) {
                     console.error(error);
-                    alert('ওয়ার্ড ফাইলটি রিড করতে সমস্যা হয়েছে। শুধুমাত্র .docx ফাইল সাপোর্ট করে।');
+                    Swal.fire('ওয়ার্ড ফাইলটি রিড করতে সমস্যা হয়েছে। শুধুমাত্র .docx ফাইল সাপোর্ট করে।');
                     document.getElementById('loading').style.display = 'none';
                 });
         };
@@ -112,10 +112,10 @@
         html2pdf().set(opt).from(element).save().then(() => {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';
-            alert('সফলভাবে পিডিএফ তৈরি করা হয়েছে!');
+            Swal.fire('সফলভাবে পিডিএফ তৈরি করা হয়েছে!');
         }).catch(err => {
             console.error(err);
-            alert('পিডিএফ ডাউনলোড করতে সমস্যা হয়েছে।');
+            Swal.fire('পিডিএফ ডাউনলোড করতে সমস্যা হয়েছে।');
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';
         });

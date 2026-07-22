@@ -59,7 +59,7 @@
         const file = fileInput.files[0];
 
         if (!file) {
-            alert('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
+            Swal.fire('অনুগ্রহ করে একটি পিডিএফ ফাইল নির্বাচন করুন।');
             return;
         }
 
@@ -112,11 +112,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে পিডিএফ রিসাইজ করা হয়েছে!');
+            Swal.fire('সফলভাবে পিডিএফ রিসাইজ করা হয়েছে!');
 
         } catch (error) {
             console.error(error);
-            alert('পিডিএফ রিসাইজ করতে সমস্যা হয়েছে!');
+            Swal.fire('পিডিএফ রিসাইজ করতে সমস্যা হয়েছে!');
         } finally {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'inline-block';

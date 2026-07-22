@@ -72,7 +72,7 @@
             document.getElementById('process-btn').style.display = 'block';
         } else {
             document.getElementById('process-btn').style.display = 'none';
-            alert('মার্জ করার জন্য অন্তত ২টি পিডিএফ ফাইল নির্বাচন করুন।');
+            Swal.fire('মার্জ করার জন্য অন্তত ২টি পিডিএফ ফাইল নির্বাচন করুন।');
         }
     }
 
@@ -105,11 +105,11 @@
             link.click();
             document.body.removeChild(link);
 
-            alert('সফলভাবে পিডিএফ মার্জ করা হয়েছে!');
+            Swal.fire('সফলভাবে পিডিএফ মার্জ করা হয়েছে!');
 
         } catch (error) {
             console.error(error);
-            alert('পিডিএফ মার্জ করতে সমস্যা হয়েছে!');
+            Swal.fire('পিডিএফ মার্জ করতে সমস্যা হয়েছে!');
         } finally {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('process-btn').style.display = 'block';

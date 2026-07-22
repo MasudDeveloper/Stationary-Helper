@@ -33,6 +33,14 @@ use App\Http\Controllers\AdController;
 use App\Http\Controllers\AiTemplateController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminPdfToolController;
+use App\Http\Controllers\FileTransferController;
+use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\OcrController;
+use App\Http\Controllers\CvController;
+use App\Http\Controllers\Admin\RechargePackageController;
+use App\Http\Controllers\Admin\CvTemplateController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\WhatsAppController;
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -40,6 +48,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Quick Share Routes
+    Route::get('/quick-share', [FileTransferController::class, 'index'])->name('share.index');
+    Route::post('/quick-share/upload', [FileTransferController::class, 'store'])->name('share.upload');
+    Route::post('/quick-share/download', [FileTransferController::class, 'download'])->name('share.download');
+
+    // Photo Maker Routes
+    Route::get('/photo', [PhotoController::class, 'index'])->name('photo.index');
 
     // Payment Routes
     Route::get('/recharge', [PaymentController::class, 'recharge'])->name('recharge');
@@ -50,8 +66,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/favorites', [DocumentController::class, 'favorites'])->name('document.favorites');
     Route::post('/documents/{id}/favorite', [DocumentController::class, 'toggleFavorite'])->name('document.favorite.toggle');
     Route::post('/documents/{id}/deduct-credit', [DocumentController::class, 'deductCredit'])->name('document.deduct.credit');
+    Route::post('/documents/{id}/send-whatsapp', [DocumentController::class, 'sendWhatsApp'])->name('document.whatsapp.send');
     Route::get('/documents/{id}/fill', [DocumentController::class, 'fill'])->name('document.fill');
 
+    Route::get('/cv-maker', [CvController::class, 'index'])->name('cv.index');
+    Route::get('/cv-maker/{id}/fill', [CvController::class, 'fill'])->name('cv.fill');
+    Route::post('/cv-maker/{id}/deduct-credit', [CvController::class, 'deductCredit'])->name('cv.deduct.credit');
+    Route::post('/cv-maker/{id}/send-whatsapp', [CvController::class, 'sendWhatsApp'])->name('cv.whatsapp.send');
     // Accounting Routes
     Route::get('/accounting', [AccountingController::class, 'index'])->name('accounting.index');
     Route::post('/accounting/store', [AccountingController::class, 'storeTransaction'])->name('accounting.store');
@@ -70,6 +91,7 @@ Route::middleware('auth')->group(function () {
     // Memo & Receipt Generators
     Route::get('/receipt', [AccountingController::class, 'receiptGenerator'])->name('accounting.receipt');
     Route::get('/memo', [AccountingController::class, 'memoGenerator'])->name('accounting.memo');
+    Route::post('/accounting/whatsapp/send', [AccountingController::class, 'sendWhatsApp'])->name('accounting.whatsapp.send');
 
     // Ticket / Support / Custom Hiring Routes
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
@@ -84,6 +106,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/design/ai-hub/generate', [DesignAiController::class, 'generateImage'])->name('design.ai_hub.generate');
     Route::post('/design/ai-hub/bg-remove', [DesignAiController::class, 'removeBackground'])->name('design.ai_hub.bg_remove');
 
+    // OCR Routes
+    Route::get('/ocr', [OcrController::class, 'index'])->name('ocr.index');
+    Route::post('/ocr/deduct-credit', [OcrController::class, 'deductCredit'])->name('ocr.deduct_credit');
+    Route::post('/ocr/process-ocr-space', [OcrController::class, 'processOcrSpace'])->name('ocr.process_space');
+
     // Question Generator Routes
     Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
     Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
@@ -94,6 +121,11 @@ Route::middleware('auth')->group(function () {
     // PDF Editor & Tools Routes
     Route::get('/pdf/editor', [PdfController::class, 'editor'])->name('pdf.editor');
     Route::get('/pdf/tools', [PdfController::class, 'tools'])->name('pdf.tools');
+    
+    // Typing Test Routes
+    Route::get('/typing-test', [\App\Http\Controllers\TypingTestController::class, 'index'])->name('typing-test.index');
+    Route::get('/typing-test/custom', [\App\Http\Controllers\TypingTestController::class, 'custom'])->name('typing-test.custom');
+    Route::get('/typing-test/{id}', [\App\Http\Controllers\TypingTestController::class, 'test'])->name('typing-test.test');
     
     // Feature 1 & 2
     Route::get('/pdf/tools/page-remove', [PdfController::class, 'pageRemove'])->name('pdf.tools.page_remove');
@@ -137,6 +169,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/design/ai-templates/{id}/customize', [AiTemplateController::class, 'customize'])->name('design.ai_templates.customize');
     Route::post('/design/ai-templates/{id}/process', [AiTemplateController::class, 'process'])->name('design.ai_templates.process');
 
+    // WhatsApp Device Linking
+    Route::get('/whatsapp/connect', [WhatsAppController::class, 'index'])->name('whatsapp.connect');
+    Route::post('/whatsapp/logout', [WhatsAppController::class, 'logout'])->name('whatsapp.logout');
+
     // Admin Control Panel routes (only for admins)
     Route::middleware(\App\Http\Middleware\IsAdmin::class)->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
@@ -150,15 +186,25 @@ Route::middleware('auth')->group(function () {
         Route::resource('categories', DocumentCategoryController::class, ['as' => 'admin'])->except(['show']);
         Route::resource('templates', DocumentTemplateController::class, ['as' => 'admin'])->except(['show']);
 
+        // CV Templates
+        Route::resource('cv-templates', CvTemplateController::class, ['as' => 'admin'])->except(['show']);
+
+        // Recharge Packages
+        Route::resource('recharge-packages', RechargePackageController::class, ['as' => 'admin'])->except(['show']);
+
+        // Settings
+        Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+        Route::post('/settings', [SettingController::class, 'store'])->name('admin.settings.store');
+
         // Tickets
         Route::get('/tickets', [TicketController::class, 'adminIndex'])->name('admin.tickets');
         Route::get('/tickets/{id}', [TicketController::class, 'adminShow'])->name('admin.tickets.show');
 
         // Local Ads
+        Route::post('/ads/{id}/delete', [AdController::class, 'destroy'])->name('admin.ads.delete');
+        Route::post('/ads/{id}/toggle', [AdController::class, 'toggle'])->name('admin.ads.toggle');
         Route::get('/ads', [AdController::class, 'index'])->name('admin.ads');
         Route::post('/ads', [AdController::class, 'store'])->name('admin.ads.store');
-        Route::post('/ads/{id}/toggle', [AdController::class, 'toggle'])->name('admin.ads.toggle');
-        Route::post('/ads/{id}/delete', [AdController::class, 'destroy'])->name('admin.ads.delete');
 
         // AI Templates
         Route::get('/ai-templates', [AiTemplateController::class, 'adminIndex'])->name('admin.ai_templates');
@@ -168,5 +214,8 @@ Route::middleware('auth')->group(function () {
         // PDF Tools Settings
         Route::get('/pdf-tools', [AdminPdfToolController::class, 'index'])->name('admin.pdf_tools');
         Route::post('/pdf-tools/{id}/toggle', [AdminPdfToolController::class, 'toggle'])->name('admin.pdf_tools.toggle');
+
+        // Typing Tests
+        Route::resource('typing-test', \App\Http\Controllers\Admin\TypingTestController::class, ['as' => 'admin'])->except(['show']);
     });
 });

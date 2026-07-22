@@ -123,7 +123,7 @@
 
         } catch (error) {
             console.error(error);
-            alert('ব্যাকগ্রাউন্ড রিমুভ করতে সমস্যা হয়েছে: ' + error.message);
+            Swal.fire('ব্যাকগ্রাউন্ড রিমুভ করতে সমস্যা হয়েছে: ' + error.message);
             resetTool();
         }
     }

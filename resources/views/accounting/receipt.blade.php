@@ -37,6 +37,9 @@
             </div>
 
             <button onclick="window.print()" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #6366f1, #06b6d4);">প্রিন্ট / ডাউনলোড করুন</button>
+            <button onclick="sendViaWhatsApp()" class="btn btn-success" id="wa-btn" style="width: 100%; margin-top: 10px; font-weight: 600; padding: 12px; background: #25D366; border: none;">
+                <i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান
+            </button>
         </div>
 
         <!-- Preview Area -->
@@ -139,6 +142,67 @@
         str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
         str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
         return str;
+    }
+
+    async function sendViaWhatsApp() {
+        const phone = await Swal.fire({
+            title: 'WhatsApp Number',
+            input: 'text',
+            inputLabel: 'গ্রাহকের হোয়াটসঅ্যাপ নম্বর দিন',
+            inputPlaceholder: 'যেমন: 017XXXXXXXX',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) return 'নম্বর দিতে হবে!';
+            }
+        });
+
+        if (phone.isConfirmed && phone.value) {
+            const no = document.getElementById('view_no').innerText;
+            const date = document.getElementById('view_date').innerText;
+            const company = document.getElementById('view_company').innerText;
+            const from = document.getElementById('rec_from').value || '-';
+            const purpose = document.getElementById('rec_purpose').value || '-';
+            const amount = document.getElementById('view_amount').innerText;
+
+            const text = `*মানি রিসিট*\n\nরিসিট নং: ${no}\nতারিখ: ${date}\nপ্রতিষ্ঠান: ${company}\n\nযার কাছ থেকে প্রাপ্ত: ${from}\nবাবদ: ${purpose}\n\n*মোট পরিমাণ: ৳ ${amount}/-*\n\nধন্যবাদ!`;
+
+            const btn = document.getElementById('wa-btn');
+            btn.innerHTML = '<i class="material-icons-round spin">sync</i> পাঠানো হচ্ছে...';
+            btn.disabled = true;
+
+            fetch('{{ route("accounting.whatsapp.send") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ phone: phone.value, message: text })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = '<i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান';
+                btn.disabled = false;
+
+                if (data.success) {
+                    Swal.fire('সফল!', 'WhatsApp-এ মেমো পাঠানো হয়েছে।', 'success');
+                } else if (data.fallback) {
+                    // Open wa.me manually
+                    let formatPhone = phone.value.replace(/[^0-9]/g, '');
+                    if (formatPhone.length === 11 && formatPhone.startsWith('01')) {
+                        formatPhone = '88' + formatPhone;
+                    }
+                    window.open(`https://wa.me/${formatPhone}?text=${encodeURIComponent(text)}`, '_blank');
+                    Swal.fire('নির্দেশনা', 'আপনার WhatsApp ওপেন করা হয়েছে, সেখান থেকে সেন্ড করুন।', 'info');
+                } else {
+                    Swal.fire('ত্রুটি', data.error || 'পাঠানো সম্ভব হয়নি!', 'error');
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = '<i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান';
+                btn.disabled = false;
+                Swal.fire('ত্রুটি', 'সার্ভারের সাথে সমস্যা হচ্ছে।', 'error');
+            });
+        }
     }
 </script>
 @endsection

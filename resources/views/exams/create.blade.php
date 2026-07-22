@@ -333,7 +333,7 @@
         const editIndex = parseInt(document.getElementById('edit_index').value);
 
         if(!text || !a || !b || !c || !d) {
-            alert('Please fill out the question and all options.');
+            Swal.fire('Please fill out the question and all options.');
             return;
         }
 
@@ -359,7 +359,7 @@
         const editIndex = parseInt(document.getElementById('edit_index').value);
 
         if(!stem || !a || !b || !c || !d) {
-            alert('Please fill out the stem and all 4 questions.');
+            Swal.fire('Please fill out the stem and all 4 questions.');
             return;
         }
 
@@ -518,7 +518,7 @@
 
     function saveExam() {
         if (questions.length === 0) {
-            alert('Please add at least one question to the exam.');
+            Swal.fire('Please add at least one question to the exam.');
             return;
         }
 
@@ -548,11 +548,11 @@
             if(data.success) {
                 window.location.href = data.redirect;
             } else {
-                alert('An error occurred while saving.');
+                Swal.fire('An error occurred while saving.');
             }
         })
         .catch(err => {
-            alert('Server error.');
+            Swal.fire('Server error.');
         });
     }
 </script>

@@ -4,7 +4,7 @@
 
 @section('content')
 <div style="margin-top: 10px;">
-    
+
     <!-- Welcome Banner -->
     <div class="glass" style="padding: 40px; margin-bottom: 30px;">
         <h2 style="color: #fff; margin-bottom: 12px; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em;">
@@ -22,7 +22,7 @@
             </a>
         </div>
     </div>
-        
+
     <div class="grid-2" style="margin-bottom: 40px;">
         <!-- Account Info -->
         <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
@@ -31,7 +31,7 @@
                     <h3 style="color: #fff; font-weight: 700; font-size: 1.2rem; margin: 0;">অ্যাকাউন্ট ডিটেইলস</h3>
                     <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Active</div>
                 </div>
-                
+
                 <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px;">
                     <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; color: var(--text-muted);">
                         <i class="material-icons-round" style="font-size: 1.2rem;">mail_outline</i>
@@ -41,7 +41,7 @@
                         <p style="color: #fff; font-weight: 500; font-size: 1rem; margin: 0;">{{ Auth::user()->email }}</p>
                     </div>
                 </div>
-                
+
                 <div style="display: flex; align-items: flex-start; gap: 15px;">
                     <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 10px; color: #10b981;">
                         <i class="material-icons-round" style="font-size: 1.2rem;">verified_user</i>
@@ -58,7 +58,7 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Credit Balance -->
         <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
             <div>
@@ -68,13 +68,13 @@
                         <i class="material-icons-round" style="font-size: 1.2rem;">payments</i>
                     </div>
                 </div>
-                
+
                 <h1 style="font-size: 3rem; color: #a5b4fc; margin: 0 0 8px 0; font-weight: 700; line-height: 1;">
                     ৳{{ number_format(Auth::user()->credits, 2) }}
                 </h1>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">ব্যালেন্স মেয়াদের কোনো সীমাবদ্ধতা নেই</p>
             </div>
-            
+
             <div style="margin-top: 30px;">
                 <a href="{{ route('recharge') }}" class="btn w-100" style="background: linear-gradient(135deg, #6366f1, #06b6d4); color: #fff; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem;">
                     <i class="material-icons-round" style="font-size: 1.2rem;">add_circle_outline</i> ক্রেডিট রিচার্জ করুন
@@ -99,7 +99,7 @@
                 <div style="background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); color: #a5b4fc; font-family: monospace; font-size: 1.1rem;">
                     {{ url('/register?ref=' . Auth::user()->referral_code) }}
                 </div>
-                <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . Auth::user()->referral_code) }}').then(() => alert('লিংক কপি হয়েছে!'))" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 8px; font-weight: 600;">
+                <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . Auth::user()->referral_code) }}').then(() => Swal.fire('লিংক কপি হয়েছে!'))" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 8px; font-weight: 600;">
                     <i class="material-icons-round" style="font-size: 1.1rem; vertical-align: middle;">content_copy</i> কপি লিংক
                 </button>
             </div>
@@ -110,7 +110,7 @@
             <p style="color: var(--text-muted); font-size: 0.8rem; margin: 5px 0 0 0;">জন ইউজার</p>
         </div>
     </div>
-    
+
     <div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <h3 style="font-weight: 700; font-size: 1.3rem; color: #fff; margin: 0; border-left: 3px solid #818cf8; padding-left: 10px;">দ্রুত অ্যাক্সেস টুলস</h3>
@@ -118,9 +118,9 @@
                 সকল টুলস দেখুন <i class="material-icons-round" style="font-size: 1rem;">open_in_new</i>
             </a>
         </div>
-        
+
         <div class="grid-3" style="gap: 20px;">
-            
+
             <!-- Document Editor -->
             <a href="{{ route('document.index') }}" style="text-decoration: none; display: block;">
                 <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
@@ -129,6 +129,29 @@
                     </div>
                     <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Document Editor</h4>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">প্রফেশনাল ডকুমেন্ট তৈরি এবং এডিট করার উন্নত টুল।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+            <!-- WhatsApp Connect -->
+            <a href="{{ route('whatsapp.connect') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(37, 211, 102, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #25D366; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">qr_code_scanner</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">WhatsApp Connect</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">QR স্ক্যান করে আপনার নিজের WhatsApp কানেক্ট করুন</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+
+            <!-- CV Maker -->
+            <a href="{{ route('cv.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(16, 185, 129, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #10b981; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">contact_page</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">CV Maker</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">সহজেই প্রফেশনাল এবং আকর্ষণীয় সিভি তৈরি করুন।</p>
                     <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
@@ -141,6 +164,18 @@
                     </div>
                     <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">PDF Tools</h4>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">PDF ফাইল কনভার্ট, মার্জ এবং কম্প্রেস করার সমাধান।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+
+            <!-- Photo Maker -->
+            <a href="{{ route('photo.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(234, 179, 8, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #eab308; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">portrait</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Photo Maker</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">ছবি আপলোড করে পাসপোর্ট সাইজ ক্রপ এবং কালার চেঞ্জ করুন।</p>
                     <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
