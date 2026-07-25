@@ -69,23 +69,13 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('accounting.receipt') }}" class="sidebar-link {{ request()->routeIs('accounting.receipt') ? 'active' : '' }}">
-                        <i class="material-icons-round">receipt</i><span>মানি রিসিট</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('accounting.memo') }}" class="sidebar-link {{ request()->routeIs('accounting.memo') ? 'active' : '' }}">
-                        <i class="material-icons-round">article</i><span>ক্যাশ মেমো</span>
+                    <a href="{{ route('accounting.memo') }}" class="sidebar-link {{ request()->routeIs('accounting.memo') || request()->routeIs('accounting.receipt') ? 'active' : '' }}">
+                        <i class="material-icons-round">receipt_long</i><span>ইনভয়েস / ক্যাশ মেমো</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('tickets.index') }}" class="sidebar-link {{ request()->routeIs('tickets.index') || request()->routeIs('tickets.show') ? 'active' : '' }}">
                         <i class="material-icons-round">support_agent</i><span>যোগাযোগ ও হায়ার</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('design.editor') }}" class="sidebar-link {{ request()->routeIs('design.editor') ? 'active' : '' }}">
-                        <i class="material-icons-round">brush</i><span>ডিজাইন এডিটর</span>
                     </a>
                 </li>
                 <li>
@@ -95,11 +85,6 @@
 
                     <a href="{{ route('ocr.index') }}" class="sidebar-link {{ request()->routeIs('ocr.index') ? 'active' : '' }}">
                         <i class="material-icons-round">document_scanner</i> AI Document OCR
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('design.ai_templates') }}" class="sidebar-link {{ request()->routeIs('design.ai_templates') || request()->routeIs('design.ai_templates.customize') ? 'active' : '' }}">
-                        <i class="material-icons-round">auto_stories</i><span>এআই টেমপ্লেট</span>
                     </a>
                 </li>
                 <li>

@@ -158,6 +158,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pdf/tools/image-convert', [PdfController::class, 'imageConvert'])->name('pdf.tools.image_convert');
     Route::get('/pdf/tools/qr-generator', [PdfController::class, 'qrGenerator'])->name('pdf.tools.qr_generator');
     Route::get('/pdf/tools/image-resize', [PdfController::class, 'imageResize'])->name('pdf.tools.image_resize');
+    Route::get('/pdf/tools/joint-photo', [PdfController::class, 'jointPhoto'])->name('pdf.tools.joint_photo');
+    Route::get('/pdf/tools/document-scanner', [PdfController::class, 'documentScanner'])->name('pdf.tools.document_scanner');
 
     // Exam System Routes
     Route::get('/exams', [\App\Http\Controllers\ExamController::class, 'index'])->name('exams.index');

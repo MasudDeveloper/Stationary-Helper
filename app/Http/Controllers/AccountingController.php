@@ -111,7 +111,7 @@ class AccountingController extends Controller
 
     public function receiptGenerator()
     {
-        return view('accounting.receipt');
+        return redirect()->route('accounting.memo');
     }
 
     public function memoGenerator()
@@ -123,42 +123,59 @@ class AccountingController extends Controller
     {
         $request->validate([
             'phone' => 'required|string',
-            'message' => 'required|string',
+            'pdf_base64' => 'required|string',
+            'filename' => 'required|string',
         ]);
 
-        $provider = \App\Models\Setting::where('key', 'whatsapp_provider')->value('value');
-
-        if ($provider === 'ultramsg') {
-            $instance = \App\Models\Setting::where('key', 'whatsapp_instance_id')->value('value');
-            $token = \App\Models\Setting::where('key', 'whatsapp_token')->value('value');
-
-            if (!$instance || !$token) {
-                return response()->json(['success' => false, 'error' => 'Ultramsg API credentials are not set in Admin Settings.', 'fallback' => true]);
-            }
-
-            // Format phone number (must be international format without +)
-            $phone = preg_replace('/[^0-9]/', '', $request->phone);
-            if (strlen($phone) == 11 && str_starts_with($phone, '01')) {
-                $phone = '88' . $phone;
-            }
-
-            try {
-                $response = \Illuminate\Support\Facades\Http::post("https://api.ultramsg.com/{$instance}/messages/chat", [
-                    'token' => $token,
-                    'to' => $phone,
-                    'body' => $request->message,
-                ]);
-
-                if ($response->successful()) {
-                    return response()->json(['success' => true]);
-                }
-            } catch (\Exception $e) {
-                // Return fallback true to open wa.me
-            }
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'আপনাকে প্রথমে লগইন করতে হবে।'
+            ], 401);
         }
 
-        // Return fallback to open wa.me
-        return response()->json(['success' => false, 'fallback' => true]);
+        try {
+            // Check status first
+            $statusResp = \Illuminate\Support\Facades\Http::timeout(5)->get("http://localhost:3001/status/{$user->id}");
+            if (!$statusResp->successful() || $statusResp->json('status') !== 'CONNECTED') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'আপনার WhatsApp কানেক্ট করা নেই। দয়া করে ড্যাশবোর্ড থেকে WhatsApp কানেক্ট করুন।'
+                ], 400);
+            }
+
+            // Clean base64 string safely
+            $parts = explode(',', $request->pdf_base64);
+            $base64 = end($parts);
+
+            $response = \Illuminate\Support\Facades\Http::post("http://localhost:3001/send", [
+                'userId' => $user->id,
+                'phone' => $request->phone,
+                'message' => $request->message ?? 'আপনার ইনভয়েস / ক্যাশ মেমো পাঠানো হয়েছে।',
+                'mediaBase64' => $base64,
+                'mediaMime' => 'application/pdf',
+                'mediaName' => $request->filename . '.pdf'
+            ]);
+
+            if ($response->successful() && $response->json('success')) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'WhatsApp-এ ইনভয়েস PDF ফাইল পাঠানো সফল হয়েছে!'
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'ফাইল পাঠানো সম্ভব হয়নি। WhatsApp কানেকশন চেক করুন।'
+            ], 500);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'সার্ভারের সাথে কানেক্ট করা যাচ্ছে না।'
+            ], 500);
+        }
     }
 
     // --- Dues (Bakir Hishab) Methods ---

@@ -13,6 +13,18 @@ class PdfController extends Controller
 
     public function tools()
     {
+        if (\App\Models\PdfTool::where('route_name', 'pdf.tools.joint_photo')->doesntExist()) {
+            \App\Models\PdfTool::updateOrCreate(
+                ['title' => 'যৌথ পাসপোর্ট ছবি (Husband-Wife)'],
+                ['icon' => 'people_alt', 'gradient_class' => 'grad-purple', 'is_hot' => true, 'route_name' => 'pdf.tools.joint_photo', 'order' => 17, 'is_active' => true]
+            );
+        }
+        if (\App\Models\PdfTool::where('route_name', 'pdf.tools.document_scanner')->doesntExist()) {
+            \App\Models\PdfTool::updateOrCreate(
+                ['title' => 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)'],
+                ['icon' => 'document_scanner', 'gradient_class' => 'grad-pink', 'is_hot' => true, 'route_name' => 'pdf.tools.document_scanner', 'order' => 18, 'is_active' => true]
+            );
+        }
         $tools = \App\Models\PdfTool::where('is_active', true)->orderBy('order')->get();
         return view('pdf.tools', compact('tools'));
     }
@@ -74,6 +86,7 @@ class PdfController extends Controller
 
     public function deductBgRemoverCredit(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
         $cost = 5;
 
@@ -85,7 +98,7 @@ class PdfController extends Controller
         $user->save();
 
         // Log transaction
-        \App\Models\Transaction::create([
+        \App\Models\AccountingTransaction::create([
             'user_id' => $user->id,
             'type' => 'debit',
             'amount' => $cost,
@@ -127,5 +140,15 @@ class PdfController extends Controller
     public function imageResize()
     {
         return view('pdf.tools_image_resize');
+    }
+
+    public function jointPhoto()
+    {
+        return view('pdf.tools_joint_photo');
+    }
+
+    public function documentScanner()
+    {
+        return view('pdf.tools_document_scanner');
     }
 }

@@ -3,73 +3,165 @@
 @section('title', 'Typing Test - Smart Stationary')
 
 @section('content')
-<div class="container" style="padding: 40px 20px; max-width: 900px;">
+<style>
+    .correct { color: #34d399 !important; text-shadow: 0 0 8px rgba(52, 211, 153, 0.3); font-weight: 600; }
+    .incorrect { color: #f87171 !important; background: rgba(239, 68, 68, 0.25); border-radius: 4px; padding: 0 2px; }
+    .current { border-bottom: 3px solid #60a5fa; background: rgba(96, 165, 250, 0.2); border-radius: 4px; animation: blink 1s infinite; }
+    .remaining { color: #94a3b8; }
     
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">{{ $paragraph->title }}</h2>
-        <a href="{{ route('typing-test.index') }}" class="btn" style="color: #6b7280; font-weight: 500;">&larr; Back to tests</a>
+    @keyframes blink {
+        0%, 100% { border-bottom-color: transparent; background: transparent; }
+        50% { border-bottom-color: #60a5fa; background: rgba(96, 165, 250, 0.2); }
+    }
+    
+    #text-display {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 1.6rem;
+        line-height: 1.9;
+        font-family: 'Inter', 'SolaimanLipi', sans-serif;
+        user-select: none;
+        max-height: 450px;
+        overflow-y: auto;
+        padding-right: 15px;
+    }
+
+    #text-display::-webkit-scrollbar {
+        width: 8px;
+    }
+    #text-display::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+    #text-display::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.4);
+        border-radius: 10px;
+    }
+
+    .metrics-panel {
+        background: rgba(30, 41, 59, 0.75);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 25px 35px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .metric-label {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 5px;
+    }
+    .typing-box {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(99, 102, 241, 0.4);
+        padding: 45px;
+        border-radius: 24px;
+        position: relative;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(99, 102, 241, 0.05);
+    }
+    .btn-back {
+        color: #93c5fd;
+        background: rgba(59, 130, 246, 0.15);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+    }
+    .btn-back:hover {
+        background: rgba(59, 130, 246, 0.3);
+        color: #ffffff;
+        transform: translateX(-3px);
+    }
+    .btn-restart {
+        padding: 12px 35px;
+        border-radius: 30px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #64748b, #475569);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-restart:hover {
+        background: linear-gradient(135deg, #475569, #334155);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
+</style>
+
+<div class="container" style="padding: 40px 20px; max-width: 950px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <span style="font-size: 0.85rem; color: #a5b4fc; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">টাইপিং স্পিড প্র্যাকটিস</span>
+            <h2 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">{{ $paragraph->title }}</h2>
+        </div>
+        <a href="{{ route('typing-test.index') }}" class="btn-back"><i class="material-icons-round" style="vertical-align: middle; font-size: 20px; margin-right: 6px;">arrow_back</i> সব টেস্টে ফিরে যান</a>
     </div>
 
     <!-- Metrics Dashboard -->
-    <div class="glass" style="padding: 20px 30px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px;">
+    <div class="metrics-panel">
         <div style="text-align: center;">
-            <div style="font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Time</div>
-            <div id="time-display" style="font-size: 2rem; font-weight: 700; color: #3b82f6;">00:00</div>
+            <div class="metric-label">সময় (Time)</div>
+            <div id="time-display" style="font-size: 2.2rem; font-weight: 800; color: #60a5fa; text-shadow: 0 0 15px rgba(96, 165, 250, 0.3);">00:00</div>
         </div>
+        <div style="width: 1px; height: 50px; background: rgba(255,255,255,0.1);"></div>
         <div style="text-align: center;">
-            <div style="font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">WPM</div>
-            <div id="wpm-display" style="font-size: 2.5rem; font-weight: 800; color: #10b981;">0</div>
+            <div class="metric-label">গতি (WPM)</div>
+            <div id="wpm-display" style="font-size: 2.75rem; font-weight: 900; color: #34d399; text-shadow: 0 0 15px rgba(52, 211, 153, 0.3);">0</div>
         </div>
+        <div style="width: 1px; height: 50px; background: rgba(255,255,255,0.1);"></div>
         <div style="text-align: center;">
-            <div style="font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Accuracy</div>
-            <div id="accuracy-display" style="font-size: 2rem; font-weight: 700; color: #f59e0b;">100%</div>
+            <div class="metric-label">নির্ভুলতা (Accuracy)</div>
+            <div id="accuracy-display" style="font-size: 2.2rem; font-weight: 800; color: #fbbf24; text-shadow: 0 0 15px rgba(251, 191, 36, 0.3);">100%</div>
         </div>
+        <div style="width: 1px; height: 50px; background: rgba(255,255,255,0.1);"></div>
         <div style="text-align: center;">
-            <div style="font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Errors</div>
-            <div id="errors-display" style="font-size: 2rem; font-weight: 700; color: #ef4444;">0</div>
+            <div class="metric-label">ভুল (Errors)</div>
+            <div id="errors-display" style="font-size: 2.2rem; font-weight: 800; color: #f87171; text-shadow: 0 0 15px rgba(248, 113, 113, 0.3);">0</div>
         </div>
     </div>
 
     <!-- Typing Area -->
-    <div class="glass" style="padding: 40px; border-radius: 12px; position: relative;">
+    <div class="typing-box">
         <!-- Click to focus overlay -->
-        <div id="focus-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(2px); border-radius: 12px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer;">
-            <div style="background: #3b82f6; color: #fff; padding: 10px 25px; border-radius: 30px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(59,130,246,0.3);">
-                Click here or press any key to start
+        <div id="focus-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(6px); border-radius: 22px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer;">
+            <div style="background: linear-gradient(135deg, #3b82f6, #6366f1); color: #fff; padding: 16px 36px; border-radius: 40px; font-weight: 700; font-size: 1.2rem; box-shadow: 0 10px 30px rgba(59,130,246,0.5); display: flex; align-items: center; gap: 12px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <i class="material-icons-round" style="font-size: 28px;">touch_app</i> ক্লিক করুন বা যেকোনো কি (Key) চাপুন টেস্ট শুরু করতে
             </div>
         </div>
         
-        <div id="text-display" style="font-size: 1.5rem; line-height: 1.8; font-family: 'Inter', sans-serif; color: #9ca3af; user-select: none;">
+        <div id="text-display">
             <!-- Words will be injected here via JS -->
         </div>
 
         <input type="text" id="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; opacity: 0; pointer-events: none;">
     </div>
     
-    <div style="text-align: center; margin-top: 30px;">
-        <button id="restart-btn" class="btn-primary" style="padding: 10px 30px; border-radius: 30px; font-size: 1rem; font-weight: 600; background: #6b7280;">
-            <i class="material-icons-round" style="vertical-align: middle; font-size: 20px; margin-right: 5px;">refresh</i> Restart Test
+    <div style="text-align: center; margin-top: 35px;">
+        <button id="restart-btn" class="btn-restart">
+            <i class="material-icons-round" style="font-size: 24px;">refresh</i> পুনরায় শুরু করুন (Restart Test)
         </button>
     </div>
 
 </div>
-
-<style>
-    .correct { color: #10b981; }
-    .incorrect { color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 2px; }
-    .current { border-bottom: 2px solid #3b82f6; animation: blink 1s infinite; }
-    .remaining { color: #9ca3af; }
-    
-    @keyframes blink {
-        0%, 100% { border-bottom-color: transparent; }
-        50% { border-bottom-color: #3b82f6; }
-    }
-    
-    #text-display {
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-</style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -148,8 +240,8 @@
         const currentEl = textDisplay.querySelector('.current');
         if (currentEl) {
             const container = textDisplay;
-            if (currentEl.offsetTop > container.scrollTop + container.clientHeight - 50) {
-                container.scrollTop = currentEl.offsetTop - 50;
+            if (currentEl.offsetTop > container.scrollTop + container.clientHeight - 60) {
+                container.scrollTop = currentEl.offsetTop - 60;
             }
         }
     }
@@ -186,17 +278,19 @@
         calculateMetrics();
         
         Swal.fire({
-            title: 'Test Completed!',
+            title: 'অভিনন্দন! টেস্ট সম্পন্ন হয়েছে! 🎉',
             html: `
-                <div style="font-size: 1.2rem; margin-top: 15px;">
-                    <div style="margin-bottom: 10px;"><strong>WPM:</strong> <span style="color: #10b981;">${wpmDisplay.innerText}</span></div>
-                    <div style="margin-bottom: 10px;"><strong>Accuracy:</strong> <span style="color: #f59e0b;">${accuracyDisplay.innerText}</span></div>
-                    <div style="margin-bottom: 10px;"><strong>Errors:</strong> <span style="color: #ef4444;">${errorsDisplay.innerText}</span></div>
-                    <div><strong>Time:</strong> <span style="color: #3b82f6;">${timeDisplay.innerText}</span></div>
+                <div style="font-size: 1.15rem; margin-top: 20px; line-height: 2; text-align: left; background: rgba(30, 41, 59, 0.8); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                    <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:8px;"><strong>গতি (WPM):</strong> <span style="color: #34d399; font-weight:800; font-size:1.4rem;">${wpmDisplay.innerText}</span></div>
+                    <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0;"><strong>নির্ভুলতা (Accuracy):</strong> <span style="color: #fbbf24; font-weight:800; font-size:1.4rem;">${accuracyDisplay.innerText}</span></div>
+                    <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0;"><strong>ভুল (Errors):</strong> <span style="color: #f87171; font-weight:800; font-size:1.4rem;">${errorsDisplay.innerText}</span></div>
+                    <div style="display:flex; justify-content:space-between; padding-top: 8px;"><strong>সময় (Time):</strong> <span style="color: #60a5fa; font-weight:800; font-size:1.4rem;">${timeDisplay.innerText}</span></div>
                 </div>
             `,
             icon: 'success',
-            confirmButtonText: 'Try Again',
+            background: '#1e293b',
+            color: '#fff',
+            confirmButtonText: '<i class="material-icons-round" style="vertical-align:middle;">refresh</i> আবার চেষ্টা করুন',
             confirmButtonColor: '#3b82f6',
             allowOutsideClick: false
         }).then(() => {

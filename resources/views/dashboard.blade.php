@@ -99,7 +99,7 @@
                 <div style="background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); color: #a5b4fc; font-family: monospace; font-size: 1.1rem;">
                     {{ url('/register?ref=' . Auth::user()->referral_code) }}
                 </div>
-                <button onclick="navigator.clipboard.writeText('{{ url('/register?ref=' . Auth::user()->referral_code) }}').then(() => Swal.fire('লিংক কপি হয়েছে!'))" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 8px; font-weight: 600;">
+                <button data-link="{{ url('/register?ref=' . Auth::user()->referral_code) }}" onclick="navigator.clipboard.writeText(this.getAttribute('data-link')).then(() => Swal.fire('লিংক কপি হয়েছে!'))" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 8px; font-weight: 600;">
                     <i class="material-icons-round" style="font-size: 1.1rem; vertical-align: middle;">content_copy</i> কপি লিংক
                 </button>
             </div>
@@ -192,18 +192,6 @@
                 </div>
             </a>
 
-            <!-- Graphic Design -->
-            <a href="{{ route('design.editor') }}" style="text-decoration: none; display: block;">
-                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
-                    <div style="background: rgba(245, 158, 11, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fbbf24; margin-bottom: 20px;">
-                        <i class="material-icons-round" style="font-size: 1.5rem;">palette</i>
-                    </div>
-                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Design Editor</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">সহজেই আকর্ষণীয় গ্রাফিক ডিজাইন তৈরি করুন এখানে।</p>
-                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
-                </div>
-            </a>
-
             <!-- AI Service Hub -->
             <a href="{{ route('design.ai_hub') }}" style="text-decoration: none; display: block;">
                 <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
@@ -248,6 +236,30 @@
                     </div>
                     <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Passport Layout</h4>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">পাসপোর্ট ছবি 4R/A4 পেপারে অটোমেটিক সাজান।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+
+            <!-- Joint Photo Maker -->
+            <a href="{{ route('pdf.tools.joint_photo') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(168, 85, 247, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #c084fc; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">people_alt</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Joint Photo Maker</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">স্বামী-স্ত্রী বা দুজনের ছবি একসাথে পাসপোর্ট সাইজ করুন।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
+
+            <!-- Document Scanner (Perspective Crop) -->
+            <a href="{{ route('pdf.tools.document_scanner') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
+                    <div style="background: rgba(236, 72, 153, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ec4899; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">document_scanner</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">Document Scanner</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">বাঁকাত্যারা ছবি বা ডকুমেন্ট ফটোশপের মতো সোজা ও ক্রপ করুন।</p>
                     <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
