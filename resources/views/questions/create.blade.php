@@ -172,25 +172,47 @@
         </div>
         
         <div class="sidebar-content">
-            <div class="form-group mb-3">
-                <label class="form-label">পরীক্ষার নাম / শিরোনাম</label>
-                <input type="text" id="paper_title" class="form-control" value="বার্ষিক পরীক্ষা" oninput="updateSheetHeader()">
+            <div class="form-group mb-2">
+                <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">স্কুলের / প্রতিষ্ঠানের নাম</label>
+                <input type="text" id="paper_school" class="form-control" value="স্কুলের / প্রতিষ্ঠানের নাম" placeholder="স্কুলের নাম লিখুন..." oninput="updateSheetHeader()">
+            </div>
+
+            <div class="form-group mb-2">
+                <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">ঠিকানা / স্থান</label>
+                <input type="text" id="paper_address" class="form-control" value="ঠিকানা / স্থান" placeholder="ঠিকানা লিখুন..." oninput="updateSheetHeader()">
+            </div>
+
+            <div class="form-group mb-2">
+                <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">পরীক্ষার নাম / শিরোনাম</label>
+                <input type="text" id="paper_title" class="form-control" value="বার্ষিক পরীক্ষা" placeholder="পরীক্ষার নাম লিখুন..." oninput="updateSheetHeader()">
             </div>
             
-            <div class="row mb-4 g-2">
+            <div class="row mb-2 g-2">
                 <div class="col-6">
-                    <label class="form-label">শ্রেণী</label>
-                    <input type="text" id="paper_class" class="form-control" value="দশম" oninput="updateSheetHeader()">
+                    <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">শ্রেণী</label>
+                    <input type="text" id="paper_class" class="form-control" value="দশম" placeholder="শ্রেণী..." oninput="updateSheetHeader()">
                 </div>
                 <div class="col-6">
-                    <label class="form-label">বিষয়</label>
-                    <input type="text" id="paper_subject" class="form-control" value="উচ্চতর গণিত" oninput="updateSheetHeader()">
+                    <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">বিষয়</label>
+                    <input type="text" id="paper_subject" class="form-control" value="সাধারণ গণিত" placeholder="বিষয়..." oninput="updateSheetHeader()">
+                </div>
+            </div>
+
+            <div class="row mb-4 g-2">
+                <div class="col-6">
+                    <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">সময়</label>
+                    <input type="text" id="paper_time" class="form-control" value="৩ ঘণ্টা" placeholder="সময়..." oninput="updateSheetHeader()">
+                </div>
+                <div class="col-6">
+                    <label class="form-label" style="font-size: 0.85rem; color: #93c5fd;">পূর্ণমান / মার্ক</label>
+                    <input type="text" id="paper_marks" class="form-control" value="৫০" placeholder="মার্ক..." oninput="updateSheetHeader()">
                 </div>
             </div>
 
             <hr style="border-color: rgba(255,255,255,0.1); margin: 0 0 20px 0;">
 
             <div id="editor-fields">
+                <input type="hidden" id="edit_index" value="-1">
                 @if ($type == 'mcq')
                     <h6 class="text-white mb-3 d-flex align-items-center gap-2">
                         <i class="material-icons-round" style="font-size: 18px; color: #8b5cf6;">add_circle</i>
@@ -198,9 +220,9 @@
                     </h6>
                     <div class="form-group mb-3">
                         <label class="form-label">প্রশ্ন (LaTeX সমর্থন করে, যেমন: $x^2 + y^2 = r^2$)</label>
-                        <textarea id="mcq_question" class="form-control" rows="3" placeholder="প্রশ্ন লিখুন..."></textarea>
+                        <textarea id="mcq_question" class="form-control" rows="2" placeholder="প্রশ্ন লিখুন..."></textarea>
                     </div>
-                    <div class="row g-2 mb-4">
+                    <div class="row g-2 mb-3">
                         <div class="col-6">
                             <input type="text" id="opt_a" class="form-control" placeholder="ক)">
                         </div>
@@ -214,8 +236,6 @@
                             <input type="text" id="opt_d" class="form-control" placeholder="ঘ)">
                         </div>
                     </div>
-                    
-                    <input type="hidden" id="edit_index" value="-1">
                     <div class="d-flex gap-2">
                         <button onclick="saveOrUpdateMcqQuestion()" class="btn btn-gradient w-100" id="btn_save_q">
                             + প্রশ্ন যোগ করুন
@@ -227,26 +247,24 @@
                 @else
                     <h6 class="text-white mb-3 d-flex align-items-center gap-2">
                         <i class="material-icons-round" style="font-size: 18px; color: #ec4899;">add_circle</i>
-                        <span id="form_title">নতুন CQ (সৃজনশীল) প্রশ্ন যোগ করুন</span>
+                        <span id="form_title">নতুন সৃজনশীল প্রশ্ন যোগ করুন</span>
                     </h6>
                     <div class="form-group mb-3">
                         <label class="form-label">উদ্দীপক (Stem)</label>
-                        <textarea id="cq_stem" class="form-control" rows="4" placeholder="উদ্দীপক লিখুন..."></textarea>
+                        <textarea id="cq_stem" class="form-control" rows="3" placeholder="উদ্দীপক লিখুন..."></textarea>
                     </div>
                     <div class="form-group mb-2">
-                        <input type="text" id="cq_a" class="form-control" placeholder="ক) প্রশ্ন (১ নম্বর)">
+                        <input type="text" id="cq_a" class="form-control" placeholder="ক) জ্ঞানমূলক (মান ১)">
                     </div>
                     <div class="form-group mb-2">
-                        <input type="text" id="cq_b" class="form-control" placeholder="খ) প্রশ্ন (২ নম্বর)">
+                        <input type="text" id="cq_b" class="form-control" placeholder="খ) অনুধাবনমূলক (মান ২)">
                     </div>
                     <div class="form-group mb-2">
-                        <input type="text" id="cq_c" class="form-control" placeholder="গ) প্রশ্ন (৩ নম্বর)">
+                        <input type="text" id="cq_c" class="form-control" placeholder="গ) প্রয়োগমূলক (মান ৩)">
                     </div>
-                    <div class="form-group mb-4">
-                        <input type="text" id="cq_d" class="form-control" placeholder="ঘ) প্রশ্ন (৪ নম্বর)">
+                    <div class="form-group mb-3">
+                        <input type="text" id="cq_d" class="form-control" placeholder="ঘ) উচ্চতর দক্ষতা (মান ৪)">
                     </div>
-                    
-                    <input type="hidden" id="edit_index" value="-1">
                     <div class="d-flex gap-2">
                         <button onclick="saveOrUpdateCqQuestion()" class="btn btn-gradient w-100" id="btn_save_q" style="background: linear-gradient(135deg, #ec4899, #be185d);">
                             + প্রশ্ন যোগ করুন
@@ -269,13 +287,15 @@
     <!-- Preview Area -->
     <div class="builder-preview">
         <div class="preview-paper">
-            <div style="text-align: center; margin-bottom: 25px; padding-bottom: 15px;">
-                <h2 id="view_title" style="font-weight: bold; margin: 0 0 5px 0; font-size: 1.8rem;">বার্ষিক পরীক্ষা</h2>
-                <h4 style="font-weight: normal; margin: 0 0 10px 0; font-size: 1.2rem;">বিষয়: <span id="view_subject">উচ্চতর গণিত</span></h4>
-                <div style="display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 5px;">
-                    <div>শ্রেণী: <span id="view_class">দশম</span></div>
-                    <div>সময়: ২ ঘণ্টা ৩০ মিনিট</div>
-                    <div>পূর্ণমান: ১০০</div>
+            <div style="text-align: center; margin-bottom: 25px; font-family: 'Kalpurush', 'Siyam Rupali', 'SolaimanLipi', Arial, sans-serif;">
+                <h1 id="view_school" style="font-weight: 800; margin: 0 0 5px 0; font-size: 26px; color: #000; letter-spacing: 0.5px;">স্কুলের / প্রতিষ্ঠানের নাম</h1>
+                <h3 id="view_address" style="font-weight: 600; margin: 0 0 6px 0; font-size: 17px; color: #111;">ঠিকানা / স্থান</h3>
+                <h2 id="view_title" style="font-weight: 700; margin: 0 0 6px 0; font-size: 20px; color: #000;">বার্ষিক পরীক্ষা</h2>
+                <h4 style="font-weight: 700; margin: 0 0 15px 0; font-size: 17px; color: #000;">শ্রেণী : <span id="view_class">দশম</span> &nbsp;&nbsp;&nbsp;&nbsp; বিষয়: <span id="view_subject">সাধারণ গণিত</span></h4>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 700; color: #000; margin-top: 10px; border-bottom: 1.5px solid #000; padding-bottom: 8px;">
+                    <div>সময়: <span id="view_time">৩ ঘণ্টা</span></div>
+                    <div>মার্ক <span id="view_marks">৫০</span></div>
                 </div>
             </div>
 
@@ -295,9 +315,13 @@
     let questions = [];
 
     function updateSheetHeader() {
+        document.getElementById('view_school').innerText = document.getElementById('paper_school').value || 'স্কুলের / প্রতিষ্ঠানের নাম';
+        document.getElementById('view_address').innerText = document.getElementById('paper_address').value || 'ঠিকানা / স্থান';
         document.getElementById('view_title').innerText = document.getElementById('paper_title').value || 'বার্ষিক পরীক্ষা';
-        document.getElementById('view_subject').innerText = document.getElementById('paper_subject').value || 'বিষয়';
-        document.getElementById('view_class').innerText = document.getElementById('paper_class').value || 'শ্রেণী';
+        document.getElementById('view_class').innerText = document.getElementById('paper_class').value || 'দশম';
+        document.getElementById('view_subject').innerText = document.getElementById('paper_subject').value || 'সাধারণ গণিত';
+        document.getElementById('view_time').innerText = document.getElementById('paper_time').value || '৩ ঘণ্টা';
+        document.getElementById('view_marks').innerText = document.getElementById('paper_marks').value || '৫০';
     }
 
     function saveOrUpdateMcqQuestion() {
@@ -489,9 +513,13 @@
             return;
         }
 
+        const schoolName = document.getElementById('paper_school').value;
+        const address = document.getElementById('paper_address').value;
         const title = document.getElementById('paper_title').value;
         const subject = document.getElementById('paper_subject').value;
         const className = document.getElementById('paper_class').value;
+        const duration = document.getElementById('paper_time').value;
+        const marks = document.getElementById('paper_marks').value;
         const type = '{{ $type }}';
 
         fetch('{{ route("questions.store") }}', {
@@ -501,9 +529,13 @@
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
+                school_name: schoolName,
+                address: address,
                 title: title,
                 subject: subject,
                 class: className,
+                duration: duration,
+                marks: marks,
                 type: type,
                 content: JSON.stringify(questions)
             })

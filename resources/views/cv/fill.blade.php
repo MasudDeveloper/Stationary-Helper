@@ -6,7 +6,7 @@
 <div class="content-header no-print" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
     <div>
         <h2 style="color: #fff; margin: 0; font-weight: 700;">{{ $template->name }}</h2>
-        <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 0.9rem;">প্রয়োজনীয় তথ্য দিয়ে সিভি পূরণ করুন</p>
+        <p style="color: #cbd5e1; margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 500;">প্রয়োজনীয় তথ্য দিয়ে সিভি পূরণ করুন</p>
     </div>
     <div style="display: flex; gap: 10px;">
         <a href="{{ route('cv.index') }}" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border-radius: 8px; padding: 10px 20px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
@@ -15,41 +15,100 @@
     </div>
 </div>
 
-<div class="grid-2 no-print" style="grid-template-columns: 350px 1fr; gap: 25px; align-items: start;">
+<style>
+    /* Sleek Custom Scrollbar for Editor Boxes */
+    .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.6);
+    }
+    .preview-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+    .preview-scroll::-webkit-scrollbar-track {
+        background: #f1f5f9;
+    }
+    .preview-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    .preview-scroll::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+</style>
+
+<div class="grid-2 no-print" style="grid-template-columns: 380px 1fr; gap: 25px; align-items: start;">
     
-    <!-- Left Sidebar: Form -->
-    <div class="glass" style="padding: 25px; position: sticky; top: 20px;">
-        <h3 style="color: #fff; margin: 0 0 20px 0; font-size: 1.1rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">তথ্য প্রদান করুন</h3>
+    <!-- Left Sidebar: Form with Independent Scrolling -->
+    <div class="glass custom-scroll" style="padding: 25px; position: sticky; top: 15px; max-height: calc(100vh - 30px); overflow-y: auto; border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <h3 style="color: #ffffff; margin: 0 0 20px 0; font-size: 1.2rem; font-weight: 700; border-bottom: 2px solid #38bdf8; padding-bottom: 12px; display: flex; align-items: center; gap: 8px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            <i class="material-icons-round" style="color: #38bdf8;">edit_note</i> তথ্য প্রদান করুন
+        </h3>
         
         <form id="cv-form">
             @foreach($fields as $field)
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 0.85rem;">{{ str_replace('_', ' ', $field) }}</label>
-                    <input type="text" class="form-control cv-input" data-target="[{{ $field }}]" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." style="width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-size: 0.9rem;">
+                @php
+                    $isPhoto = in_array(strtolower($field), ['photo', 'image', 'profile_photo', 'avatar', 'pic', 'picture', 'user_photo', 'candidate_photo']);
+                    $isTextarea = ! $isPhoto && preg_match('/(objective|skills|experience|education|qualifications|hobbies|address|summary|description|list|details|projects|references)/i', $field);
+                    $isList = preg_match('/(skills|hobbies|qualifications|experience_list)/i', $field);
+                    $isEducation = preg_match('/(education)/i', $field);
+                @endphp
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label style="display: block; color: #ffffff; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5); letter-spacing: 0.3px;">
+                        @if($isPhoto) 📷 @elseif($isEducation) 🎓 @elseif($isList) 🔹 @else ✏️ @endif {{ str_replace('_', ' ', $field) }} @if($isPhoto) (ছবি আপলোড করুন) @endif
+                    </label>
+                    @if($isPhoto)
+                        <input type="file" accept="image/*" class="form-control cv-photo-upload" data-target="[{{ $field }}]" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed #38bdf8; border-radius: 8px; color: #fff; font-size: 0.9rem; cursor: pointer; font-weight: 500;">
+                        <input type="hidden" class="cv-input" id="photo-hidden-{{ $field }}" data-target="[{{ $field }}]" value="">
+                        <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">* পাসপোর্ট সাইজ ছবি আপলোড করুন</small>
+                    @elseif($isTextarea)
+                        <textarea class="form-control cv-input" data-target="[{{ $field }}]" data-field-type="{{ $isEducation ? 'education' : ($isList ? 'list' : 'text') }}" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." rows="{{ $isEducation ? '6' : '4' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; line-height: 1.5; font-family: monospace; font-weight: 500;"></textarea>
+                        @if($isEducation)
+                            <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: প্রথমে ডিগ্রির নাম (যেমন: S.S.C on 2013), নিচের লাইনে কোলন দিয়ে রেজাল্ট (যেমন: Result : GPA-5.00) লিখলে স্বয়ংক্রিয়ভাবে সুন্দর ফরম্যাট হয়ে যাবে!</small>
+                        @elseif($isList)
+                            <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: এন্টার (Enter) দিয়ে প্রতি লাইনে একটি করে লিখলে স্বয়ংক্রিয়ভাবে বুলেট পয়েন্ট হয়ে যাবে!</small>
+                        @else
+                            <small style="color: #e2e8f0; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: এন্টার (Enter) দিয়ে নতুন লাইন করতে পারবেন।</small>
+                        @endif
+                    @else
+                        <input type="text" class="form-control cv-input" data-target="[{{ $field }}]" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; font-weight: 500;">
+                    @endif
                 </div>
             @endforeach
         </form>
 
-        <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+        <div style="margin-top: 30px; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <span style="color: var(--text-muted); font-size: 0.9rem;">প্রিন্টিং চার্জ:</span>
-                <span style="color: #10b981; font-weight: 700; font-size: 1.1rem;">{{ $template->credit_cost }} Credits</span>
+                <span style="color: #ffffff; font-size: 1rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">প্রিন্টিং চার্জ:</span>
+                <span style="color: #4ade80; font-weight: 800; font-size: 1.25rem;">{{ $template->credit_cost }} Credits</span>
             </div>
-            <button id="print-btn" class="btn w-100" style="background: var(--primary-color); color: #fff; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;">
-                <i class="material-icons-round" style="font-size: 1.2rem;">print</i> প্রিন্ট করুন
+            <button id="print-btn" class="btn w-100" style="background: var(--primary-color); color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);">
+                <i class="material-icons-round" style="font-size: 1.3rem;">print</i> প্রিন্ট করুন
             </button>
-            <button onclick="sendViaWhatsApp({{ $template->id }}, {{ $template->credit_cost ?? 5 }}, '{{ addslashes($template->name) }}')" id="whatsappBtn" class="btn w-100" style="background: #25D366; color: #fff; padding: 12px; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <i class="material-icons-round" style="font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান
+            <button onclick="sendViaWhatsApp({{ $template->id }}, {{ $template->credit_cost ?? 5 }}, '{{ addslashes($template->name) }}')" id="whatsappBtn" class="btn w-100" style="background: #25D366; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);">
+                <i class="material-icons-round" style="font-size: 1.3rem;">chat</i> WhatsApp-এ পাঠান
             </button>
         </div>
     </div>
 
-    <!-- Right Side: Live Preview -->
-    <div style="background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; color: #000;">
-        <div style="background: #f1f5f9; padding: 10px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 600; color: #475569; font-size: 0.9rem;">লাইভ প্রিভিউ (Live Preview)</span>
+    <!-- Right Side: Live Preview with Independent Scrolling & Sticky Top -->
+    <div class="preview-scroll" style="background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: auto; color: #000; position: sticky; top: 15px; max-height: calc(100vh - 30px); border: 2px solid #38bdf8;">
+        <div style="background: #f8fafc; padding: 12px 20px; border-bottom: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10;">
+            <span style="font-weight: 700; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+                <i class="material-icons-round" style="color: #0284c7;">visibility</i> লাইভ প্রিভিউ (Live Preview) - A4 Size
+            </span>
+            <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">100% Realtime</span>
         </div>
-        <div id="cv-preview" style="padding: 40px; min-height: 842px; font-family: 'Times New Roman', Times, serif; font-size: 14px; line-height: 1.6; background: #fff;">
+        <div id="cv-preview" style="padding: 0; min-height: 842px; font-family: 'Times New Roman', Times, serif; font-size: 14px; line-height: 1.5; background: #e2e8f0; display: flex; justify-content: center; overflow-x: auto;">
             {!! $template->content !!}
         </div>
     </div>
@@ -82,9 +141,12 @@
             width: 100%;
             background: #fff;
             color: #000;
+            margin: 0;
+            padding: 0;
         }
         @page {
-            margin: 2cm;
+            size: A4;
+            margin: 0;
         }
     }
     .print-only {
@@ -108,15 +170,62 @@
             updatePreview();
         });
 
+        // Photo Upload Handler (FileReader to base64 DataURL)
+        $('.cv-photo-upload').on('change', function(e) {
+            let file = e.target.files[0];
+            let hiddenInput = $(this).siblings('input[type="hidden"]');
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(evt) {
+                    hiddenInput.val(evt.target.result).trigger('input');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                hiddenInput.val('').trigger('input');
+            }
+        });
+
         function updatePreview() {
             let content = originalContent;
             
             $('.cv-input').each(function() {
                 let target = $(this).data('target');
                 let val = $(this).val();
+                let fieldType = $(this).data('field-type');
                 
-                // If input is empty, leave placeholder, else replace with value
-                let replacement = val ? val : target;
+                let replacement = target;
+                if (val) {
+                    if (fieldType === 'list') {
+                        // For skills, hobbies, qualifications: each new line becomes a bullet item <li>...</li>
+                        let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
+                        replacement = lines.map(l => `<li>${l}</li>`).join('');
+                    } else if (fieldType === 'education') {
+                        // Smart Education formatting from new lines
+                        let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
+                        let eduHtml = '';
+                        lines.forEach(line => {
+                            if (line.includes(':')) {
+                                let parts = line.split(':');
+                                let label = parts[0].trim();
+                                let value = parts.slice(1).join(':').trim();
+                                eduHtml += `<div style="padding-left: 15px; margin-bottom: 2px; font-size: 13px;">${label} &nbsp;&nbsp;: &nbsp;<strong>${value}</strong></div>`;
+                            } else {
+                                eduHtml += `<div style="font-weight: bold; color: #0d47a1; font-size: 14px; margin-top: 6px; margin-bottom: 2px;">${line}</div>`;
+                            }
+                        });
+                        replacement = eduHtml;
+                    } else if ($(this).is('textarea')) {
+                        // Normal textareas like Objective or Experience: convert \n to <br> or <li>
+                        if (target.toLowerCase().includes('experience')) {
+                            let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
+                            replacement = lines.map(l => `<li style="margin-bottom: 5px; list-style: none;">${l}</li>`).join('');
+                        } else {
+                            replacement = val.replace(/\n/g, '<br>');
+                        }
+                    } else {
+                        replacement = val;
+                    }
+                }
                 
                 // Replace all occurrences
                 content = content.split(target).join(replacement);

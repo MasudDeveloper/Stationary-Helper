@@ -45,7 +45,7 @@ class CvTemplateController extends Controller
         $template->credit_cost = $request->credit_cost;
         $template->save();
 
-        return redirect()->route('admin.cv_templates.index')->with('success', 'CV Template created successfully');
+        return redirect()->route('admin.cv-templates.index')->with('success', 'CV Template created successfully');
     }
 
     public function edit(CvTemplate $cvTemplate)
@@ -78,12 +78,12 @@ class CvTemplateController extends Controller
         $cvTemplate->is_active = $request->has('is_active');
         $cvTemplate->save();
 
-        return redirect()->route('admin.cv_templates.index')->with('success', 'CV Template updated successfully');
+        return redirect()->route('admin.cv-templates.index')->with('success', 'CV Template updated successfully');
     }
 
     public function destroy(CvTemplate $cvTemplate)
     {
         $cvTemplate->delete();
-        return redirect()->route('admin.cv_templates.index')->with('success', 'CV Template deleted successfully');
+        return redirect()->route('admin.cv-templates.index')->with('success', 'CV Template deleted successfully');
     }
 }

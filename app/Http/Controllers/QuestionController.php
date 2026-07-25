@@ -24,18 +24,26 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'school_name' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
             'title' => 'required|string|max:255',
             'subject' => 'nullable|string',
             'class' => 'nullable|string',
+            'duration' => 'nullable|string',
+            'marks' => 'nullable|string',
             'type' => 'required|in:mcq,cq',
             'content' => 'required|json',
         ]);
 
         QuestionPaper::create([
             'user_id' => Auth::id(),
+            'school_name' => $request->school_name ?? 'স্কুলের / প্রতিষ্ঠানের নাম',
+            'address' => $request->address ?? 'ঠিকানা / স্থান',
             'title' => $request->title,
             'subject' => $request->subject,
             'class' => $request->class,
+            'duration' => $request->duration ?? '৩ ঘণ্টা',
+            'marks' => $request->marks ?? '৫০',
             'type' => $request->type,
             'content' => json_decode($request->content, true),
         ]);

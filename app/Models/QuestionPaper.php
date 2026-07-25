@@ -8,9 +8,13 @@ class QuestionPaper extends Model
 {
     protected $fillable = [
         'user_id',
+        'school_name',
+        'address',
         'title',
         'subject',
         'class',
+        'duration',
+        'marks',
         'type',
         'content',
     ];

@@ -36,5 +36,9 @@ class DatabaseSeeder extends Seeder
                 'credits' => 100,
             ]
         );
+
+        $this->call([
+            CvTemplateSeeder::class,
+        ]);
     }
 }

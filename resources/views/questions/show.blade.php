@@ -24,13 +24,15 @@
     <div style="display: flex; justify-content: center;">
         <div id="print-sheet" style="background: #fff; color: #000; width: 100%; max-width: 210mm; min-height: 297mm; padding: 20mm; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-family: 'Times New Roman', Times, serif; font-size: 1.1rem; line-height: 1.6;">
             <!-- Header Info -->
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2 style="margin: 0; font-size: 1.7rem; font-weight: bold;">{{ $paper->title }}</h2>
-                <h4 style="margin: 5px 0; font-weight: normal;">বিষয়: {{ $paper->subject }}</h4>
-                <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-top: 15px; border-bottom: 2px solid #000; padding-bottom: 5px;">
-                    <div>শ্রেণী: {{ $paper->class }}</div>
-                    <div>সময়: ২ ঘণ্টা ৩০ মিনিট</div>
-                    <div>পূর্ণমান: ১০০</div>
+            <div style="text-align: center; margin-bottom: 25px; font-family: 'Kalpurush', 'Siyam Rupali', 'SolaimanLipi', Arial, sans-serif;">
+                <h1 style="font-weight: 800; margin: 0 0 5px 0; font-size: 26px; color: #000; letter-spacing: 0.5px;">{{ $paper->school_name ?? 'স্কুলের / প্রতিষ্ঠানের নাম' }}</h1>
+                <h3 style="font-weight: 600; margin: 0 0 6px 0; font-size: 17px; color: #111;">{{ $paper->address ?? 'ঠিকানা / স্থান' }}</h3>
+                <h2 style="font-weight: 700; margin: 0 0 6px 0; font-size: 20px; color: #000;">{{ $paper->title }}</h2>
+                <h4 style="font-weight: 700; margin: 0 0 15px 0; font-size: 17px; color: #000;">শ্রেণী : {{ $paper->class }} &nbsp;&nbsp;&nbsp;&nbsp; বিষয়: {{ $paper->subject }}</h4>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 700; color: #000; margin-top: 10px; border-bottom: 1.5px solid #000; padding-bottom: 8px;">
+                    <div>সময়: {{ $paper->duration ?? '৩ ঘণ্টা' }}</div>
+                    <div>মার্ক {{ $paper->marks ?? '৫০' }}</div>
                 </div>
             </div>
 
