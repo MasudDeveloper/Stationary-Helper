@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'এনআইডি টু পিডিএফ - Smart Stationary')
+@section('title', 'এনআইডি টু পিডিএফ - penghor.com')
 
 @section('content')
 <!-- PDF-lib -->

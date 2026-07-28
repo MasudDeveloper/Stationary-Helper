@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'পিডিএফ ও ইমেজ টুলস - Smart Stationary')
+@section('title', 'পিডিএফ ও ইমেজ টুলস - penghor.com')
 
 @section('content')
 <style>
@@ -128,25 +128,97 @@
 </style>
 
 <div class="tools-container">
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h2 style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 10px;">পিডিএফ ও ইমেজ টুলস</h2>
-        <p style="color: var(--text-muted);">আপনার দৈনন্দিন কাজের জন্য সবচেয়ে দরকারি টুলস</p>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 10px;">ছবি ও পিডিএফ টুলস</h2>
+        <p style="color: var(--text-muted); font-size: 1rem;">আপনার দৈনন্দিন কাজের জন্য সবচেয়ে দরকারি সকল টুলস একসাথে</p>
     </div>
 
-    <div class="tools-grid">
-        @foreach($tools as $tool)
-        <a href="{{ $tool->route_name ? route($tool->route_name) : '#' }}" class="tool-card-wrapper">
-            @if($tool->is_hot)
-            <div class="hot-badge">হট</div>
-            @endif
-            <div class="tool-squircle {{ $tool->gradient_class }}">
-                <i class="material-icons-round">{{ $tool->icon }}</i>
-                <div class="star-btn"><i class="material-icons-round">star_border</i></div>
+    <!-- Category Filter Tabs -->
+    <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap;">
+        <button onclick="filterTools('all', this)" class="filter-tab active" style="padding: 10px 24px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); background: rgba(99, 102, 241, 0.2); color: #fff; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;">
+            <i class="material-icons-round" style="font-size: 1.2rem; color: #818cf8;">grid_view</i> সকল টুলস
+        </button>
+        <button onclick="filterTools('pdf', this)" class="filter-tab" style="padding: 10px 24px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;">
+            <i class="material-icons-round" style="font-size: 1.2rem; color: #f43f5e;">picture_as_pdf</i> পিডিএফ টুলস ({{ $pdfTools->count() }})
+        </button>
+        <button onclick="filterTools('image', this)" class="filter-tab" style="padding: 10px 24px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;">
+            <i class="material-icons-round" style="font-size: 1.2rem; color: #10b981;">image</i> ছবি ও ইমেজ টুলস ({{ $imageTools->count() }})
+        </button>
+    </div>
+
+    <!-- PDF Tools Section -->
+    <div id="section-pdf" class="tool-section" style="margin-bottom: 50px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid rgba(244, 63, 94, 0.3); padding-bottom: 12px;">
+            <div style="background: rgba(244, 63, 94, 0.15); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #f43f5e;">
+                <i class="material-icons-round" style="font-size: 1.5rem;">picture_as_pdf</i>
             </div>
-            <div class="tool-title">{{ $tool->title }}</div>
-        </a>
-        @endforeach
+            <h3 style="color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0;">পিডিএফ টুলস (PDF Tools)</h3>
+        </div>
+        <div class="tools-grid">
+            @foreach($pdfTools as $tool)
+            <a href="{{ $tool->route_name ? route($tool->route_name) : '#' }}" class="tool-card-wrapper">
+                @if($tool->is_hot)
+                <div class="hot-badge">হট</div>
+                @endif
+                <div class="tool-squircle {{ $tool->gradient_class }}">
+                    <i class="material-icons-round">{{ $tool->icon }}</i>
+                    <div class="star-btn"><i class="material-icons-round">star_border</i></div>
+                </div>
+                <div class="tool-title">{{ $tool->title }}</div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Image Tools Section -->
+    <div id="section-image" class="tool-section" style="margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid rgba(16, 185, 129, 0.3); padding-bottom: 12px;">
+            <div style="background: rgba(16, 185, 129, 0.15); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #10b981;">
+                <i class="material-icons-round" style="font-size: 1.5rem;">image</i>
+            </div>
+            <h3 style="color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0;">ছবি ও ইমেজ টুলস (Image & Photo Tools)</h3>
+        </div>
+        <div class="tools-grid">
+            @foreach($imageTools as $tool)
+            <a href="{{ $tool->route_name ? route($tool->route_name) : '#' }}" class="tool-card-wrapper">
+                @if($tool->is_hot)
+                <div class="hot-badge">হট</div>
+                @endif
+                <div class="tool-squircle {{ $tool->gradient_class }}">
+                    <i class="material-icons-round">{{ $tool->icon }}</i>
+                    <div class="star-btn"><i class="material-icons-round">star_border</i></div>
+                </div>
+                <div class="tool-title">{{ $tool->title }}</div>
+            </a>
+            @endforeach
+        </div>
     </div>
 </div>
+
+<script>
+function filterTools(category, btn) {
+    document.querySelectorAll('.filter-tab').forEach(t => {
+        t.style.background = 'rgba(255,255,255,0.05)';
+        t.style.borderColor = 'rgba(255,255,255,0.1)';
+        t.style.color = 'var(--text-muted)';
+        t.classList.remove('active');
+    });
+    btn.style.background = 'rgba(99, 102, 241, 0.2)';
+    btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    btn.style.color = '#fff';
+    btn.classList.add('active');
+
+    if(category === 'all') {
+        document.getElementById('section-pdf').style.display = 'block';
+        document.getElementById('section-image').style.display = 'block';
+    } else if(category === 'pdf') {
+        document.getElementById('section-pdf').style.display = 'block';
+        document.getElementById('section-image').style.display = 'none';
+    } else if(category === 'image') {
+        document.getElementById('section-pdf').style.display = 'none';
+        document.getElementById('section-image').style.display = 'block';
+    }
+}
+</script>
 
 @endsection

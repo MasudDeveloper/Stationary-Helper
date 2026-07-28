@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'পাসপোর্ট ছবি মেকার - Smart Stationary')
+@section('title', 'পাসপোর্ট ছবি মেকার - penghor.com')
 
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />

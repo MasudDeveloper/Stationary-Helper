@@ -18,8 +18,10 @@ class WhatsAppController extends Controller
         $pushname = '';
         $wid = '';
 
+        $whatsappUrl = env('WHATSAPP_SERVER_URL', (request()->getHost() === 'localhost' || request()->getHost() === '127.0.0.1') ? 'http://localhost:3001' : 'https://whatsapp.' . preg_replace('/^www\./', '', request()->getHost()));
+
         try {
-            $response = Http::timeout(5)->get("http://localhost:3001/status/{$userId}");
+            $response = Http::timeout(5)->get("{$whatsappUrl}/status/{$userId}");
             if ($response->successful()) {
                 $data = $response->json();
                 $status = $data['status'];
@@ -41,8 +43,9 @@ class WhatsAppController extends Controller
     public function logout(Request $request)
     {
         $userId = Auth::id();
+        $whatsappUrl = env('WHATSAPP_SERVER_URL', (request()->getHost() === 'localhost' || request()->getHost() === '127.0.0.1') ? 'http://localhost:3001' : 'https://whatsapp.' . preg_replace('/^www\./', '', request()->getHost()));
         try {
-            $response = Http::post("http://localhost:3001/logout", [
+            $response = Http::post("{$whatsappUrl}/logout", [
                 'userId' => $userId
             ]);
             

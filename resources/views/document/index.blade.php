@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'ডকুমেন্ট ও ফর্ম - Smart Stationary')
+@section('title', 'ডকুমেন্ট ও ফর্ম - penghor.com')
 
 @section('content')
 <style>
@@ -20,9 +20,10 @@
             <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">যেকোনো ফর্ম বা দলিল খুব সহজেই তৈরি করুন।</p>
         </div>
         
-        <div style="display: flex; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap;">
             <a href="{{ route('document.index') }}" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: #fff; background: rgba(255,255,255,0.1); box-shadow: 0 2px 5px rgba(0,0,0,0.2);">সকল ডকুমেন্ট</a>
             <a href="{{ route('document.favorites') }}" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: var(--text-muted); transition: all 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">আমার প্রিয় <i class="material-icons-round" style="font-size: 1rem; vertical-align: middle; color: #f43f5e;">favorite</i></a>
+            <a href="{{ route('saved-documents.index', ['type' => 'document']) }}" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: #818cf8; background: rgba(79, 70, 229, 0.15); border: 1px solid rgba(79, 70, 229, 0.3); transition: all 0.2s;">সংরক্ষিত ফাইল <i class="material-icons-round" style="font-size: 1rem; vertical-align: middle;">folder_special</i></a>
         </div>
     </div>
     

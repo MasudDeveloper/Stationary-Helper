@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'পিডিএফ এডিটর - Smart Stationary')
+@section('title', 'পিডিএফ এডিটর - penghor.com')
 
 @section('content')
 <!-- pdf-lib CDN -->

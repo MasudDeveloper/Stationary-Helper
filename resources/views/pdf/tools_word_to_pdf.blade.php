@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'ওয়ার্ড টু পিডিএফ - Smart Stationary')
+@section('title', 'ওয়ার্ড টু পিডিএফ - penghor.com')
 
 @section('content')
 <!-- Mammoth.js for Word to HTML -->

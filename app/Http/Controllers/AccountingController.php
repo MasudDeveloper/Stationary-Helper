@@ -137,7 +137,8 @@ class AccountingController extends Controller
 
         try {
             // Check status first
-            $statusResp = \Illuminate\Support\Facades\Http::timeout(5)->get("http://localhost:3001/status/{$user->id}");
+            $whatsappUrl = env('WHATSAPP_SERVER_URL', (request()->getHost() === 'localhost' || request()->getHost() === '127.0.0.1') ? 'http://localhost:3001' : 'https://whatsapp.' . preg_replace('/^www\./', '', request()->getHost()));
+            $statusResp = \Illuminate\Support\Facades\Http::timeout(5)->get("{$whatsappUrl}/status/{$user->id}");
             if (!$statusResp->successful() || $statusResp->json('status') !== 'CONNECTED') {
                 return response()->json([
                     'success' => false,
@@ -149,7 +150,7 @@ class AccountingController extends Controller
             $parts = explode(',', $request->pdf_base64);
             $base64 = end($parts);
 
-            $response = \Illuminate\Support\Facades\Http::post("http://localhost:3001/send", [
+            $response = \Illuminate\Support\Facades\Http::post("{$whatsappUrl}/send", [
                 'userId' => $user->id,
                 'phone' => $request->phone,
                 'message' => $request->message ?? 'আপনার ইনভয়েস / ক্যাশ মেমো পাঠানো হয়েছে।',

@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'লগিন - সহজ কাজ')
+@section('title', 'লগিন - penghor.com')
 
 @section('content')
 <div class="auth-wrapper">
     <div class="auth-left">
         <div class="text-center" style="color: white; max-width: 400px; display: flex; flex-direction: column; align-items: center;">
-            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 50%; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.2);">
-                <i class="material-icons-round" style="font-size: 4rem; color: #a5b4fc;">storefront</i>
+            <div style="margin-bottom: 25px;">
+                <img src="{{ asset('images/logo.png') }}" alt="penghor.com Logo" style="height: 80px; width: auto; object-fit: contain;">
             </div>
-            <h1 style="font-size: 3rem; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.02em;">
-                <span class="text-white">Smart</span><span class="text-gradient" style="background: linear-gradient(135deg, #a5b4fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Station</span>
+            <h1 style="font-size: 2.8rem; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.02em;">
+                <span class="text-white">penghor</span><span class="text-gradient" style="background: linear-gradient(135deg, #a5b4fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.com</span>
             </h1>
             <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-muted);">উন্নত ডিজিটাল টুলস এবং এআই সার্ভিসের স্মার্ট দুনিয়ায় আপনাকে স্বাগতম।</p>
         </div>

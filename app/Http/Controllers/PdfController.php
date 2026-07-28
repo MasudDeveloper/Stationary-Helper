@@ -25,8 +25,29 @@ class PdfController extends Controller
                 ['icon' => 'document_scanner', 'gradient_class' => 'grad-pink', 'is_hot' => true, 'route_name' => 'pdf.tools.document_scanner', 'order' => 18, 'is_active' => true]
             );
         }
+        if (\App\Models\PdfTool::where('route_name', 'pdf.tools.jpg_to_pdf')->doesntExist()) {
+            \App\Models\PdfTool::updateOrCreate(
+                ['title' => 'জেপিজি টু পিডিএফ (JPG to PDF)'],
+                ['icon' => 'picture_as_pdf', 'gradient_class' => 'grad-red', 'is_hot' => true, 'route_name' => 'pdf.tools.jpg_to_pdf', 'order' => 19, 'is_active' => true]
+            );
+        }
         $tools = \App\Models\PdfTool::where('is_active', true)->orderBy('order')->get();
-        return view('pdf.tools', compact('tools'));
+        
+        $pdfTitles = [
+            'পেজ রিমুভ', 'পিডিএফ ওয়াটারমার্ক', 'পিডিএফ পারমিশন', 'পিডিএফ রিসাইজ', 
+            'পিডিএফ ক্রপ', 'পিডিএফ টু এক্সেল', 'পিডিএফ রিপেয়ার', 'এনআইডি টু পিডিএফ', 
+            'পাসপোর্ট টু পিডিএফ', 'জেপিজি টু পিডিএফ (JPG to PDF)', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)'
+        ];
+
+        $pdfTools = $tools->filter(function($tool) use ($pdfTitles) {
+            return in_array($tool->title, $pdfTitles) || str_contains(strtolower($tool->title), 'pdf') || str_contains($tool->title, 'পিডিএফ');
+        });
+
+        $imageTools = $tools->reject(function($tool) use ($pdfTools) {
+            return $pdfTools->contains('id', $tool->id);
+        });
+
+        return view('pdf.tools', compact('tools', 'pdfTools', 'imageTools'));
     }
 
     public function pageRemove()
@@ -150,5 +171,10 @@ class PdfController extends Controller
     public function documentScanner()
     {
         return view('pdf.tools_document_scanner');
+    }
+
+    public function jpgToPdf()
+    {
+        return view('pdf.tools_jpg_to_pdf');
     }
 }

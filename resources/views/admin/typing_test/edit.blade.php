@@ -1,6 +1,6 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
-@section('title', 'Edit Typing Test - Smart Stationary')
+@section('title', 'Edit Typing Test - penghor.com')
 
 @section('content')
 <div class="container" style="padding: 20px;">

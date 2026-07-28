@@ -52,6 +52,23 @@
                 </div>
             </div>
             
+            @php
+                $aiCostSetting = \App\Models\Setting::where('key', 'ai_image_cost')->value('value');
+                $aiCostVal = ($aiCostSetting !== null && $aiCostSetting !== '') ? (float) $aiCostSetting : 0;
+            @endphp
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 5px;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">AI মডেল: Pollinations AI (Unlimited)</span>
+                @if ($aiCostVal == 0)
+                    <span style="font-size: 0.85rem; color: #10b981; font-weight: 600; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <i class="material-icons-round" style="font-size: 1rem; vertical-align: middle; margin-right: 2px;">check_circle</i> সম্পূর্ণ ফ্রি (0 Credit)
+                    </span>
+                @else
+                    <span style="font-size: 0.85rem; color: #f59e0b; font-weight: 600; background: rgba(245, 158, 11, 0.1); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <i class="material-icons-round" style="font-size: 1rem; vertical-align: middle; margin-right: 2px;">monetization_on</i> খরচ: {{ $aiCostVal }} ক্রেডিট / ছবি
+                    </span>
+                @endif
+            </div>
+
             <button onclick="generateImage()" id="btn-generate" class="btn" style="width: 100%; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff; border: none; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);">ইমেজ জেনারেট করুন</button>
 
             <!-- Result Area -->
@@ -75,8 +92,8 @@
                     <i class="material-icons-round" style="font-size: 2.5rem;">layers_clear</i>
                 </div>
                 <div>
-                    <h3 style="margin: 0; color: #fff; font-weight: 700;">২. ব্যাকগ্রাউন্ড রিমুভার</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 5px 0 0 0;">আপনার ছবির ব্যাকগ্রাউন্ড স্বয়ংক্রিয়ভাবে মুছে ফেলুন</p>
+                    <h3 style="margin: 0; color: #fff; font-weight: 700;">২. ব্যাকগ্রাউন্ড রিমুভার <span style="background: #10b981; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; vertical-align: middle; margin-left: 5px; font-weight: 600;">সম্পূর্ণ ফ্রি</span></h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 5px 0 0 0;">আপনার ছবির ব্যাকগ্রাউন্ড স্বয়ংক্রিয়ভাবে মুছে ফেলুন (কোনো ক্রেডিট কাটা হবে না)</p>
                 </div>
             </div>
             
@@ -90,7 +107,7 @@
                 <img id="bg-preview-img" src="" alt="Uploaded" style="max-width: 150px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
             </div>
             
-            <button onclick="removeBackground()" id="btn-bg-remove" class="btn" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff; border: none; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);" disabled>ব্যাকগ্রাউন্ড রিমুভ করুন</button>
+            <button onclick="removeBackground()" id="btn-bg-remove" class="btn" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);" disabled><i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">auto_awesome</i> ব্যাকগ্রাউন্ড রিমুভ করুন (সম্পূর্ণ ফ্রি)</button>
 
             <!-- Result Area -->
             <div id="bg-result-container" style="margin-top: 25px; text-align: center; display: none;">
@@ -183,24 +200,24 @@
         }
     }
 
-    function removeBackground() {
+    async function removeBackground() {
         if (!uploadedImageBase64) return;
 
         document.getElementById('bg-loader').style.display = 'block';
         document.getElementById('bg-result-container').style.display = 'none';
         document.getElementById('btn-bg-remove').disabled = true;
 
-        // Deduct Credit via DB Request first
-        fetch('{{ route("design.ai_hub.bg_remove") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ image: uploadedImageBase64 })
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            // Deduct Credit via DB Request first
+            const res = await fetch('{{ route("design.ai_hub.bg_remove") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ image: uploadedImageBase64 })
+            });
+            const data = await res.json();
             if (data.error) {
                 document.getElementById('bg-loader').style.display = 'none';
                 document.getElementById('btn-bg-remove').disabled = false;
@@ -211,53 +228,95 @@
             // Update Balance
             document.getElementById('credit-balance').innerText = data.remaining_credits;
 
-            // Execute actual client-side background keying (Chroma-key style removal)
+            // Execute client-side AI Background Removal using @imgly/background-removal
+            const module = await import('https://esm.sh/@imgly/background-removal@1.4.5');
+            const removeBg = module.default || module.removeBackground;
+            if (!removeBg) throw new Error("এআই লাইব্রেরি লোড হতে ব্যর্থ হয়েছে।");
+
+            const config = {
+                publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/'
+            };
+
+            let rawBlob = await removeBg(uploadedImageBase64, config);
+            let cleanBlob = await cleanEdges(rawBlob);
+            let transparentUrl = URL.createObjectURL(cleanBlob);
+
             const img = new Image();
-            img.src = uploadedImageBase64;
             img.onload = function() {
                 const canvas = document.getElementById('bg-result-canvas');
                 const ctx = canvas.getContext('2d');
                 canvas.width = img.width;
                 canvas.height = img.height;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0);
-
-                // Chroma-Key/Thresholding: Erasure of standard background color (top-left pixel matches)
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const dataPixels = imgData.data;
-                
-                // Get target key color from top-left pixel
-                const rKey = dataPixels[0];
-                const gKey = dataPixels[1];
-                const bKey = dataPixels[2];
-                const tolerance = 45; // Match tolerance
-
-                for (let i = 0; i < dataPixels.length; i += 4) {
-                    const r = dataPixels[i];
-                    const g = dataPixels[i+1];
-                    const b = dataPixels[i+2];
-
-                    // Check if current pixel color matches the key color within tolerance
-                    const diff = Math.sqrt(
-                        Math.pow(r - rKey, 2) +
-                        Math.pow(g - gKey, 2) +
-                        Math.pow(b - bKey, 2)
-                    );
-
-                    if (diff < tolerance) {
-                        dataPixels[i+3] = 0; // Make pixel fully transparent
-                    }
-                }
-                ctx.putImageData(imgData, 0, 0);
 
                 document.getElementById('bg-loader').style.display = 'none';
                 document.getElementById('btn-bg-remove').disabled = false;
                 document.getElementById('bg-result-container').style.display = 'block';
             };
-        })
-        .catch(err => {
+            img.src = transparentUrl;
+
+        } catch (err) {
+            console.error(err);
             document.getElementById('bg-loader').style.display = 'none';
             document.getElementById('btn-bg-remove').disabled = false;
-            Swal.fire('ব্যাকগ্রাউন্ড রিমুভ করার সময় ত্রুটি ঘটেছে।');
+            Swal.fire('ব্যাকগ্রাউন্ড রিমুভ করার সময় ত্রুটি ঘটেছে: ' + (err.message || ''));
+        }
+    }
+
+    function cleanEdges(blob) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        let idx = (y * width + x) * 4;
+                        let alpha = data[idx + 3];
+                        
+                        if (alpha > 10) {
+                            let isEdge = false;
+                            const offsets = [
+                                [-2,0], [2,0], [0,-2], [0,2],
+                                [-1,-1], [1,-1], [-1,1], [1,1]
+                            ];
+                            for(let i=0; i<offsets.length; i++) {
+                                let nx = x + offsets[i][0];
+                                let ny = y + offsets[i][1];
+                                if(nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                    if(data[(ny * width + nx) * 4 + 3] < 20) {
+                                        isEdge = true;
+                                        break;
+                                    }
+                                } else {
+                                    isEdge = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (isEdge && alpha < 240) {
+                                data[idx + 3] = Math.max(0, alpha - 80);
+                                data[idx] = Math.max(0, data[idx] - 40);
+                                data[idx + 1] = Math.max(0, data[idx + 1] - 40);
+                                data[idx + 2] = Math.max(0, data[idx + 2] - 40);
+                            }
+                        }
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                canvas.toBlob(resolve, 'image/png');
+            };
+            img.src = URL.createObjectURL(blob);
         });
     }
 

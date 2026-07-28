@@ -37,6 +37,7 @@ class PdfToolSeeder extends Seeder
             ['title' => 'ইমেজ কনভার্ট', 'icon' => 'transform', 'gradient_class' => 'grad-cyan', 'is_hot' => true, 'route_name' => null, 'order' => 14],
             ['title' => 'কিউআর কোড জেনারেটর', 'icon' => 'qr_code_2', 'gradient_class' => 'grad-cyan', 'is_hot' => true, 'route_name' => null, 'order' => 15],
             ['title' => 'ইমেজ রিসাইজ', 'icon' => 'photo_size_select_large', 'gradient_class' => 'grad-blue', 'is_hot' => false, 'route_name' => null, 'order' => 16],
+            ['title' => 'জেপিজি টু পিডিএফ (JPG to PDF)', 'icon' => 'picture_as_pdf', 'gradient_class' => 'grad-red', 'is_hot' => true, 'route_name' => 'pdf.tools.jpg_to_pdf', 'order' => 19],
         ];
 
         foreach ($tools as $tool) {

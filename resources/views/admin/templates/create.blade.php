@@ -1,6 +1,6 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
-@section('title', 'Add Template - Smart Stationary')
+@section('title', 'Add Template - penghor.com')
 
 @section('content')
 <!-- TinyMCE CDN -->

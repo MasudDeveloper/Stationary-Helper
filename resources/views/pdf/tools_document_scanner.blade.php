@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner Perspective Crop) - Smart Stationary')
+@section('title', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner Perspective Crop) - penghor.com')
 
 @section('content')
 <style>
@@ -632,7 +632,7 @@
         const win = window.open('', '_blank');
         win.document.write(`
             <html>
-            <head><title>Print Scanned Document - Smart Stationary</title></head>
+            <head><title>Print Scanned Document - penghor.com</title></head>
             <body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center; min-height:100vh;">
                 <img src="${dataUrl}" style="max-width:100%; max-height:100vh; display:block;" onload="window.print();">
             </body>

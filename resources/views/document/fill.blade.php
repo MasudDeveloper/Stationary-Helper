@@ -30,7 +30,7 @@ $marginRight = $template->margin_right ?? 20;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $template->name }} - Smart Stationary</title>
+    <title>{{ $template->name }} - penghor.com</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -68,15 +68,16 @@ $marginRight = $template->margin_right ?? 20;
 
         .a4-paper {
             background: #fff;
-            width: {{ $pageWidth }};
-            min-height: {{ $pageHeight }};
-            padding: {{ $marginTop }}mm {{ $marginRight }}mm {{ $marginBottom }}mm {{ $marginLeft }}mm;
+            width: var(--page-w, 210mm);
+            min-height: var(--page-h, 297mm);
+            padding: var(--page-p, 10mm 20mm 20mm 20mm);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-family: 'Kalpurush', Arial, sans-serif;
             font-size: 16pt;
             line-height: 1.6;
             color: #000;
             margin: 0 auto;
+            position: relative;
         }
 
         .placeholder-highlight {
@@ -155,8 +156,32 @@ $marginRight = $template->margin_right ?? 20;
 
         .sidebar-body {
             flex: 1;
-            overflow-y: auto;
             padding: 20px;
+            overflow-y: auto;
+        }
+
+        .form-control, .dynamic-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            font-family: 'Inter', 'Kalpurush', Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .form-control:focus, .dynamic-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-control:hover, .dynamic-input:hover {
+            border-color: #94a3b8;
         }
 
         .sidebar-footer {
@@ -165,27 +190,19 @@ $marginRight = $template->margin_right ?? 20;
             background: #f9fafb;
         }
 
-        .dynamic-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            margin-top: 5px;
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
-
-        .dynamic-input:focus {
-            border-color: #3b82f6;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
         .btn-primary {
             background: #3b82f6;
-            color: #fff;
+            color: white;
             border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
             transition: background 0.2s;
         }
 
@@ -193,7 +210,27 @@ $marginRight = $template->margin_right ?? 20;
             background: #2563eb;
         }
 
-        /* Toggle Button */
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Toggle Sidebar Button */
         .toggle-sidebar-btn {
             position: absolute;
             left: -40px;
@@ -217,6 +254,41 @@ $marginRight = $template->margin_right ?? 20;
             background: #f9fafb;
         }
 
+        .watermark {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0.16;
+            overflow: hidden;
+        }
+
+        .watermark-item {
+            font-size: 32px;
+            font-weight: 900;
+            color: #000000;
+            font-family: 'Inter', Arial, sans-serif;
+            transform: rotate(-35deg);
+            user-select: none;
+            white-space: nowrap;
+            padding: 10px 20px;
+            border: 2px dashed rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            margin: 25px;
+            letter-spacing: 2px;
+        }
+
+        body.no-watermark .watermark {
+            display: none !important;
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .form-sidebar {
@@ -230,11 +302,6 @@ $marginRight = $template->margin_right ?? 20;
 
         /* Print Styles */
         @media print {
-            @page {
-                size: {{ strtolower($template->page_size ?? 'a4') }} {{ strtolower($template->page_orientation ?? 'portrait') }};
-                margin: 0;
-            }
-
             body,
             html {
                 margin: 0;
@@ -265,12 +332,13 @@ $marginRight = $template->margin_right ?? 20;
 
             .a4-paper {
                 margin: 0;
-                padding: {{ $marginTop }}mm {{ $marginRight }}mm {{ $marginBottom }}mm {{ $marginLeft }}mm;
+                padding: var(--page-p, 10mm 20mm 20mm 20mm);
                 box-shadow: none;
-                width: {{ $pageWidth }};
+                width: var(--page-w, 210mm);
                 min-height: auto;
                 background: #ffffff !important;
                 color: #000000 !important;
+                position: relative !important;
             }
 
             .placeholder-highlight {
@@ -284,17 +352,39 @@ $marginRight = $template->margin_right ?? 20;
             }
 
             .watermark {
-                display: block !important;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 9999;
-                pointer-events: none;
-                opacity: 0.15;
-                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" transform="rotate(-45 150 150)" font-family="Arial" font-size="40" fill="black" font-weight="bold">Smart Stationary</text></svg>');
-                background-repeat: repeat;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: space-around !important;
+                align-content: space-around !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                z-index: 99 !important;
+                pointer-events: none !important;
+                opacity: 0.16 !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            .watermark-item {
+                font-size: 32px !important;
+                font-weight: 900 !important;
+                color: #000000 !important;
+                font-family: 'Inter', Arial, sans-serif !important;
+                transform: rotate(-35deg) !important;
+                user-select: none !important;
+                white-space: nowrap !important;
+                padding: 10px 20px !important;
+                border: 2px dashed rgba(0, 0, 0, 0.35) !important;
+                border-radius: 10px !important;
+                margin: 25px !important;
+                letter-spacing: 2px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             body.no-watermark .watermark {
@@ -302,15 +392,17 @@ $marginRight = $template->margin_right ?? 20;
             }
         }
     </style>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php
+    echo '<style>@media print { @page { size: ' . $pageSize . ' ' . $orientation . '; margin: 0; } }</style>';
+    @endphp
 </head>
 
-<body>
+<body class="no-watermark">
 
     <div class="layout-wrapper">
         <!-- Document Preview -->
         <div class="doc-preview-pane">
-            <div class="a4-paper" id="printable-doc">
+            <div class="a4-paper" id="printable-doc" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}" style="--page-w: {{ $pageWidth }}; --page-h: {{ $pageHeight }}; --page-p: {{ $marginTop }}mm {{ $marginRight }}mm {{ $marginBottom }}mm {{ $marginLeft }}mm;">
                 @php
                 $previewContent = $template->content;
                 foreach ($fields as $field) {
@@ -345,7 +437,7 @@ $marginRight = $template->margin_right ?? 20;
                         <label style="font-weight: 500; color: #374151; font-size: 0.9rem; margin-bottom: 5px; display: block;">
                             {{ str_replace('-', ' ', Str::title($field)) }}
                         </label>
-                        <input type="text" class="dynamic-input" data-target="{{ $field }}" placeholder="Enter {{ str_replace('-', ' ', $field) }}" oninput="updatePreview(this)">
+                        <input type="text" class="form-control dynamic-input" data-target="{{ $field }}" placeholder="Enter {{ str_replace('-', ' ', $field) }}" value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
                     </div>
                     @endforeach
                 </div>
@@ -355,10 +447,13 @@ $marginRight = $template->margin_right ?? 20;
                         <button onclick="printDemo()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #6b7280;">
                             <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">visibility</i> ডেমো দেখুন (জলছাপ সহ)
                         </button>
-                        <button onclick="finalPrint({{ $template->id }}, {{ $template->credit_cost ?? 5 }})" id="finalPrintBtn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
+                        <button id="saveDocBtn" data-id="{{ $template->id }}" data-type="document" data-title="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #4f46e5; color: #fff;">
+                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">save</i> সংরক্ষণ করুন (Save)
+                        </button>
+                        <button id="finalPrintBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
                             <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ (ক্রেডিট লাগবে)
                         </button>
-                        <button onclick="sendViaWhatsApp({{ $template->id }}, {{ $template->credit_cost ?? 5 }}, '{{ addslashes($template->name) }}')" id="whatsappBtn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
+                        <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
                             <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">chat</i> WhatsApp-এ পাঠান
                         </button>
                     </div>
@@ -409,18 +504,121 @@ $marginRight = $template->margin_right ?? 20;
                 if (input.value) updatePreview(input);
             });
 
-            // Add watermark div
+            // Add watermark div inside the A4 paper container
             const watermarkDiv = document.createElement('div');
             watermarkDiv.className = 'watermark';
-            document.body.appendChild(watermarkDiv);
+            let wmHtml = '';
+            for (let i = 0; i < 6; i++) {
+                wmHtml += '<div class="watermark-item">penghor.com</div>';
+            }
+            watermarkDiv.innerHTML = wmHtml;
+            const paperDoc = document.getElementById('printable-doc');
+            if (paperDoc) {
+                paperDoc.appendChild(watermarkDiv);
+            } else {
+                document.body.appendChild(watermarkDiv);
+            }
+
+            // Attach click listeners to buttons to avoid inline Blade evaluation in attributes
+            const finalPrintBtn = document.getElementById('finalPrintBtn');
+            if (finalPrintBtn) {
+                finalPrintBtn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const cost = this.getAttribute('data-cost');
+                    const name = this.getAttribute('data-name');
+                    finalPrint(id, cost, name);
+                });
+            }
+
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (whatsappBtn) {
+                whatsappBtn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const cost = this.getAttribute('data-cost');
+                    const name = this.getAttribute('data-name');
+                    sendViaWhatsApp(id, cost, name);
+                });
+            }
+
+            const saveDocBtn = document.getElementById('saveDocBtn');
+            if (saveDocBtn) {
+                saveDocBtn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const type = this.getAttribute('data-type');
+                    const title = this.getAttribute('data-title');
+                    saveDocument(id, type, title);
+                });
+            }
         });
+
+        async function saveDocument(id, type, defaultTitle) {
+            const { value: title } = await Swal.fire({
+                title: 'ডকুমেন্ট সংরক্ষণ করুন',
+                input: 'text',
+                inputLabel: 'ডকুমেন্টের একটি নাম দিন',
+                inputValue: defaultTitle,
+                showCancelButton: true,
+                confirmButtonText: 'সংরক্ষণ করুন',
+                cancelButtonText: 'বাতিল',
+                inputValidator: (value) => {
+                    if (!value) return 'নাম দিতে হবে!';
+                }
+            });
+
+            if (!title) return;
+
+            const formData = {};
+            document.querySelectorAll('.dynamic-input').forEach(input => {
+                const target = input.getAttribute('data-target');
+                formData[target] = input.value;
+            });
+
+            const btn = document.getElementById('saveDocBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="material-icons-round" style="vertical-align: middle; animation: spin 1s linear infinite;">sync</i> সংরক্ষণ হচ্ছে...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`/saved-documents`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        template_id: id,
+                        type: type,
+                        title: title,
+                        form_data: formData
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire('সফল!', data.message, 'success');
+                } else {
+                    Swal.fire('ত্রুটি!', 'সংরক্ষণ করা সম্ভব হয়নি।', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire('ত্রুটি!', 'সার্ভার এরর হয়েছে।', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
 
         function printDemo() {
             document.body.classList.remove('no-watermark');
             window.print();
+            setTimeout(() => {
+                document.body.classList.add('no-watermark');
+            }, 1000);
+            window.addEventListener('afterprint', () => {
+                document.body.classList.add('no-watermark');
+            }, { once: true });
         }
 
-        async function finalPrint(id, creditCost) {
+        async function finalPrint(id, creditCost, templateName = 'Document') {
             const result = await Swal.fire({
                 title: 'আপনি কি নিশ্চিত?',
                 text: `ফাইনাল প্রিন্ট করার জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
@@ -456,17 +654,39 @@ $marginRight = $template->margin_right ?? 20;
                     // Ensure watermark is hidden
                     document.body.classList.add('no-watermark');
 
-                    // Show success alert briefly
-                    await Swal.fire({
+                    // Show success alert briefly without blocking
+                    Swal.fire({
                         title: 'সফল!',
-                        text: data.message,
+                        text: 'ক্রেডিট কাটা হয়েছে! ফাইল সেভ ও প্রিন্ট হচ্ছে...',
                         icon: 'success',
-                        timer: 1500,
+                        timer: 1200,
                         showConfirmButton: false
                     });
 
-                    // Trigger print
-                    window.print();
+                    // 1. Automatically save/download PDF to user's computer
+                    const element = document.getElementById('printable-doc');
+                    const opt = {
+                        margin: 0,
+                        filename: templateName + '.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true },
+                        jsPDF: {
+                            unit: 'mm',
+                            format: element ? (element.getAttribute('data-size') || 'a4') : 'a4',
+                            orientation: element ? (element.getAttribute('data-orientation') || 'portrait') : 'portrait'
+                        }
+                    };
+
+                    setTimeout(() => {
+                        Swal.close();
+                        if (typeof html2pdf !== 'undefined' && element) {
+                            html2pdf().set(opt).from(element).save();
+                        }
+                        // 2. Open print dialog after 500ms
+                        setTimeout(() => {
+                            window.print();
+                        }, 500);
+                    }, 1200);
                 } else {
                     Swal.fire('দুঃখিত!', data.message || 'ক্রেডিট কাটাতে সমস্যা হয়েছে।', 'error');
                 }
@@ -531,8 +751,8 @@ $marginRight = $template->margin_right ?? 20;
                     },
                     jsPDF: {
                         unit: 'mm',
-                        format: '{{ strtolower($template->page_size ?? 'a4') }}',
-                        orientation: '{{ strtolower($template->page_orientation ?? 'portrait') }}'
+                        format: element.getAttribute('data-size') || 'a4',
+                        orientation: element.getAttribute('data-orientation') || 'portrait'
                     }
                 };
 

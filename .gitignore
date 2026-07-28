@@ -23,4 +23,13 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /whatsapp-server/.wwebjs_auth
+/whatsapp-server/.wwebjs_cache
 /whatsapp-server/node_modules
+
+# Archives and Backups
+*.zip
+*.rar
+*.tar
+*.gz
+*.sql
+*.bak

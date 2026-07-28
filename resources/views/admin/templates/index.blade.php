@@ -1,6 +1,6 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
-@section('title', 'Document Templates - Smart Stationary')
+@section('title', 'Document Templates - penghor.com')
 
 @section('content')
 <div class="container" style="padding: 20px;">

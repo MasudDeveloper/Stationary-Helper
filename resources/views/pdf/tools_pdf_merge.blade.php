@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'পিডিএফ মার্জ - Smart Stationary')
+@section('title', 'পিডিএফ মার্জ - penghor.com')
 
 @section('content')
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>

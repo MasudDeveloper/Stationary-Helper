@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'ইমেজ এক্সট্রাক্ট - Smart Stationary')
+@section('title', 'ইমেজ এক্সট্রাক্ট - penghor.com')
 
 @section('content')
 <!-- PDF.js CDN -->

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CvTemplate;
+use App\Models\SavedDocument;
 use Illuminate\Support\Facades\Auth;
 
 class CvController extends Controller
@@ -14,14 +15,22 @@ class CvController extends Controller
         return view('cv.index', compact('templates'));
     }
 
-    public function fill($id)
+    public function fill(Request $request, $id)
     {
         $template = CvTemplate::where('is_active', true)->findOrFail($id);
         
         // Decode the fields json
         $fields = json_decode($template->fields_data, true) ?? [];
         
-        return view('cv.fill', compact('template', 'fields'));
+        $savedData = [];
+        if ($request->query('saved_id')) {
+            $savedDoc = SavedDocument::where('user_id', Auth::id())->find($request->query('saved_id'));
+            if ($savedDoc && $savedDoc->form_data) {
+                $savedData = $savedDoc->form_data;
+            }
+        }
+
+        return view('cv.fill', compact('template', 'fields', 'savedData'));
     }
 
     public function deductCredit($id)
@@ -69,7 +78,8 @@ class CvController extends Controller
         }
 
         try {
-            $statusResp = \Illuminate\Support\Facades\Http::timeout(5)->get("http://localhost:3001/status/{$user->id}");
+            $whatsappUrl = env('WHATSAPP_SERVER_URL', (request()->getHost() === 'localhost' || request()->getHost() === '127.0.0.1') ? 'http://localhost:3001' : 'https://whatsapp.' . preg_replace('/^www\./', '', request()->getHost()));
+            $statusResp = \Illuminate\Support\Facades\Http::timeout(5)->get("{$whatsappUrl}/status/{$user->id}");
             if (!$statusResp->successful() || $statusResp->json('status') !== 'CONNECTED') {
                 return response()->json([
                     'success' => false,
@@ -80,7 +90,7 @@ class CvController extends Controller
             $parts = explode(',', $request->pdf_base64);
             $base64 = end($parts);
 
-            $response = \Illuminate\Support\Facades\Http::post("http://localhost:3001/send", [
+            $response = \Illuminate\Support\Facades\Http::post("{$whatsappUrl}/send", [
                 'userId' => $user->id,
                 'phone' => $request->phone,
                 'message' => 'আপনার রিকুয়েস্ট করা সিভিটি পাঠানো হয়েছে।',

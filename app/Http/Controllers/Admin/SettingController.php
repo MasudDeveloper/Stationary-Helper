@@ -29,6 +29,7 @@ class SettingController extends Controller
             'whatsapp_provider' => 'nullable|string',
             'whatsapp_instance_id' => 'nullable|string',
             'whatsapp_token' => 'nullable|string',
+            'ai_image_cost' => 'nullable|numeric|min:0',
         ]);
 
         Setting::updateOrCreate(['key' => 'ocr_engine'], ['value' => $request->ocr_engine]);
@@ -36,6 +37,7 @@ class SettingController extends Controller
         Setting::updateOrCreate(['key' => 'whatsapp_provider'], ['value' => $request->whatsapp_provider]);
         Setting::updateOrCreate(['key' => 'whatsapp_instance_id'], ['value' => $request->whatsapp_instance_id]);
         Setting::updateOrCreate(['key' => 'whatsapp_token'], ['value' => $request->whatsapp_token]);
+        Setting::updateOrCreate(['key' => 'ai_image_cost'], ['value' => $request->ai_image_cost ?? '0']);
 
         return redirect()->back()->with('success', 'Settings updated successfully.');
     }

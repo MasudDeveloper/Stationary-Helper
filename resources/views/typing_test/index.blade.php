@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'টাইপিং স্পিড টেস্ট (Typing Speed Test) - Smart Stationary')
+@section('title', 'টাইপিং স্পিড টেস্ট (Typing Speed Test) - penghor.com')
 
 @section('content')
 <style>

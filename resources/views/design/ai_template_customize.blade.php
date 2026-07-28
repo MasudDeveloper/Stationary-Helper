@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'স্টাইল কাস্টমাইজ করুন - সহজ কাজ')
 
@@ -238,7 +238,7 @@
             if (data.success) {
                 // Download the canvas as image file
                 const link = document.createElement('a');
-                link.download = `ShohozKaj_Poster_${Date.now()}.png`;
+                link.download = `penghor.com_Poster_${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 document.body.appendChild(link);
                 link.click();

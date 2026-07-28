@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Smart Stationary')</title>
+    <title>@yield('title', 'penghor.com')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <!-- Material Icons for Modern Design -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -20,10 +20,13 @@
         <!-- Sidebar -->
         <aside class="app-sidebar no-print" id="appSidebar">
             <a href="{{ route('dashboard') }}" class="sidebar-logo">
-                <div class="sidebar-logo-title">
-                    <span class="text-white">Smart</span><span class="text-gradient">Station</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="{{ asset('images/logo.png') }}" alt="penghor.com Logo" style="height: 38px; width: auto; object-fit: contain;">
+                    <div class="sidebar-logo-title" style="margin: 0; line-height: 1.2;">
+                        <span class="text-white" style="font-size: 1.35rem; font-weight: 800; letter-spacing: 0.5px;">penghor</span><span class="text-gradient" style="font-size: 1.35rem; font-weight: 800;">.com</span>
+                    </div>
                 </div>
-                <div class="sidebar-logo-subtitle">ADMIN CONSOLE</div>
+                <div class="sidebar-logo-subtitle" style="margin-top: 4px; letter-spacing: 2px;">DIGITAL PLATFORM</div>
             </a>
             
             <ul class="sidebar-menu">
@@ -31,6 +34,11 @@
                 <li>
                     <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="material-icons-round">dashboard</i><span>ড্যাশবোর্ড</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('saved-documents.index') }}" class="sidebar-link {{ request()->routeIs('saved-documents.*') ? 'active' : '' }}" style="background: rgba(79, 70, 229, 0.15); border: 1px solid rgba(79, 70, 229, 0.3); color: #818cf8; font-weight: 700;">
+                        <i class="material-icons-round" style="color: #818cf8;">folder_special</i><span>সংরক্ষিত ফাইল (Saved)</span>
                     </a>
                 </li>
                 <li>
@@ -48,18 +56,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('pdf.editor') }}" class="sidebar-link {{ request()->routeIs('pdf.editor') ? 'active' : '' }}">
-                        <i class="material-icons-round">edit_note</i><span>পিডিএফ এডিটর</span>
-                    </a>
-                </li>
-                <li>
                     <a href="{{ route('photo.index') }}" class="sidebar-link {{ request()->routeIs('photo.index') ? 'active' : '' }}">
                         <i class="material-icons-round">portrait</i><span>ছবি মেকার</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('pdf.tools') }}" class="sidebar-link {{ request()->routeIs('pdf.tools') ? 'active' : '' }}">
-                        <i class="material-icons-round">library_books</i><span>পিডিএফ টুলস</span>
+                        <i class="material-icons-round">build_circle</i><span>ছবি ও পিডিএফ টুলস</span>
                     </a>
                 </li>
                 <li>
@@ -113,6 +116,36 @@
                 @endif
             </ul>
 
+            <!-- Sidebar Ad Slot -->
+            @php
+                $sidebarAds = \App\Models\LocalAd::where('is_active', true)->where('slot', 'sidebar')->get();
+            @endphp
+            @if ($sidebarAds->count() === 1)
+                @php $ad = $sidebarAds->first(); @endphp
+                <div style="padding: 15px; text-align: center;">
+                    <a href="{{ $ad->target_url }}" target="_blank">
+                        <img src="{{ asset($ad->image_path) }}" alt="{{ $ad->title }}" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: var(--card-shadow);">
+                    </a>
+                </div>
+            @elseif ($sidebarAds->count() > 1)
+                <div style="padding: 15px; text-align: center;">
+                    <div class="ad-slider-container" id="ad-slider-sidebar" style="position: relative; overflow: hidden; border-radius: 10px; box-shadow: var(--card-shadow); display: inline-block; max-width: 100%; width: 100%;">
+                        @foreach ($sidebarAds as $index => $ad)
+                        <div class="ad-slide ad-slide-sidebar {{ $index === 0 ? 'active' : '' }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
+                            <a href="{{ $ad->target_url }}" target="_blank" style="display: block;">
+                                <img src="{{ asset($ad->image_path) }}" alt="{{ $ad->title }}" style="max-width: 100%; width: 100%; height: auto; border-radius: 10px; display: block; margin: 0 auto;">
+                            </a>
+                        </div>
+                        @endforeach
+                        <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 10; background: rgba(0,0,0,0.4); padding: 3px 6px; border-radius: 12px;">
+                            @foreach ($sidebarAds as $index => $ad)
+                            <span class="ad-dot ad-dot-sidebar {{ $index === 0 ? 'active' : '' }}" style="width: 6px; height: 6px; border-radius: 50%; background: {{ $index === 0 ? '#10b981' : 'rgba(255,255,255,0.4)' }}; transition: all 0.3s; display: inline-block;"></span>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Logout form for when user logs out -->
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
@@ -135,7 +168,8 @@
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <div class="credit-badge" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--secondary-color);">
                         <i class="material-icons-round" style="font-size: 1.1rem;">account_balance_wallet</i> 
-                        <span>Credits: {{ number_format(Auth::user()->credits) }}</span>
+                        <span style="font-weight: bold; font-size: 1rem;" id="credit-balance">{{ Auth::user()->credits }}</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">ক্রেডিট</span>
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 15px; color: var(--text-muted);">
@@ -155,15 +189,31 @@
 
             <div class="content-body">
                 @if(!request()->is('login') && !request()->is('register'))
-                <!-- Top Ad Slot -->
+                <!-- Top Ad Slot (Multi-Banner Slider) -->
                 <div class="container no-print" style="margin-bottom: 30px; text-align: center;">
                     @php
-                        $topAd = \App\Models\LocalAd::where('is_active', true)->where('slot', 'top')->first();
+                        $topAds = \App\Models\LocalAd::where('is_active', true)->where('slot', 'top')->get();
                     @endphp
-                    @if ($topAd)
-                        <a href="{{ $topAd->target_url }}" target="_blank">
-                            <img src="{{ asset($topAd->image_path) }}" alt="{{ $topAd->title }}" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: var(--card-shadow);">
+                    @if ($topAds->count() === 1)
+                        @php $ad = $topAds->first(); @endphp
+                        <a href="{{ $ad->target_url }}" target="_blank">
+                            <img src="{{ asset($ad->image_path) }}" alt="{{ $ad->title }}" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: var(--card-shadow); display: inline-block;">
                         </a>
+                    @elseif ($topAds->count() > 1)
+                        <div class="ad-slider-container" id="ad-slider-top" style="position: relative; overflow: hidden; border-radius: 12px; box-shadow: var(--card-shadow); display: inline-block; max-width: 100%; width: 100%; background: rgba(0,0,0,0.1);">
+                            @foreach ($topAds as $index => $ad)
+                            <div class="ad-slide ad-slide-top {{ $index === 0 ? 'active' : '' }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
+                                <a href="{{ $ad->target_url }}" target="_blank" style="display: block;">
+                                    <img src="{{ asset($ad->image_path) }}" alt="{{ $ad->title }}" style="max-width: 100%; width: 100%; height: auto; border-radius: 12px; display: block; margin: 0 auto;">
+                                </a>
+                            </div>
+                            @endforeach
+                            <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 15px;">
+                                @foreach ($topAds as $index => $ad)
+                                <span class="ad-dot ad-dot-top {{ $index === 0 ? 'active' : '' }}" style="width: 8px; height: 8px; border-radius: 50%; background: {{ $index === 0 ? '#10b981' : 'rgba(255,255,255,0.4)' }}; transition: all 0.3s; display: inline-block;"></span>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
                 </div>
                 @endif
@@ -171,15 +221,31 @@
                 @yield('content')
 
                 @if(!request()->is('login') && !request()->is('register'))
-                <!-- Bottom Ad Slot -->
+                <!-- Bottom Ad Slot (Multi-Banner Slider) -->
                 <div class="container no-print" style="margin-top: 40px; text-align: center;">
                     @php
-                        $bottomAd = \App\Models\LocalAd::where('is_active', true)->where('slot', 'bottom')->first();
+                        $bottomAds = \App\Models\LocalAd::where('is_active', true)->where('slot', 'bottom')->get();
                     @endphp
-                    @if ($bottomAd)
-                        <a href="{{ $bottomAd->target_url }}" target="_blank">
-                            <img src="{{ asset($bottomAd->image_path) }}" alt="{{ $bottomAd->title }}" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: var(--card-shadow);">
+                    @if ($bottomAds->count() === 1)
+                        @php $ad = $bottomAds->first(); @endphp
+                        <a href="{{ $ad->target_url }}" target="_blank">
+                            <img src="{{ asset($ad->image_path) }}" alt="{{ $ad->title }}" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: var(--card-shadow); display: inline-block;">
                         </a>
+                    @elseif ($bottomAds->count() > 1)
+                        <div class="ad-slider-container" id="ad-slider-bottom" style="position: relative; overflow: hidden; border-radius: 12px; box-shadow: var(--card-shadow); display: inline-block; max-width: 100%; width: 100%; background: rgba(0,0,0,0.1);">
+                            @foreach ($bottomAds as $index => $ad)
+                            <div class="ad-slide ad-slide-bottom {{ $index === 0 ? 'active' : '' }}" style="display: {{ $index === 0 ? 'block' : 'none' }};">
+                                <a href="{{ $ad->target_url }}" target="_blank" style="display: block;">
+                                    <img src="{{ asset($ad->image_path) }}" alt="{{ $ad->title }}" style="max-width: 100%; width: 100%; height: auto; border-radius: 12px; display: block; margin: 0 auto;">
+                                </a>
+                            </div>
+                            @endforeach
+                            <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 15px;">
+                                @foreach ($bottomAds as $index => $ad)
+                                <span class="ad-dot ad-dot-bottom {{ $index === 0 ? 'active' : '' }}" style="width: 8px; height: 8px; border-radius: 50%; background: {{ $index === 0 ? '#10b981' : 'rgba(255,255,255,0.4)' }}; transition: all 0.3s; display: inline-block;"></span>
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
                 </div>
                 @endif
@@ -189,6 +255,13 @@
     @else
         @yield('content')
     @endauth
+
+    <style>
+        @keyframes adFade {
+            0% { opacity: 0.3; transform: scale(0.99); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
 
     <script>
         function toggleSidebar() {
@@ -201,6 +274,29 @@
             if(activeLink) {
                 activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+
+            // Automatic Multi-Banner Ad Slider
+            function initAdSlider(slideClassName, dotClassName, intervalMs = 4000) {
+                const slides = document.querySelectorAll('.' + slideClassName);
+                const dots = document.querySelectorAll('.' + dotClassName);
+                if (slides.length <= 1) return; // Fixed if single banner
+
+                let currentIdx = 0;
+                setInterval(() => {
+                    slides[currentIdx].style.display = 'none';
+                    if (dots[currentIdx]) dots[currentIdx].style.background = 'rgba(255,255,255,0.4)';
+                    
+                    currentIdx = (currentIdx + 1) % slides.length;
+                    
+                    slides[currentIdx].style.display = 'block';
+                    slides[currentIdx].style.animation = 'adFade 0.8s ease-in-out';
+                    if (dots[currentIdx]) dots[currentIdx].style.background = '#10b981';
+                }, intervalMs);
+            }
+
+            initAdSlider('ad-slide-top', 'ad-dot-top', 4000);
+            initAdSlider('ad-slide-bottom', 'ad-dot-bottom', 4000);
+            initAdSlider('ad-slide-sidebar', 'ad-dot-sidebar', 4000);
         });
     </script>
 </body>

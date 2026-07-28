@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'ইমেজ কম্প্রেস - Smart Stationary')
+@section('title', 'ইমেজ কম্প্রেস - penghor.com')
 
 @section('content')
 <style>

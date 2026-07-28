@@ -41,6 +41,7 @@ use App\Http\Controllers\Admin\RechargePackageController;
 use App\Http\Controllers\Admin\CvTemplateController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\WhatsAppController;
+use App\Http\Controllers\SavedDocumentController;
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -73,6 +74,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/cv-maker/{id}/fill', [CvController::class, 'fill'])->name('cv.fill');
     Route::post('/cv-maker/{id}/deduct-credit', [CvController::class, 'deductCredit'])->name('cv.deduct.credit');
     Route::post('/cv-maker/{id}/send-whatsapp', [CvController::class, 'sendWhatsApp'])->name('cv.whatsapp.send');
+
+    // Saved Documents Routes
+    Route::get('/saved-documents', [SavedDocumentController::class, 'index'])->name('saved-documents.index');
+    Route::post('/saved-documents', [SavedDocumentController::class, 'store'])->name('saved-documents.store');
+    Route::get('/saved-documents/{id}', [SavedDocumentController::class, 'show'])->name('saved-documents.show');
+    Route::post('/saved-documents/{id}/delete', [SavedDocumentController::class, 'destroy'])->name('saved-documents.delete');
+
     // Accounting Routes
     Route::get('/accounting', [AccountingController::class, 'index'])->name('accounting.index');
     Route::post('/accounting/store', [AccountingController::class, 'storeTransaction'])->name('accounting.store');
@@ -160,6 +168,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pdf/tools/image-resize', [PdfController::class, 'imageResize'])->name('pdf.tools.image_resize');
     Route::get('/pdf/tools/joint-photo', [PdfController::class, 'jointPhoto'])->name('pdf.tools.joint_photo');
     Route::get('/pdf/tools/document-scanner', [PdfController::class, 'documentScanner'])->name('pdf.tools.document_scanner');
+    Route::get('/pdf/tools/jpg-to-pdf', [PdfController::class, 'jpgToPdf'])->name('pdf.tools.jpg_to_pdf');
 
     // Exam System Routes
     Route::get('/exams', [\App\Http\Controllers\ExamController::class, 'index'])->name('exams.index');

@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Passport Photo Auto Arrange - Smart Stationary')
+@section('title', 'Passport Photo Auto Arrange - penghor.com')
 
 @section('content')
 <style>

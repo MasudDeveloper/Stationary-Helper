@@ -48,6 +48,8 @@ function createSession(userId) {
         authStrategy: new LocalAuth({ clientId: `user_${userId}` }),
         puppeteer: {
             headless: true,
+            timeout: 60000, // 60 seconds (double the default)
+            protocolTimeout: 60000,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -55,7 +57,25 @@ function createSession(userId) {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--disable-gpu'
+                '--disable-gpu',
+                '--single-process', // Extremely important for CloudLinux limits
+                '--disable-extensions',
+                '--disable-software-rasterizer',
+                '--disable-background-networking',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-breakpad',
+                '--disable-client-side-phishing-detection',
+                '--disable-default-apps',
+                '--disable-features=TranslateUI,BlinkGenPropertyTrees',
+                '--disable-hang-monitor',
+                '--disable-ipc-flooding-protection',
+                '--disable-prompt-on-repost',
+                '--disable-renderer-backgrounding',
+                '--disable-sync',
+                '--metrics-recording-only',
+                '--mute-audio',
+                '--safebrowsing-disable-auto-update'
             ]
         }
     });
@@ -96,9 +116,15 @@ function createSession(userId) {
     sessions[userId] = client;
     client.initialize().catch(err => {
         console.error(`Error initializing client for user ${userId}:`, err);
+        io.to(userId).emit('qr_error', { userId, error: 'সার্ভারে ক্রোম/পাপেটিয়ার রান করতে সমস্যা হয়েছে: ' + (err.message || 'Unknown error') });
         delete sessions[userId];
     });
 }
+
+// Root check route for cPanel health check
+app.get('/', (req, res) => {
+    res.status(200).send('WhatsApp Server is Live and Running!');
+});
 
 // Check session status API
 app.get('/status/:userId', (req, res) => {

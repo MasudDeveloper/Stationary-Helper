@@ -27,16 +27,19 @@ class DesignAiController extends Controller
 
         $user = Auth::user();
         
-        // Determine credit cost based on account type
-        $cost = ($user->role === 'business') ? 1.00 : 5.00;
+        // Check dynamic setting from Admin panel (default is 0 for free)
+        $costSetting = \App\Models\Setting::where('key', 'ai_image_cost')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 0.00;
 
-        if ($user->credits < $cost) {
-            return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। অনুগ্রহ করে ক্রেডিট রিচার্জ করুন।'], 403);
+        if ($cost > 0 && $user->credits < $cost) {
+            return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। প্রতিটি ছবি জেনারেট করতে ' . $cost . ' ক্রেডিট প্রয়োজন। অনুগ্রহ করে রিচার্জ করুন।'], 403);
         }
 
-        // Deduct credits
-        $user->credits -= $cost;
-        $user->save();
+        // Deduct credits only if cost > 0
+        if ($cost > 0) {
+            $user->credits -= $cost;
+            $user->save();
+        }
 
         // Integrate with pollinations.ai for image generation (free, no API key required)
         $encodedPrompt = urlencode($request->prompt);
@@ -57,20 +60,12 @@ class DesignAiController extends Controller
         ]);
 
         $user = Auth::user();
-        $cost = ($user->role === 'business') ? 1.00 : 5.00;
+        $cost = 0; // Free in AI Hub
 
-        if ($user->credits < $cost) {
-            return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। অনুগ্রহ করে ক্রেডিট রিচার্জ করুন।'], 403);
-        }
-
-        // Deduct credits
-        $user->credits -= $cost;
-        $user->save();
-
-        // Return success and trigger mock/client-side transparent processing
+        // Return success without deducting any credits
         return response()->json([
             'success' => true,
-            'remaining_credits' => $user->credits,
+            'remaining_credits' => $user ? $user->credits : 0,
             'cost' => $cost
         ]);
     }

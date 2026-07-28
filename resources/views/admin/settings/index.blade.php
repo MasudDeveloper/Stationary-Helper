@@ -36,6 +36,16 @@
 
                 <hr style="border-top-color: rgba(255,255,255,0.1); margin: 30px 0;">
 
+                <h4 class="mb-3 text-info" style="color: #38bdf8 !important;"><i class="material-icons-round" style="vertical-align: middle;">palette</i> AI Hub (Image Generation) Settings</h4>
+
+                <div class="form-group mb-4">
+                    <label>AI Image Generation Cost (Credits per Image)</label>
+                    <input type="number" step="0.01" min="0" name="ai_image_cost" value="{{ $settings['ai_image_cost'] ?? '0' }}" class="form-control" placeholder="Enter cost in credits (0 for Free)" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <small class="text-muted mt-2 d-block" style="color: #94a3b8 !important;">Set to <strong style="color: #10b981;">0</strong> to make AI image generation completely FREE for all users. If you set any value (e.g. 1.00 or 5.00), that many credits will be deducted per generated image.</small>
+                </div>
+
+                <hr style="border-top-color: rgba(255,255,255,0.1); margin: 30px 0;">
+
                 <h4 class="mb-3 text-success"><i class="material-icons-round" style="vertical-align: middle;">chat</i> WhatsApp API Settings</h4>
 
                 <div class="form-group mb-4">

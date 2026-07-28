@@ -68,10 +68,10 @@
                     </label>
                     @if($isPhoto)
                         <input type="file" accept="image/*" class="form-control cv-photo-upload" data-target="[{{ $field }}]" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed #38bdf8; border-radius: 8px; color: #fff; font-size: 0.9rem; cursor: pointer; font-weight: 500;">
-                        <input type="hidden" class="cv-input" id="photo-hidden-{{ $field }}" data-target="[{{ $field }}]" value="">
+                        <input type="hidden" class="cv-input" id="photo-hidden-{{ $field }}" data-target="[{{ $field }}]" value="{{ $savedData['['.$field.']'] ?? '' }}">
                         <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">* পাসপোর্ট সাইজ ছবি আপলোড করুন</small>
                     @elseif($isTextarea)
-                        <textarea class="form-control cv-input" data-target="[{{ $field }}]" data-field-type="{{ $isEducation ? 'education' : ($isList ? 'list' : 'text') }}" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." rows="{{ $isEducation ? '6' : '4' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; line-height: 1.5; font-family: monospace; font-weight: 500;"></textarea>
+                        <textarea class="form-control cv-input" data-target="[{{ $field }}]" data-field-type="{{ $isEducation ? 'education' : ($isList ? 'list' : 'text') }}" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." rows="{{ $isEducation ? '6' : '4' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; line-height: 1.5; font-family: monospace; font-weight: 500;">{{ $savedData['['.$field.']'] ?? '' }}</textarea>
                         @if($isEducation)
                             <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: প্রথমে ডিগ্রির নাম (যেমন: S.S.C on 2013), নিচের লাইনে কোলন দিয়ে রেজাল্ট (যেমন: Result : GPA-5.00) লিখলে স্বয়ংক্রিয়ভাবে সুন্দর ফরম্যাট হয়ে যাবে!</small>
                         @elseif($isList)
@@ -80,7 +80,7 @@
                             <small style="color: #e2e8f0; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: এন্টার (Enter) দিয়ে নতুন লাইন করতে পারবেন।</small>
                         @endif
                     @else
-                        <input type="text" class="form-control cv-input" data-target="[{{ $field }}]" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; font-weight: 500;">
+                        <input type="text" class="form-control cv-input" data-target="[{{ $field }}]" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." value="{{ $savedData['['.$field.']'] ?? '' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; font-weight: 500;">
                     @endif
                 </div>
             @endforeach
@@ -91,10 +91,13 @@
                 <span style="color: #ffffff; font-size: 1rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">প্রিন্টিং চার্জ:</span>
                 <span style="color: #4ade80; font-weight: 800; font-size: 1.25rem;">{{ $template->credit_cost }} Credits</span>
             </div>
+            <button id="saveCvBtn" data-id="{{ $template->id }}" data-type="cv" data-title="{{ $template->name }}" class="btn w-100" style="background: #4f46e5; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);">
+                <i class="material-icons-round" style="font-size: 1.3rem;">save</i> সংরক্ষণ করুন (Save)
+            </button>
             <button id="print-btn" class="btn w-100" style="background: var(--primary-color); color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);">
                 <i class="material-icons-round" style="font-size: 1.3rem;">print</i> প্রিন্ট করুন
             </button>
-            <button onclick="sendViaWhatsApp({{ $template->id }}, {{ $template->credit_cost ?? 5 }}, '{{ addslashes($template->name) }}')" id="whatsappBtn" class="btn w-100" style="background: #25D366; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);">
+            <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn w-100" style="background: #25D366; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);">
                 <i class="material-icons-round" style="font-size: 1.3rem;">chat</i> WhatsApp-এ পাঠান
             </button>
         </div>
@@ -262,7 +265,80 @@
                 }
             });
         });
+
+        // WhatsApp Send Button Handler
+        $('#whatsappBtn').click(function() {
+            const id = $(this).data('id');
+            const creditCost = $(this).data('cost');
+            const templateName = String($(this).data('name'));
+            sendViaWhatsApp(id, creditCost, templateName);
+        });
+
+        $('#saveCvBtn').click(function() {
+            const id = $(this).data('id');
+            const type = $(this).data('type');
+            const title = String($(this).data('title'));
+            saveDocument(id, type, title);
+        });
+
+        updatePreview();
     });
+
+    async function saveDocument(id, type, defaultTitle) {
+        const { value: title } = await Swal.fire({
+            title: 'সিভি সংরক্ষণ করুন',
+            input: 'text',
+            inputLabel: 'সিভি-র একটি নাম দিন',
+            inputValue: defaultTitle,
+            showCancelButton: true,
+            confirmButtonText: 'সংরক্ষণ করুন',
+            cancelButtonText: 'বাতিল',
+            inputValidator: (value) => {
+                if (!value) return 'নাম দিতে হবে!';
+            }
+        });
+
+        if (!title) return;
+
+        const formData = {};
+        $('.cv-input').each(function() {
+            const target = $(this).data('target');
+            formData[target] = $(this).val();
+        });
+
+        const btn = $('#saveCvBtn');
+        const originalText = btn.html();
+        btn.html('<i class="material-icons-round" style="vertical-align: middle; animation: spin 1s linear infinite;">sync</i> সংরক্ষণ হচ্ছে...');
+        btn.prop('disabled', true);
+
+        try {
+            const response = await fetch(`/saved-documents`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    template_id: id,
+                    type: type,
+                    title: title,
+                    form_data: formData
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                Swal.fire('সফল!', data.message, 'success');
+            } else {
+                Swal.fire('ত্রুটি!', 'সংরক্ষণ করা সম্ভব হয়নি।', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('ত্রুটি!', 'সার্ভার এরর হয়েছে।', 'error');
+        } finally {
+            btn.html(originalText);
+            btn.prop('disabled', false);
+        }
+    }
 
     async function sendViaWhatsApp(id, creditCost, templateName) {
         const phone = await Swal.fire({

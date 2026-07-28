@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'ব্যাকগ্রাউন্ড রিমুভার - Smart Stationary')
+@section('title', 'ব্যাকগ্রাউন্ড রিমুভার - penghor.com')
 
 @section('content')
 <style>
@@ -105,51 +105,8 @@
         
         const file = input.files[0];
         
-        // 1. Confirm Credit Deduction
-        Swal.fire({
-            title: 'নিশ্চিত করুন',
-            text: "ব্যাকগ্রাউন্ড রিমুভ করতে ৫ ক্রেডিট কাটা হবে। আপনি কি রাজি?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#10b981',
-            cancelButtonColor: '#ef4444',
-            confirmButtonText: 'হ্যাঁ, শুরু করুন',
-            cancelButtonText: 'বাতিল'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Deduct via AJAX
-                fetch("{{ route('pdf.tools.bg_remover.deduct') }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update balance on UI
-                        const balanceSpans = document.querySelectorAll('.credit-badge span');
-                        if (balanceSpans.length > 0) {
-                            balanceSpans[0].innerText = 'Credits: ' + data.new_balance;
-                        }
-                        
-                        // Proceed to Process
-                        startProcessing(file);
-                    } else {
-                        Swal.fire('দুঃখিত', data.message, 'error');
-                        input.value = '';
-                    }
-                })
-                .catch(err => {
-                    Swal.fire('ত্রুটি', 'সার্ভারে যোগাযোগ করা যাচ্ছে না।', 'error');
-                    input.value = '';
-                });
-            } else {
-                input.value = ''; // Reset input
-            }
-        });
+        // No credit deduction needed. Start processing immediately.
+        startProcessing(file);
     }
 
     async function startProcessing(file) {

@@ -65,7 +65,9 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const socket = io('http://localhost:3001');
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const serverUrl = isLocal ? 'http://localhost:3001' : `${window.location.protocol}//whatsapp.${window.location.hostname.replace(/^www\./, '')}`;
+        const socket = io(serverUrl);
         const userId = '{{ $userId }}';
 
         socket.on('connect', () => {
@@ -97,6 +99,17 @@
             if (data.userId === userId) {
                 document.getElementById('loading-container').innerHTML = '<div class="spinner-border text-success" role="status"></div><p class="text-success mt-2">অ্যাপ্রুভ করা হচ্ছে...</p>';
                 document.getElementById('qr-container').style.display = 'none';
+            }
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Socket connection error:', err);
+            document.getElementById('loading-container').innerHTML = `<div class="alert alert-danger" style="max-width: 550px; margin: 0 auto;"><i class="material-icons-round" style="vertical-align: middle;">error</i> <strong>সার্ভার কানেকশন এরর:</strong> হোয়াটসঅ্যাপ সার্ভারে কানেক্ট করা যাচ্ছে না (${err.message})। আপনার হোস্টিং থেকে Node.js সার্ভারটি চালু আছে কিনা এবং <code>${serverUrl}</code> ইউআরএলটি ঠিকমতো কাজ করছে কিনা নিশ্চিত করুন।</div>`;
+        });
+
+        socket.on('qr_error', (data) => {
+            if (data.userId === userId) {
+                document.getElementById('loading-container').innerHTML = `<div class="alert alert-danger" style="max-width: 550px; margin: 0 auto;"><i class="material-icons-round" style="vertical-align: middle;">error</i> <strong>QR Code জেনারেট সমস্যা:</strong> ${data.error}</div>`;
             }
         });
     });

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'প্রফেশনাল ইনভয়েস ও ক্যাশ মেমো জেনারেটর - সহজ কাজ')
 
@@ -84,7 +84,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label class="form-label" style="font-size: 0.85rem; color: #cbd5e1;">প্রতিষ্ঠানের নাম</label>
-                    <input type="text" id="set_company_name" class="form-control" value="Smart Stationary" oninput="updateView()" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1);">
+                    <input type="text" id="set_company_name" class="form-control" value="penghor.com" oninput="updateView()" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1);">
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label class="form-label" style="font-size: 0.85rem; color: #cbd5e1;">ঠিকানা (Address)</label>
@@ -208,7 +208,7 @@
                     <label class="form-label" style="font-size: 0.8rem; color: #cbd5e1;">মন্তব্য / শর্তাবলী (Remarks, notes)</label>
                     <textarea id="set_remarks" class="form-control" rows="3" oninput="updateView()" style="background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); font-size: 0.85rem; resize: vertical;">Thank you for your business!
 Payment terms: 15 days from date of receipt.
-Make all checks payable to Smart Stationary.</textarea>
+Make all checks payable to penghor.com.</textarea>
                 </div>
             </div>
 
@@ -244,7 +244,7 @@ Make all checks payable to Smart Stationary.</textarea>
                             </div>
                             <!-- Company Info (Phone and Email strictly on separate lines) -->
                             <div>
-                                <div id="view_company" style="font-size: 1.35rem; font-weight: 800; color: #334155; margin-bottom: 4px; line-height: 1.2;">Smart Stationary</div>
+                                <div id="view_company" style="font-size: 1.35rem; font-weight: 800; color: #334155; margin-bottom: 4px; line-height: 1.2;">penghor.com</div>
                                 <div id="view_address" style="font-size: 0.82rem; color: #64748b; margin-bottom: 2px; line-height: 1.4;">53 DIT Extention Road, Nayapaltan, Dhaka</div>
                                 <div id="view_phone" style="font-size: 0.82rem; color: #64748b; margin-bottom: 2px; line-height: 1.4;">Phone: +880 1711-111122</div>
                                 <div id="view_email" style="font-size: 0.82rem; color: #64748b; line-height: 1.4;">Email: info@company.com</div>
@@ -321,7 +321,7 @@ Make all checks payable to Smart Stationary.</textarea>
                             <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 4px;">Remarks, notes:</div>
                             <div id="view_remarks" style="font-size: 0.82rem; color: #334155; line-height: 1.5; white-space: pre-line; min-height: 50px;">Thank you for your business!
 Payment terms: 15 days from date of receipt.
-Make all checks payable to Smart Stationary.</div>
+Make all checks payable to penghor.com.</div>
                             
                             <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
                                 <span style="font-size: 0.78rem; font-weight: 700; color: #64748b;">In Words (কথায়):</span>
@@ -645,7 +645,7 @@ Make all checks payable to Smart Stationary.</div>
         document.querySelectorAll('.view_curr').forEach(el => el.innerText = curr);
 
         // Company Left Info (Phone and Email strictly separated)
-        document.getElementById('view_company').innerText = document.getElementById('set_company_name').value || 'Smart Stationary';
+        document.getElementById('view_company').innerText = document.getElementById('set_company_name').value || 'penghor.com';
         document.getElementById('view_address').innerText = document.getElementById('set_company_address').value || '';
         document.getElementById('view_phone').innerText = document.getElementById('set_company_phone').value || '';
         document.getElementById('view_email').innerText = document.getElementById('set_company_email').value || '';
@@ -804,7 +804,7 @@ Make all checks payable to Smart Stationary.</div>
             items = [];
             document.getElementById('set_title').value = 'INVOICE';
             document.getElementById('set_currency').value = '৳';
-            document.getElementById('set_company_name').value = 'Smart Stationary';
+            document.getElementById('set_company_name').value = 'penghor.com';
             document.getElementById('set_company_address').value = '53 DIT Extention Road, Nayapaltan, Dhaka';
             document.getElementById('set_company_phone').value = 'Phone: +880 1711-111122';
             document.getElementById('set_company_email').value = 'Email: info@company.com';

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'ড্যাশবোর্ড - Smart Stationary')
+@section('title', 'ড্যাশবোর্ড - penghor.com')
 
 @section('content')
 <div style="margin-top: 10px;">
@@ -11,7 +11,7 @@
             স্বাগতম, {{ Auth::user()->name }}!
         </h2>
         <p style="color: var(--text-muted); font-size: 1rem; max-width: 700px; line-height: 1.6; margin-bottom: 25px;">
-            SmartStation কন্ট্রোল প্যানেলে আপনাকে স্বাগতম। এখান থেকে আপনি আপনার সমস্ত ডিজিটাল টুলস এবং সার্ভিসগুলো অত্যন্ত দক্ষতার সাথে পরিচালনা করতে পারবেন।
+            penghor.com কন্ট্রোল প্যানেলে আপনাকে স্বাগতম। এখান থেকে আপনি আপনার সমস্ত ডিজিটাল টুলস এবং সার্ভিসগুলো অত্যন্ত দক্ষতার সাথে পরিচালনা করতে পারবেন।
         </p>
         <div style="display: flex; gap: 15px;">
             <a href="#" class="btn btn-outline-primary" style="background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 10px 20px; font-weight: 500; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
@@ -132,6 +132,17 @@
                     <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
+            <!-- Saved Documents -->
+            <a href="{{ route('saved-documents.index') }}" style="text-decoration: none; display: block;">
+                <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative; border: 1px solid rgba(129, 140, 248, 0.4); background: rgba(129, 140, 248, 0.05);">
+                    <div style="background: rgba(129, 140, 248, 0.2); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #818cf8; margin-bottom: 20px;">
+                        <i class="material-icons-round" style="font-size: 1.5rem;">folder_special</i>
+                    </div>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">সংরক্ষিত ফাইল (Saved)</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">আপনার সেভ করা সকল ডকুমেন্ট এবং সিভি এখানে দেখুন।</p>
+                    <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: #818cf8; font-size: 1.2rem;">arrow_forward</i>
+                </div>
+            </a>
             <!-- WhatsApp Connect -->
             <a href="{{ route('whatsapp.connect') }}" style="text-decoration: none; display: block;">
                 <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
@@ -162,8 +173,8 @@
                     <div style="background: rgba(6, 182, 212, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #22d3ee; margin-bottom: 20px;">
                         <i class="material-icons-round" style="font-size: 1.5rem;">picture_as_pdf</i>
                     </div>
-                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">PDF Tools</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">PDF ফাইল কনভার্ট, মার্জ এবং কম্প্রেস করার সমাধান।</p>
+                    <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem; font-weight: 600;">ছবি ও পিডিএফ টুলস</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">ছবি ও পিডিএফ কনভার্ট, এডিট, রিসাইজ এবং বিভিন্ন প্রয়োজনীয় টুলস।</p>
                     <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>

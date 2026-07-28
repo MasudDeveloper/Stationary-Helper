@@ -1,11 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'সিভি মেকার - Smart Stationary')
+@section('title', 'সিভি মেকার - penghor.com')
 
 @section('content')
-<div class="content-header" style="margin-top: 10px; margin-bottom: 30px;">
-    <h2 style="color: #fff; margin: 0; font-size: 2rem; font-weight: 700;">সিভি মেকার</h2>
-    <p style="color: var(--text-muted); margin: 8px 0 0 0; font-size: 1rem;">প্রফেশনাল সিভি তৈরি করুন সহজেই</p>
+<div class="content-header" style="margin-top: 10px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px;">
+    <div>
+        <h2 style="color: #fff; margin: 0; font-size: 2rem; font-weight: 700;">সিভি মেকার</h2>
+        <p style="color: var(--text-muted); margin: 8px 0 0 0; font-size: 1rem;">প্রফেশনাল সিভি তৈরি করুন সহজেই</p>
+    </div>
+    <div style="display: flex; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap;">
+        <a href="{{ route('cv.index') }}" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: #fff; background: rgba(255,255,255,0.1); box-shadow: 0 2px 5px rgba(0,0,0,0.2);">সকল সিভি</a>
+        <a href="{{ route('saved-documents.index', ['type' => 'cv']) }}" style="padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; color: #818cf8; background: rgba(79, 70, 229, 0.15); border: 1px solid rgba(79, 70, 229, 0.3); transition: all 0.2s;">সংরক্ষিত সিভি <i class="material-icons-round" style="font-size: 1rem; vertical-align: middle;">folder_special</i></a>
+    </div>
 </div>
 
 <div class="grid-3" style="gap: 20px;">

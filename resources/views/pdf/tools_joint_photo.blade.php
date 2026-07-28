@@ -1,6 +1,6 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'যৌথ পাসপোর্ট ছবি মেকার (Husband-Wife Joint Photo) - Smart Stationary')
+@section('title', 'যৌথ পাসপোর্ট ছবি মেকার (Husband-Wife Joint Photo) - penghor.com')
 
 @section('content')
 <style>
