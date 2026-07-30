@@ -31,7 +31,7 @@ class QuestionController extends Controller
             'class' => 'nullable|string',
             'duration' => 'nullable|string',
             'marks' => 'nullable|string',
-            'type' => 'required|in:mcq,cq',
+            'type' => 'required|in:mcq,cq,mixed',
             'content' => 'required|json',
         ]);
 

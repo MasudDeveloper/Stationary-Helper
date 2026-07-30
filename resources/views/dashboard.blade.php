@@ -33,6 +33,16 @@
                 </div>
 
                 <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 10px; border-radius: 10px; color: #818cf8;">
+                        <i class="material-icons-round" style="font-size: 1.2rem;">badge</i>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 4px 0;">অ্যাকাউন্ট আইডি (Account ID)</p>
+                        <p style="color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; letter-spacing: 1px;">{{ Auth::user()->account_id ?? 'N/A' }}</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px;">
                     <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; color: var(--text-muted);">
                         <i class="material-icons-round" style="font-size: 1.2rem;">mail_outline</i>
                     </div>
@@ -47,15 +57,32 @@
                         <i class="material-icons-round" style="font-size: 1.2rem;">verified_user</i>
                     </div>
                     <div>
-                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 4px 0;">ব্যবহারকারীর ধরন</p>
-                        <p style="color: #fff; font-weight: 500; font-size: 1rem; margin: 0; text-transform: capitalize;">Active {{ Auth::user()->role }} User</p>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 4px 0;">অ্যাকাউন্টের ধরন</p>
+                        <p style="color: #fff; font-weight: 500; font-size: 1rem; margin: 0; text-transform: capitalize;">
+                            @if(Auth::user()->account_type == 'business')
+                                <span style="color: #f59e0b;"><i class="material-icons-round" style="font-size: 1rem; vertical-align: middle;">store</i> Business Account</span>
+                            @else
+                                Normal Account
+                            @endif
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">({{ Auth::user()->role }})</span>
+                        </p>
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 30px;">
+            <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
                 <a href="#" style="color: #818cf8; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     Edit Profile Details <i class="material-icons-round" style="font-size: 1rem;">arrow_forward</i>
                 </a>
+                
+                @if(Auth::user()->account_type !== 'business')
+                <a href="{{ route('business.upgrade') }}" class="btn btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-radius: 6px; font-weight: 600; font-size: 0.85rem; padding: 6px 15px; display: flex; align-items: center; gap: 5px; margin-left: auto;">
+                    <i class="material-icons-round" style="font-size: 1rem;">storefront</i> Upgrade to Business
+                </a>
+                @else
+                <a href="{{ route('shopkeeper.orders.index') }}" class="btn btn-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border-radius: 6px; font-weight: 600; font-size: 0.85rem; padding: 6px 15px; display: flex; align-items: center; gap: 5px; margin-left: auto;">
+                    <i class="material-icons-round" style="font-size: 1rem;">assignment</i> আমার অর্ডারসমূহ
+                </a>
+                @endif
             </div>
         </div>
 
@@ -102,6 +129,9 @@
                 <button data-link="{{ url('/register?ref=' . Auth::user()->referral_code) }}" onclick="navigator.clipboard.writeText(this.getAttribute('data-link')).then(() => Swal.fire('লিংক কপি হয়েছে!'))" class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 8px; font-weight: 600;">
                     <i class="material-icons-round" style="font-size: 1.1rem; vertical-align: middle;">content_copy</i> কপি লিংক
                 </button>
+                <a href="{{ route('referrals.index') }}" class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600;">
+                    <i class="material-icons-round" style="font-size: 1.1rem; vertical-align: middle;">analytics</i> আয়ের হিস্ট্রি
+                </a>
             </div>
         </div>
         <div style="background: rgba(0,0,0,0.15); padding: 25px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); min-width: 250px; text-align: center;">
@@ -144,6 +174,7 @@
                 </div>
             </a>
             <!-- WhatsApp Connect -->
+            @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
             <a href="{{ route('whatsapp.connect') }}" style="text-decoration: none; display: block;">
                 <div class="glass glass-interactive" style="height: 100%; padding: 25px; position: relative;">
                     <div style="background: rgba(37, 211, 102, 0.1); width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #25D366; margin-bottom: 20px;">
@@ -154,6 +185,7 @@
                     <i class="material-icons-round" style="position: absolute; bottom: 20px; right: 20px; color: var(--text-muted); font-size: 1.2rem;">arrow_forward</i>
                 </div>
             </a>
+            @endif
 
             <!-- CV Maker -->
             <a href="{{ route('cv.index') }}" style="text-decoration: none; display: block;">

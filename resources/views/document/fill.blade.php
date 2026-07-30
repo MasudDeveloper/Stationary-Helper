@@ -453,9 +453,11 @@ $marginRight = $template->margin_right ?? 20;
                         <button id="finalPrintBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
                             <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ (ক্রেডিট লাগবে)
                         </button>
-                        <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
+                        @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
+                        <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $whatsappCost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
                             <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">chat</i> WhatsApp-এ পাঠান
                         </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -619,6 +621,7 @@ $marginRight = $template->margin_right ?? 20;
         }
 
         async function finalPrint(id, creditCost, templateName = 'Document') {
+            if (creditCost > 0) {
             const result = await Swal.fire({
                 title: 'আপনি কি নিশ্চিত?',
                 text: `ফাইনাল প্রিন্ট করার জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
@@ -632,6 +635,7 @@ $marginRight = $template->margin_right ?? 20;
 
             if (!result.isConfirmed) {
                 return;
+                }
             }
 
             const btn = document.getElementById('finalPrintBtn');
@@ -713,7 +717,8 @@ $marginRight = $template->margin_right ?? 20;
 
             if (!phone.isConfirmed || !phone.value) return;
 
-            const confirmResp = await Swal.fire({
+            if (creditCost > 0) {
+                const confirmResp = await Swal.fire({
                 title: 'আপনি কি নিশ্চিত?',
                 text: `ফাইলটি WhatsApp-এ পাঠানোর জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
                 icon: 'warning',
@@ -725,6 +730,7 @@ $marginRight = $template->margin_right ?? 20;
             });
 
             if (!confirmResp.isConfirmed) return;
+            }
 
             const btn = document.getElementById('whatsappBtn');
             const originalText = btn.innerHTML;
@@ -798,3 +804,4 @@ $marginRight = $template->margin_right ?? 20;
 </body>
 
 </html>
+

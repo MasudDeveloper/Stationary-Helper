@@ -16,7 +16,11 @@ class OcrController extends Controller
     public function index()
     {
         $engine = Setting::where('key', 'ocr_engine')->value('value') ?? 'tesseract';
-        return view('ocr.index', compact('engine'));
+        
+        $costSetting = Setting::where('key', 'cost_ocr_scanner')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
+        
+        return view('ocr.index', compact('engine', 'cost'));
     }
 
     /**
@@ -27,17 +31,18 @@ class OcrController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         
-        // Cost: 1 for business, 5 for regular users
-        $cost = ($user->role === 'business') ? 1.00 : 5.00;
+        $costSetting = Setting::where('key', 'cost_ocr_scanner')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
-        if ($user->credits < $cost) {
+        if ($cost > 0 && $user->credits < $cost) {
             return response()->json([
                 'error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। অনুগ্রহ করে ক্রেডিট রিচার্জ করুন।'
             ], 403);
         }
 
-        $user->credits -= $cost;
-        $user->save();
+        if ($cost > 0) {
+            $user->deductCreditAndPayCommission($cost, 'OCR Scanner');
+        }
 
         return response()->json([
             'success' => true,

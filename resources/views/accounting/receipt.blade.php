@@ -37,9 +37,11 @@
             </div>
 
             <button onclick="window.print()" class="btn btn-primary" style="width: 100%; margin-top: 15px; font-weight: 600; padding: 12px; background: linear-gradient(135deg, #6366f1, #06b6d4);">প্রিন্ট / ডাউনলোড করুন</button>
+            @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
             <button onclick="sendViaWhatsApp()" class="btn btn-success" id="wa-btn" style="width: 100%; margin-top: 10px; font-weight: 600; padding: 12px; background: #25D366; border: none;">
                 <i class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">chat</i> WhatsApp-এ পাঠান
             </button>
+            @endif
         </div>
 
         <!-- Preview Area -->

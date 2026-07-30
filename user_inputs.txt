@@ -1,0 +1,398 @@
+﻿<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T12:41:03+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\.gitignore (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\partials\question_tools_modals.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\WhatsAppController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\.env.example (LANGUAGE_UNSPECIFIED)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\whatsapp\index.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.1 Pro (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T12:49:16+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+Cursor is on line: 102
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+api chara ba free te kora jay na?
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T12:51:58+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+Cursor is on line: 102
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T13:19:03+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+Cursor is on line: 102
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+agertai thik chilo
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T13:22:36+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T13:33:43+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T13:33:43+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T14:01:45+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+eirokom formet e jate hoy ar question e jate mark dewar option thake
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T14:04:17+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T14:10:09+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\show.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 109
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\show.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T14:52:26+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\show.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 109
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\show.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:04:35+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\show.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 109
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\routes\web.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\show.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\pdf\tools_pdf_to_word.blade.php (LANGUAGE_BLADE)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\PdfController.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:16:35+06:00.
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+check box nai amar check kore dekho
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:22:35+06:00.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:31:40+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:46:34+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:46:34+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+ekhon phase 2 kore dao
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T15:57:59+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+ebar phase 3 complete kore dao
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T16:04:45+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T17:19:23+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+ei koyekta file lal hoye ace keno dekhoto
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T17:29:02+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+Cursor is on line: 1
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\resources\views\questions\create.blade.php (LANGUAGE_BLADE)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+etay ekhono ace
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-29T17:39:46+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+Cursor is on line: 126
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\ReferralController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DesignAiController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\AiTemplateController.php (LANGUAGE_PHP)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-30T11:24:38+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+Cursor is on line: 86
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\ReferralController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\AiTemplateController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DesignAiController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-30T11:24:38+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+Cursor is on line: 86
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\ReferralController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\AiTemplateController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DesignAiController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-30T12:06:01+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+Cursor is on line: 86
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\AiTemplateController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DesignAiController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\ReferralController.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-30T12:06:01+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+Cursor is on line: 86
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\AiTemplateController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DesignAiController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\ReferralController.php (LANGUAGE_PHP)
+
+The user has uploaded 1 audio file(s). Consider them as a part of their message.
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+er age jei command diyechilam oigulo ki complete korecho?
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-30T12:31:11+06:00.
+
+The user's current state is as follows:
+Active Document: d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+Cursor is on line: 86
+Other open documents:
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DesignAiController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\CvController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\DocumentController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\ReferralController.php (LANGUAGE_PHP)
+- d:\MY Project\Joy Bhai\Stationary Helper\app\Http\Controllers\AiTemplateController.php (LANGUAGE_PHP)
+</ADDITIONAL_METADATA>

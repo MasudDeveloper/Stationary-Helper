@@ -30,12 +30,16 @@ class DocumentController extends Controller
             }
         }
 
-        return view('document.fill', compact('template', 'fields', 'savedData'));
+        $whatsappCostSetting = \App\Models\Setting::where('key', 'cost_document_whatsapp_send')->value('value');
+        $whatsappCost = ($whatsappCostSetting !== null && $whatsappCostSetting !== '') ? (float) $whatsappCostSetting : 5.0;
+
+        return view('document.fill', compact('template', 'fields', 'savedData', 'whatsappCost'));
     }
 
     public function toggleFavorite($id)
     {
         $template = DocumentTemplate::findOrFail($id);
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
         if ($user->favoriteDocuments()->where('document_template_id', $id)->exists()) {
@@ -49,13 +53,16 @@ class DocumentController extends Controller
 
     public function favorites()
     {
-        $templates = Auth::user()->favoriteDocuments()->where('is_active', true)->with('category')->get();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $templates = $user->favoriteDocuments()->where('is_active', true)->with('category')->get();
         return view('document.favorites', compact('templates'));
     }
 
     public function deductCredit($id)
     {
         $template = DocumentTemplate::findOrFail($id);
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
         $cost = $template->credit_cost ?? 5; // Default to 5 if null
@@ -67,8 +74,7 @@ class DocumentController extends Controller
             ], 403);
         }
         
-        $user->credits -= $cost;
-        $user->save();
+        $user->deductCreditAndPayCommission($cost, 'Document Print');
         
         // Also log this transaction (optional, but recommended if there is a transaction system)
         
@@ -88,10 +94,12 @@ class DocumentController extends Controller
         ]);
 
         $template = DocumentTemplate::findOrFail($id);
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Optional: Deduct credit for sending via WhatsApp
-        $cost = $template->credit_cost ?? 5;
+        $costSetting = \App\Models\Setting::where('key', 'cost_document_whatsapp_send')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.0;
         if ($user->credits < $cost) {
             return response()->json([
                 'success' => false,
@@ -125,8 +133,7 @@ class DocumentController extends Controller
 
             if ($response->successful() && $response->json('success')) {
                 // Deduct credit since it was successfully sent
-                $user->credits -= $cost;
-                $user->save();
+                $user->deductCreditAndPayCommission($cost, 'Document WhatsApp Send');
 
                 return response()->json([
                     'success' => true,

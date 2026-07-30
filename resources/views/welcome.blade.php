@@ -739,13 +739,24 @@
         </a>
 
         <!-- 7. PDF to Excel & Word -->
-        <a href="{{ route('pdf.tools.to_excel') }}" class="feature-card-modern" data-category="pdf" data-title="পিডিএফ থেকে এক্সেল ও ওয়ার্ড pdf to excel word spreadsheet table data converter">
+        <a href="{{ route('pdf.tools.to_excel') }}" class="feature-card-modern" data-category="pdf" data-title="পিডিএফ থেকে এক্সেল pdf to excel spreadsheet table data converter">
             <div class="feature-card-header">
                 <div class="feature-icon-box icon-emerald"><i class="material-icons-round">table_view</i></div>
                 <span class="feature-tag tag-pro">Converter</span>
             </div>
-            <h3 class="feature-card-title">৭. পিডিএফ থেকে এক্সেল ও ওয়ার্ড</h3>
-            <p class="feature-card-desc">পিডিএফ ফাইলে থাকা টেবিল বা ডেটাসমূহ কোনো ফরম্যাটিং নষ্ট না করে সরাসরি এক্সেল (Excel) বা ওয়ার্ড স্প্রেডশিটে রূপান্তর করুন।</p>
+            <h3 class="feature-card-title">৭. পিডিএফ থেকে এক্সেল</h3>
+            <p class="feature-card-desc">পিডিএফ ফাইলে থাকা টেবিল বা ডেটাসমূহ কোনো ফরম্যাটিং নষ্ট না করে সরাসরি এক্সেল (Excel) স্প্রেডশিটে রূপান্তর করুন।</p>
+            <div class="feature-card-action"><span>ব্যবহার করুন</span><i class="material-icons-round">arrow_forward</i></div>
+        </a>
+
+        <!-- 7.1. PDF to Word Converter -->
+        <a href="{{ route('pdf.tools.pdf_to_word') }}" class="feature-card-modern" data-category="pdf" data-title="পিডিএফ থেকে ওয়ার্ড pdf to word document converter text extract docx">
+            <div class="feature-card-header">
+                <div class="feature-icon-box icon-blue"><i class="material-icons-round">description</i></div>
+                <span class="feature-tag tag-pro">Advanced</span>
+            </div>
+            <h3 class="feature-card-title">পিডিএফ টু ওয়ার্ড কনভার্টার</h3>
+            <p class="feature-card-desc">যেকোনো পিডিএফ ফাইলের টেক্সট ও কন্টেন্ট সহজে এডিটেবল ওয়ার্ড (Word) ডকুমেন্টে রূপান্তর করুন।</p>
             <div class="feature-card-action"><span>ব্যবহার করুন</span><i class="material-icons-round">arrow_forward</i></div>
         </a>
 
@@ -963,6 +974,7 @@
         </a>
 
         <!-- 26. WhatsApp Connect & Automation -->
+        @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
         <a href="{{ route('whatsapp.connect') }}" class="feature-card-modern" data-category="finance" data-title="হোয়াটসঅ্যাপ কানেক্ট ও অটোমেশন whatsapp connect messaging qr code automation document sender">
             <div class="feature-card-header">
                 <div class="feature-icon-box icon-emerald"><i class="material-icons-round">qr_code_scanner</i></div>
@@ -972,6 +984,7 @@
             <p class="feature-card-desc">QR কোড স্ক্যান করে আপনার নিজের হোয়াটসঅ্যাপ কানেক্ট করুন এবং কাস্টমারদের ইনভয়েস ও ডকুমেন্ট সরাসরি অটো-মেসেজ পাঠান।</p>
             <div class="feature-card-action"><span>ব্যবহার করুন</span><i class="material-icons-round">arrow_forward</i></div>
         </a>
+        @endif
 
         <!-- 27. Custom Hiring & Support Tickets -->
         <a href="{{ route('tickets.index') }}" class="feature-card-modern" data-category="finance" data-title="কাস্টম হায়ার ও ২৪/৭ সাপোর্ট টিকিট custom hiring support ticket help desk expert team 24/7 service">

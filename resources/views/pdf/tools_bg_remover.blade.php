@@ -104,9 +104,61 @@
         if (!input.files || !input.files[0]) return;
         
         const file = input.files[0];
-        
-        // No credit deduction needed. Start processing immediately.
-        startProcessing(file);
+        const cost = {{ $cost ?? 0 }};
+
+        if (cost > 0) {
+            Swal.fire({
+                title: 'নিশ্চিত করুন',
+                text: `এই ছবির ব্যাকগ্রাউন্ড রিমুভ করতে আপনার একাউন্ট থেকে ${cost} ক্রেডিট কাটা হবে। আপনি কি রাজি?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'হ্যাঁ, রিমুভ করুন',
+                cancelButtonText: 'না, বাতিল করুন'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deductAndProcess(file);
+                } else {
+                    input.value = ''; // Reset file input
+                }
+            });
+        } else {
+            deductAndProcess(file);
+        }
+    }
+
+    async function deductAndProcess(file) {
+        document.getElementById('upload-area').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+
+        try {
+            const res = await fetch("{{ route('pdf.deduct.bg_remover') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            });
+            const data = await res.json();
+            
+            if (!data.success) {
+                document.getElementById('upload-area').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire('ত্রুটি!', data.message || 'পর্যাপ্ত ক্রেডিট নেই!', 'error');
+                return;
+            }
+
+            // Update balance
+            const balanceEl = document.getElementById('credit-balance');
+            if (balanceEl) balanceEl.innerText = data.new_balance;
+
+            startProcessing(file);
+        } catch(err) {
+            document.getElementById('upload-area').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            Swal.fire('সার্ভার এরর!', 'অনুগ্রহ করে আবার চেষ্টা করুন।', 'error');
+        }
     }
 
     async function startProcessing(file) {

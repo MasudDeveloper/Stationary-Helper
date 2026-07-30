@@ -31,12 +31,19 @@ class PdfController extends Controller
                 ['icon' => 'picture_as_pdf', 'gradient_class' => 'grad-red', 'is_hot' => true, 'route_name' => 'pdf.tools.jpg_to_pdf', 'order' => 19, 'is_active' => true]
             );
         }
+        if (\App\Models\PdfTool::where('route_name', 'pdf.tools.pdf_to_word')->doesntExist()) {
+            \App\Models\PdfTool::updateOrCreate(
+                ['title' => 'পিডিএফ টু ওয়ার্ড (PDF to Word)'],
+                ['icon' => 'description', 'gradient_class' => 'grad-blue', 'is_hot' => true, 'route_name' => 'pdf.tools.pdf_to_word', 'order' => 20, 'is_active' => true]
+            );
+        }
         $tools = \App\Models\PdfTool::where('is_active', true)->orderBy('order')->get();
         
         $pdfTitles = [
             'পেজ রিমুভ', 'পিডিএফ ওয়াটারমার্ক', 'পিডিএফ পারমিশন', 'পিডিএফ রিসাইজ', 
             'পিডিএফ ক্রপ', 'পিডিএফ টু এক্সেল', 'পিডিএফ রিপেয়ার', 'এনআইডি টু পিডিএফ', 
-            'পাসপোর্ট টু পিডিএফ', 'জেপিজি টু পিডিএফ (JPG to PDF)', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)'
+            'পাসপোর্ট টু পিডিএফ', 'জেপিজি টু পিডিএফ (JPG to PDF)', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)',
+            'পিডিএফ টু ওয়ার্ড (PDF to Word)'
         ];
 
         $pdfTools = $tools->filter(function($tool) use ($pdfTitles) {
@@ -85,6 +92,11 @@ class PdfController extends Controller
         return view('pdf.tools_pdf_to_excel');
     }
 
+    public function pdfToWord()
+    {
+        return view('pdf.tools_pdf_to_word');
+    }
+
     public function pdfRepair()
     {
         return view('pdf.tools_pdf_repair');
@@ -102,30 +114,34 @@ class PdfController extends Controller
 
     public function bgRemover()
     {
-        return view('pdf.tools_bg_remover');
+        $costSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
+        return view('pdf.tools_bg_remover', compact('cost'));
     }
 
     public function deductBgRemoverCredit(Request $request)
     {
         /** @var \App\Models\User $user */
         $user = \Illuminate\Support\Facades\Auth::user();
-        $cost = 5;
+        $costSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
-        if ($user->credits < $cost) {
+        if ($cost > 0 && $user->credits < $cost) {
             return response()->json(['success' => false, 'message' => 'অপর্যাপ্ত ক্রেডিট! দয়া করে রিচার্জ করুন।']);
         }
 
-        $user->credits -= $cost;
-        $user->save();
+        if ($cost > 0) {
+            $user->deductCreditAndPayCommission($cost, 'Background Removal');
 
-        // Log transaction
-        \App\Models\AccountingTransaction::create([
-            'user_id' => $user->id,
-            'type' => 'debit',
-            'amount' => $cost,
-            'description' => 'Background Removal Tool Usage',
-            'date' => now(),
-        ]);
+            // Log transaction
+            \App\Models\AccountingTransaction::create([
+                'user_id' => $user->id,
+                'type' => 'debit',
+                'amount' => $cost,
+                'description' => 'Background Removal Tool Usage',
+                'date' => now(),
+            ]);
+        }
 
         return response()->json([
             'success' => true,

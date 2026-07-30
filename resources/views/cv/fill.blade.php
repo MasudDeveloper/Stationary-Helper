@@ -97,9 +97,11 @@
             <button id="print-btn" class="btn w-100" style="background: var(--primary-color); color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);">
                 <i class="material-icons-round" style="font-size: 1.3rem;">print</i> প্রিন্ট করুন
             </button>
+            @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
             <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn w-100" style="background: #25D366; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);">
                 <i class="material-icons-round" style="font-size: 1.3rem;">chat</i> WhatsApp-এ পাঠান
             </button>
+            @endif
         </div>
     </div>
 
@@ -241,7 +243,28 @@
         // Print & Deduct Credit
         $('#print-btn').click(function() {
             let btn = $(this);
-            btn.prop('disabled', true).html('<i class="material-icons-round" style="animation: spin 1s linear infinite;">autorenew</i> প্রসেসিং...');
+            let cost = {{ $template->credit_cost ?? 0 }};
+
+            if (cost > 0) {
+                Swal.fire({
+                    title: "নিশ্চিত করুন",
+                    text: `এই সিভিটি প্রিন্ট/ডাউনলোড করতে আপনার ${cost} ক্রেডিট কাটা হবে। আপনি কি চালিয়ে যেতে চান?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "হ্যাঁ, চালিয়ে যান",
+                    cancelButtonText: "না, বাতিল করুন"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        executePrint(btn);
+                    }
+                });
+            } else {
+                executePrint(btn);
+            }
+        });
+
+        function executePrint(btn) {
+            btn.prop('disabled', true).html('<i class="material-icons-round" style="animation: spin 1s linear infinite;">autorenew</i> প্রিন্ট হচ্ছে...');
             
             $.ajax({
                 url: "{{ route('cv.deduct.credit', $template->id) }}",
@@ -256,7 +279,7 @@
                     btn.prop('disabled', false).html('<i class="material-icons-round">print</i> প্রিন্ট করুন');
                 },
                 error: function(xhr) {
-                    let msg = "একটি ত্রুটি হয়েছে।";
+                    let msg = "সার্ভার এরর! আবার চেষ্টা করুন।";
                     if(xhr.responseJSON && xhr.responseJSON.message) {
                         msg = xhr.responseJSON.message;
                     }
@@ -264,12 +287,12 @@
                     btn.prop('disabled', false).html('<i class="material-icons-round">print</i> প্রিন্ট করুন');
                 }
             });
-        });
+        }
 
         // WhatsApp Send Button Handler
         $('#whatsappBtn').click(function() {
             const id = $(this).data('id');
-            const creditCost = $(this).data('cost');
+            const creditCost = {{ $whatsappCost ?? 0 }};
             const templateName = String($(this).data('name'));
             sendViaWhatsApp(id, creditCost, templateName);
         });
@@ -354,18 +377,20 @@
 
         if (!phone.isConfirmed || !phone.value) return;
 
-        const confirmResp = await Swal.fire({
-            title: 'আপনি কি নিশ্চিত?',
-            text: `ফাইলটি WhatsApp-এ পাঠানোর জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#10b981',
-            cancelButtonColor: '#ef4444',
-            confirmButtonText: 'হ্যাঁ, সেন্ড করুন',
-            cancelButtonText: 'বাতিল'
-        });
+        if (creditCost > 0) {
+            const confirmResp = await Swal.fire({
+                title: 'নিশ্চিত করুন',
+                text: `এই ফাইলটি WhatsApp-এ পাঠাতে আপনার একাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে। আপনি কি রাজি?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'হ্যাঁ, পাঠিয়ে দিন',
+                cancelButtonText: 'না, বাতিল করুন'
+            });
 
-        if (!confirmResp.isConfirmed) return;
+            if (!confirmResp.isConfirmed) return;
+        }
 
         const btn = document.getElementById('whatsappBtn');
         const originalText = btn.innerHTML;

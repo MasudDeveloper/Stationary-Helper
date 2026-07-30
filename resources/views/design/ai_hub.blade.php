@@ -141,10 +141,32 @@
     function generateImage() {
         const prompt = document.getElementById('image-prompt').value;
         if (!prompt) {
-            Swal.fire('অনুগ্রহ করে প্রম্পট লিখুন।');
+            Swal.fire('অনুগ্রহ করে প্রম্পট দিন।');
             return;
         }
 
+        let cost = {{ $cost ?? 0 }};
+        if (cost > 0) {
+            Swal.fire({
+                title: 'নিশ্চিত করুন',
+                text: `এই ছবিটি তৈরি করতে আপনার একাউন্ট থেকে ${cost} ক্রেডিট কাটা হবে। আপনি কি রাজি?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'হ্যাঁ, তৈরি করুন',
+                cancelButtonText: 'না, বাতিল করুন'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    executeGenerate(prompt);
+                }
+            });
+        } else {
+            executeGenerate(prompt);
+        }
+    }
+
+    function executeGenerate(prompt) {
         document.getElementById('gen-loader').style.display = 'block';
         document.getElementById('gen-result-container').style.display = 'none';
         document.getElementById('btn-generate').disabled = true;
@@ -203,6 +225,28 @@
     async function removeBackground() {
         if (!uploadedImageBase64) return;
 
+        let bgCost = {{ $bg_cost ?? 0 }};
+        if (bgCost > 0) {
+            Swal.fire({
+                title: 'নিশ্চিত করুন',
+                text: `এই ছবির ব্যাকগ্রাউন্ড রিমুভ করতে আপনার একাউন্ট থেকে ${bgCost} ক্রেডিট কাটা হবে। আপনি কি রাজি?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'হ্যাঁ, রিমুভ করুন',
+                cancelButtonText: 'না, বাতিল করুন'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    executeBgRemove();
+                }
+            });
+        } else {
+            executeBgRemove();
+        }
+    }
+
+    async function executeBgRemove() {
         document.getElementById('bg-loader').style.display = 'block';
         document.getElementById('bg-result-container').style.display = 'none';
         document.getElementById('btn-bg-remove').disabled = true;
@@ -331,3 +375,4 @@
     }
 </script>
 @endsection
+

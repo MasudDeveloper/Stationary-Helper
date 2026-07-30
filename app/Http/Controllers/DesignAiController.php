@@ -16,7 +16,13 @@ class DesignAiController extends Controller
 
     public function aiHub()
     {
-        return view('design.ai_hub');
+        $costSetting = \App\Models\Setting::where('key', 'ai_image_cost')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 0.00;
+        
+        $bgCostSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
+        $bg_cost = ($bgCostSetting !== null && $bgCostSetting !== '') ? (float) $bgCostSetting : 5.00;
+        
+        return view('design.ai_hub', compact('cost', 'bg_cost'));
     }
 
     public function generateImage(Request $request)
@@ -25,6 +31,7 @@ class DesignAiController extends Controller
             'prompt' => 'required|string|max:500',
         ]);
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
         
         // Check dynamic setting from Admin panel (default is 0 for free)
@@ -37,8 +44,7 @@ class DesignAiController extends Controller
 
         // Deduct credits only if cost > 0
         if ($cost > 0) {
-            $user->credits -= $cost;
-            $user->save();
+            $user->deductCreditAndPayCommission($cost, 'AI Image Generation');
         }
 
         // Integrate with pollinations.ai for image generation (free, no API key required)
@@ -59,10 +65,21 @@ class DesignAiController extends Controller
             'image' => 'required|string', // Base64 image
         ]);
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
-        $cost = 0; // Free in AI Hub
+        
+        $costSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
-        // Return success without deducting any credits
+        if ($cost > 0 && $user->credits < $cost) {
+            return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। ব্যাকগ্রাউন্ড রিমুভ করতে ' . $cost . ' ক্রেডিট প্রয়োজন।'], 403);
+        }
+
+        if ($cost > 0) {
+            $user->deductCreditAndPayCommission($cost, 'Background Removal');
+        }
+
+        // Return success
         return response()->json([
             'success' => true,
             'remaining_credits' => $user ? $user->credits : 0,

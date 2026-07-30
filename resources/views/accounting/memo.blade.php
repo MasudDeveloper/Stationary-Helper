@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'প্রফেশনাল ইনভয়েস ও ক্যাশ মেমো জেনারেটর - সহজ কাজ')
 
@@ -217,9 +217,11 @@ Make all checks payable to penghor.com.</textarea>
                 <button onclick="triggerPrint()" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #f97316, #ea580c); border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);">
                     <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> প্রিন্ট / PDF হিসেবে সেভ করুন
                 </button>
+                @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
                 <button onclick="sendViaWhatsApp()" class="btn" id="wa-btn" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; background: #25D366; color: #fff; border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">
                     <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">chat</i> WhatsApp-এ গ্রাহককে পাঠান
                 </button>
+                @endif
             </div>
         </div>
 

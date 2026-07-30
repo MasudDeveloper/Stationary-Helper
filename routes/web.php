@@ -42,6 +42,11 @@ use App\Http\Controllers\Admin\CvTemplateController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\WhatsAppController;
 use App\Http\Controllers\SavedDocumentController;
+use App\Http\Controllers\BusinessAccountController;
+use App\Http\Controllers\Admin\BusinessUpgradeController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\ShopkeeperOrderController;
+use App\Http\Controllers\ReferralController;
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -61,6 +66,16 @@ Route::middleware('auth')->group(function () {
     // Payment Routes
     Route::get('/recharge', [PaymentController::class, 'recharge'])->name('recharge');
     Route::post('/recharge', [PaymentController::class, 'submitRecharge']);
+
+    // Business Account Routes
+    Route::get('/business/upgrade', [BusinessAccountController::class, 'upgrade'])->name('business.upgrade');
+    Route::post('/business/upgrade', [BusinessAccountController::class, 'submitUpgrade']);
+    Route::get('/my-orders', [ShopkeeperOrderController::class, 'index'])->name('shopkeeper.orders.index');
+    Route::post('/my-orders/{id}/accept', [ShopkeeperOrderController::class, 'accept'])->name('shopkeeper.orders.accept');
+    Route::post('/my-orders/{id}/complete', [ShopkeeperOrderController::class, 'complete'])->name('shopkeeper.orders.complete');
+
+    // Referral Routes
+    Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
 
     // Document & CV Maker Routes
     Route::get('/documents', [DocumentController::class, 'index'])->name('document.index');
@@ -149,6 +164,7 @@ Route::middleware('auth')->group(function () {
 
     // Feature 7 & 8
     Route::get('/pdf/tools/to-excel', [PdfController::class, 'pdfToExcel'])->name('pdf.tools.to_excel');
+    Route::get('/pdf/tools/to-word', [PdfController::class, 'pdfToWord'])->name('pdf.tools.pdf_to_word');
     Route::get('/pdf/tools/repair', [PdfController::class, 'pdfRepair'])->name('pdf.tools.repair');
 
     // Feature 9 & 10
@@ -194,6 +210,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/payments', [PaymentController::class, 'adminPayments'])->name('admin.payments');
         Route::post('/payments/{id}/approve', [PaymentController::class, 'approvePayment'])->name('admin.payments.approve');
         Route::post('/payments/{id}/reject', [PaymentController::class, 'rejectPayment'])->name('admin.payments.reject');
+
+        // Business Upgrades
+        Route::get('/business-upgrades', [BusinessUpgradeController::class, 'index'])->name('admin.business_upgrades');
+        Route::post('/business-upgrades/{id}/approve', [BusinessUpgradeController::class, 'approve'])->name('admin.business_upgrades.approve');
+        Route::post('/business-upgrades/{id}/reject', [BusinessUpgradeController::class, 'reject'])->name('admin.business_upgrades.reject');
+
+        // Orders
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('/orders/create', [AdminOrderController::class, 'create'])->name('admin.orders.create');
+        Route::post('/orders', [AdminOrderController::class, 'store'])->name('admin.orders.store');
+        Route::post('/orders/{id}/paid', [AdminOrderController::class, 'markPaid'])->name('admin.orders.paid');
 
         // Document Categories & Templates
         Route::resource('categories', DocumentCategoryController::class, ['as' => 'admin'])->except(['show']);

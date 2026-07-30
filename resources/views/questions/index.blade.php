@@ -15,6 +15,9 @@
         <a href="{{ route('questions.create', ['type' => 'cq']) }}" class="btn" style="padding: 15px 30px; font-size: 1.1rem; border-radius: 30px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: #fff;">
             + নতুন CQ প্রশ্নপত্র তৈরি করুন
         </a>
+        <a href="{{ route('questions.create', ['type' => 'mixed']) }}" class="btn" style="padding: 15px 30px; font-size: 1.1rem; border-radius: 30px; background: rgba(236, 72, 153, 0.2); border: 1px solid #ec4899; color: #fff; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);">
+            + নতুন মিক্সড (Mixed) প্রশ্নপত্র
+        </a>
     </div>
 
     <!-- Saved List -->
@@ -41,8 +44,10 @@
                         <td style="padding: 15px;">
                             @if ($paper->type == 'mcq')
                                 <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">MCQ</span>
-                            @else
+                            @elseif ($paper->type == 'cq')
                                 <span style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">CQ</span>
+                            @else
+                                <span style="background: rgba(236, 72, 153, 0.2); color: #ec4899; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Mixed</span>
                             @endif
                         </td>
                         <td style="padding: 15px; display: flex; gap: 10px;">

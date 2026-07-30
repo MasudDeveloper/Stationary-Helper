@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'পিডিএফ টু ওয়ার্ড - penghor.com')
 

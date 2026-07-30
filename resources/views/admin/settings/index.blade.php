@@ -46,7 +46,44 @@
 
                 <hr style="border-top-color: rgba(255,255,255,0.1); margin: 30px 0;">
 
+                <h4 class="mb-3 text-primary"><i class="material-icons-round" style="vertical-align: middle;">toll</i> Other Tools Pricing (Credits)</h4>
+                
+                <div class="row">
+                    <div class="col-md-6 form-group mb-4">
+                        <label>CV WhatsApp Send Cost</label>
+                        <input type="number" step="0.01" min="0" name="cost_cv_whatsapp_send" value="{{ $settings['cost_cv_whatsapp_send'] ?? '5' }}" class="form-control" placeholder="e.g. 5" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                        <small class="text-muted mt-2 d-block">Cost for sending CV directly to WhatsApp.</small>
+                    </div>
+                    <div class="col-md-6 form-group mb-4">
+                        <label>Document WhatsApp Send Cost</label>
+                        <input type="number" step="0.01" min="0" name="cost_document_whatsapp_send" value="{{ $settings['cost_document_whatsapp_send'] ?? '5' }}" class="form-control" placeholder="e.g. 5" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                        <small class="text-muted mt-2 d-block">Cost for sending Document directly to WhatsApp.</small>
+                    </div>
+                    <div class="col-md-6 form-group mb-4">
+                        <label>OCR Scanner Cost</label>
+                        <input type="number" step="0.01" min="0" name="cost_ocr_scanner" value="{{ $settings['cost_ocr_scanner'] ?? '5' }}" class="form-control" placeholder="e.g. 5" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                        <small class="text-muted mt-2 d-block">Cost for extracting text from an image.</small>
+                    </div>
+                    <div class="col-md-6 form-group mb-4">
+                        <label>Background Removal Cost</label>
+                        <input type="number" step="0.01" min="0" name="cost_bg_removal" value="{{ $settings['cost_bg_removal'] ?? '5' }}" class="form-control" placeholder="e.g. 5" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                        <small class="text-muted mt-2 d-block">Cost for removing background from an image.</small>
+                    </div>
+                </div>
+                <small class="text-muted mb-4 d-block" style="color: #94a3b8 !important;"><strong>Note:</strong> Set any cost to <strong style="color: #10b981;">0</strong> to make it FREE. CV and Document printing costs are set individually per template.</small>
+
+                <hr style="border-top-color: rgba(255,255,255,0.1); margin: 30px 0;">
+
                 <h4 class="mb-3 text-success"><i class="material-icons-round" style="vertical-align: middle;">chat</i> WhatsApp API Settings</h4>
+
+                <div class="form-group mb-4">
+                    <label>WhatsApp Module Status</label>
+                    <select name="whatsapp_module_status" class="form-control" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                        <option value="enabled" {{ ($settings['whatsapp_module_status'] ?? 'enabled') === 'enabled' ? 'selected' : '' }}>Enabled (Show WhatsApp Features)</option>
+                        <option value="disabled" {{ ($settings['whatsapp_module_status'] ?? 'enabled') === 'disabled' ? 'selected' : '' }}>Disabled (Hide WhatsApp Features)</option>
+                    </select>
+                    <small class="text-muted mt-2 d-block">If 'Disabled' is selected, all WhatsApp-related buttons and scanners will be hidden across the system.</small>
+                </div>
 
                 <div class="form-group mb-4">
                     <label>WhatsApp API Provider</label>
@@ -68,9 +105,33 @@
                     </div>
                 </div>
 
+                <h4 class="mb-3 text-warning mt-4"><i class="material-icons-round" style="vertical-align: middle;">payments</i> Payment Methods (Upgrade & Recharge)</h4>
+                
+                <div class="row">
+                    <div class="col-md-4 form-group mb-4">
+                        <label>bKash Number</label>
+                        <input type="text" name="payment_bkash" value="{{ $settings['payment_bkash'] ?? '' }}" class="form-control" placeholder="e.g. 017XX-XXXXXX" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    </div>
+                    <div class="col-md-4 form-group mb-4">
+                        <label>Nagad Number</label>
+                        <input type="text" name="payment_nagad" value="{{ $settings['payment_nagad'] ?? '' }}" class="form-control" placeholder="e.g. 016XX-XXXXXX" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    </div>
+                    <div class="col-md-4 form-group mb-4">
+                        <label>Rocket Number</label>
+                        <input type="text" name="payment_rocket" value="{{ $settings['payment_rocket'] ?? '' }}" class="form-control" placeholder="e.g. 019XX-XXXXXX" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    </div>
+                </div>
+
                 <hr style="border-top-color: rgba(255,255,255,0.1); margin: 30px 0;">
 
-                <button type="submit" class="btn btn-primary px-4 py-2 w-100">Save Settings</button>
+                <h4 class="mb-3 text-info"><i class="material-icons-round" style="vertical-align: middle;">image</i> Upgrade Page Banner</h4>
+                <div class="form-group mb-4">
+                    <label>Banner Image URL</label>
+                    <input type="text" name="upgrade_banner_url" value="{{ $settings['upgrade_banner_url'] ?? '' }}" class="form-control" placeholder="Enter image URL" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <small class="text-muted mt-2 d-block">Recommended size: <strong>1200 x 300 pixels</strong> (or similar ultra-wide aspect ratio). You can upload to a free image host like Imgur and paste the direct link (.jpg/.png) here.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary px-4 py-2 w-100 mt-3">Save Settings</button>
             </form>
         </div>
     </div>

@@ -122,6 +122,16 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.business_upgrades') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.business_upgrades') ? 'active' : '' }}">
+                        <i class="material-icons-round">storefront</i>বিজনেস আপগ্রেড
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.orders.index') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                        <i class="material-icons-round">assignment</i>অর্ডার ম্যানেজমেন্ট
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.recharge-packages.index') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.recharge-packages.*') ? 'active' : '' }}">
                         <i class="material-icons-round">inventory_2</i>রিচার্জ প্যাকেজ
                     </a>

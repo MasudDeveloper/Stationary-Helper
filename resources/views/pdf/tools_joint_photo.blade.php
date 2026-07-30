@@ -151,13 +151,7 @@
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 35px;">
-            <button id="btn-generate" onclick="startProcessing()" class="btn-primary" style="padding: 16px 40px; border-radius: 35px; font-size: 1.15rem; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #10b981); border: none; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;">
-                <i class="material-icons-round" style="font-size: 26px;">auto_awesome</i> এক ক্লিকে যৌথ ছবি তৈরি করুন (Merge & Remove BG)
-            </button>
-        </div>
-
-        <!-- Progress bar during AI Background Removal -->
+        <div style="text-align: center; margin-top: 25px;"><label style="color: #cbd5e1; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 1.05rem;"><input type="checkbox" id="remove-bg-checkbox" checked style="width: 20px; height: 20px; accent-color: #3b82f6;">AI ব্যাকগ্রাউন্ড রিমুভ করুন (টিক তুলে দিলে দ্রুত কাজ করবে)</label></div><div style="text-align: center; margin-top: 25px;"><button id="btn-generate" onclick="startProcessing()" class="btn-primary" style="padding: 16px 40px; border-radius: 35px; font-size: 1.15rem; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #10b981); border: none; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;"><i class="material-icons-round" style="font-size: 26px;">auto_awesome</i> ছবি মার্জ করুন (Merge Photos)</button></div><!-- Progress bar during AI Background Removal -->
         <div id="loading-section" style="display: none; text-align: center; margin-top: 25px; background: rgba(30, 41, 59, 0.8); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
             <div style="display: inline-flex; align-items: center; gap: 12px; color: #60a5fa; font-weight: 700; font-size: 1.15rem; margin-bottom: 10px;">
                 <div class="spinner-border text-primary" role="status" style="width: 1.5rem; height: 1.5rem;"></div>
@@ -312,45 +306,55 @@
         document.getElementById('loading-section').style.display = 'block';
         document.getElementById('progress-bar').style.width = '10%';
 
-        try {
-            document.getElementById('loading-status-text').innerText = 'এআই লাইব্রেরি লোড ও ১ম ছবির ব্যাকগ্রাউন্ড রিমুভ করা হচ্ছে...';
-            
-            const module = await import('https://esm.sh/@imgly/background-removal@1.4.5');
-            const removeBg = module.default || module.removeBackground;
-            if (!removeBg) throw new Error("এআই লাইব্রেরি লোড হতে ব্যর্থ হয়েছে।");
+                try {
+            const useBgRemover = document.getElementById('remove-bg-checkbox').checked;
 
-            const configP1 = {
-                publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
-                progress: (key, current, total) => {
-                    let percent = Math.round((current / total) * 45);
-                    document.getElementById('progress-bar').style.width = percent + '%';
-                }
-            };
+            if (!useBgRemover) {
+                document.getElementById('loading-status-text').innerText = '??? ????? ??? ?????...';
+                imgObj1 = await blobToImage(fileP1);
+                document.getElementById('progress-bar').style.width = '50%';
+                imgObj2 = await blobToImage(fileP2);
+                document.getElementById('progress-bar').style.width = '100%';
+            } else {
+                document.getElementById('loading-status-text').innerText = '??? ????????? ??? ? ?? ???? ????????????? ????? ??? ?????...';
+                
+                const module = await import('https://esm.sh/@imgly/background-removal@1.4.5');
+                const removeBg = module.default || module.removeBackground;
+                if (!removeBg) throw new Error("??? ????????? ??? ??? ?????? ??????");
 
-            // Remove BG for Person 1
-            const url1 = URL.createObjectURL(fileP1);
-            let rawBlob1 = await removeBg(url1, configP1);
-            let cleanBlob1 = await cleanEdges(rawBlob1);
-            imgObj1 = await blobToImage(cleanBlob1);
+                const configP1 = {
+                    publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
+                    progress: (key, current, total) => {
+                        let percent = Math.round((current / total) * 45);
+                        document.getElementById('progress-bar').style.width = percent + '%';
+                    }
+                };
 
-            document.getElementById('progress-bar').style.width = '50%';
-            document.getElementById('loading-status-text').innerText = '২য় ছবির ব্যাকগ্রাউন্ড রিমুভ করা হচ্ছে...';
+                // Remove BG for Person 1
+                const url1 = URL.createObjectURL(fileP1);
+                let rawBlob1 = await removeBg(url1, configP1);
+                let cleanBlob1 = await cleanEdges(rawBlob1);
+                imgObj1 = await blobToImage(cleanBlob1);
 
-            // Remove BG for Person 2
-            const configP2 = {
-                publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
-                progress: (key, current, total) => {
-                    let percent = 50 + Math.round((current / total) * 45);
-                    document.getElementById('progress-bar').style.width = percent + '%';
-                }
-            };
-            const url2 = URL.createObjectURL(fileP2);
-            let rawBlob2 = await removeBg(url2, configP2);
-            let cleanBlob2 = await cleanEdges(rawBlob2);
-            imgObj2 = await blobToImage(cleanBlob2);
+                document.getElementById('progress-bar').style.width = '50%';
+                document.getElementById('loading-status-text').innerText = '?? ???? ????????????? ????? ??? ?????...';
+
+                // Remove BG for Person 2
+                const configP2 = {
+                    publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
+                    progress: (key, current, total) => {
+                        let percent = 50 + Math.round((current / total) * 45);
+                        document.getElementById('progress-bar').style.width = percent + '%';
+                    }
+                };
+                const url2 = URL.createObjectURL(fileP2);
+                let rawBlob2 = await removeBg(url2, configP2);
+                let cleanBlob2 = await cleanEdges(rawBlob2);
+                imgObj2 = await blobToImage(cleanBlob2);
+            }
 
             document.getElementById('progress-bar').style.width = '100%';
-            document.getElementById('loading-status-text').innerText = 'ছবি পাশাপাশি বসিয়ে যৌথ ছবি তৈরি করা হচ্ছে...';
+            document.getElementById('loading-status-text').innerText = '??? ??????? ??????? ?????, ??????? ????...';
 
             setTimeout(() => {
                 document.getElementById('step-upload').style.display = 'none';

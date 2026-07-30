@@ -182,9 +182,32 @@ function processFile(file) {
 function startOcr() {
     if (!selectedImageFile) return;
 
+    let cost = {{ $cost ?? 0 }};
+
+    if (cost > 0) {
+        Swal.fire({
+            title: 'নিশ্চিত করুন',
+            text: `এই লেখাগুলো স্ক্যান করতে আপনার একাউন্ট থেকে ${cost} ক্রেডিট কাটা হবে। আপনি কি রাজি?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'হ্যাঁ, স্ক্যান করুন',
+            cancelButtonText: 'না, বাতিল করুন'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                executeOcrRequest();
+            }
+        });
+    } else {
+        executeOcrRequest();
+    }
+}
+
+function executeOcrRequest() {
     // First deduct credit via AJAX
     document.getElementById('start-ocr-btn').disabled = true;
-    document.getElementById('start-ocr-btn').innerHTML = '<i class="material-icons-round spin">sync</i> প্রসেস হচ্ছে...';
+    document.getElementById('start-ocr-btn').innerHTML = '<i class="material-icons-round spin">sync</i> প্রসেসিং হচ্ছে...';
 
     fetch('{{ route("ocr.deduct_credit") }}', {
         method: 'POST',

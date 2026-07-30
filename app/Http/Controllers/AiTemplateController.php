@@ -111,12 +111,17 @@ class AiTemplateController extends Controller
     public function customize($id)
     {
         $template = AiTemplate::findOrFail($id);
-        return view('design.ai_template_customize', compact('template'));
+        
+        $user = Auth::user();
+        $cost = $template->is_premium ? ($user->role === 'business' ? 1.00 : $template->credits_cost) : 0.00;
+
+        return view('design.ai_template_customize', compact('template', 'cost'));
     }
 
     public function process(Request $request, $id)
     {
         $template = AiTemplate::findOrFail($id);
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Calculate credit cost
@@ -128,8 +133,7 @@ class AiTemplateController extends Controller
 
         // Deduct credits
         if ($cost > 0) {
-            $user->credits -= $cost;
-            $user->save();
+            $user->deductCreditAndPayCommission($cost, 'AI Templates');
         }
 
         return response()->json([

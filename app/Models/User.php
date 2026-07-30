@@ -26,6 +26,8 @@ class User extends Authenticatable
         'credits',
         'referred_by',
         'referral_code',
+        'account_id',
+        'account_type',
     ];
 
     /**
@@ -81,6 +83,32 @@ class User extends Authenticatable
 
         static::creating(function ($user) {
             $user->referral_code = \Illuminate\Support\Str::random(10);
+            $user->account_id = 'UID-' . strtoupper(\Illuminate\Support\Str::random(8));
         });
+    }
+
+    /**
+     * Deduct credit and pay 20% commission to referrer if applicable.
+     */
+    public function deductCreditAndPayCommission($amount, $sourceType = 'Service Usage')
+    {
+        $this->credits -= $amount;
+        $this->save();
+
+        if ($this->referred_by && $amount > 0) {
+            $referrer = self::find($this->referred_by);
+            if ($referrer) {
+                $commission = $amount * 0.20; // 20%
+                $referrer->credits += $commission;
+                $referrer->save();
+
+                \App\Models\ReferralEarning::create([
+                    'referrer_id' => $referrer->id,
+                    'referred_user_id' => $this->id,
+                    'amount' => $commission,
+                    'source_type' => $sourceType,
+                ]);
+            }
+        }
     }
 }
