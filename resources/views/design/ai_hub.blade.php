@@ -282,7 +282,7 @@
             };
 
             let rawBlob = await removeBg(uploadedImageBase64, config);
-            let cleanBlob = await cleanEdges(rawBlob);
+            let cleanBlob = rawBlob;
             let transparentUrl = URL.createObjectURL(cleanBlob);
 
             const img = new Image();

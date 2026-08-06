@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner Perspective Crop) - penghor.com')
 
@@ -149,15 +149,7 @@
             💡 <strong>টিপস:</strong> লাল, সবুজ, নীল ও হলুদ রঙের ৪টি বৃত্ত টেনে আপনার ডকুমেন্টের আসল ৪ কোণায় ঠিকমত বসিয়ে নিচের বাটনে ক্লিক করুন।
         </p>
 
-        <!-- Aspect Ratio Option -->
-        <div style="margin-bottom: 25px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span style="color: #e2e8f0; font-weight: 600; font-size: 0.95rem;">আউটপুট অনুপাত (Ratio):</span>
-            <button onclick="setRatio('auto', this)" class="ratio-btn active">✨ অটোমেটিক (Auto)</button>
-            <button onclick="setRatio('a4', this)" class="ratio-btn">📄 A4 ডকুমেন্ট (210x297)</button>
-            <button onclick="setRatio('nid', this)" class="ratio-btn">🪪 এনআইডি / কার্ড (85x54)</button>
-            <button onclick="setRatio('legal', this)" class="ratio-btn">📜 লিগ্যাল সাইজ</button>
-            <button onclick="setRatio('square', this)" class="ratio-btn">🔲 স্কয়ার (1:1)</button>
-        </div>
+        <!-- Aspect Ratio Option Removed as per user request -->
 
         <!-- Editor Canvas -->
         <div style="overflow-x: auto; padding: 10px 0;">
@@ -256,15 +248,80 @@
         setupMouseAndTouchEvents();
     };
 
-    function handleImageUpload(input) {
+    async function handleImageUpload(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
+            const p = input.parentElement.querySelector('p');
+            const originalText = p.innerText;
+            p.innerText = 'AI স্ক্যান করছে...';
+            input.parentElement.style.opacity = '0.7';
+            input.disabled = true;
+
+            let detectedCorners = null;
+            try {
+                // Resize image before sending to bypass PHP upload limits and speed up AI
+                const compressedFile = await new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_SIZE = 800;
+                        let scale = 1;
+                        if (img.width > MAX_SIZE || img.height > MAX_SIZE) {
+                            scale = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height);
+                        }
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        canvas.toBlob(blob => resolve(new File([blob], "image.jpg", {type: "image/jpeg"})), 'image/jpeg', 0.8);
+                    };
+                    img.src = URL.createObjectURL(file);
+                });
+
+                const formData = new FormData();
+                formData.append('image', compressedFile);
+
+                const res = await fetch("{{ route('pdf.tools.detect_document_corners') }}", {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: formData
+                });
+                
+                if (!res.ok) {
+                    Swal.fire('Error', 'Server Connection Error: ' + res.statusText, 'error');
+                } else {
+                    const data = await res.json();
+                    if (data.success && data.corners) {
+                        detectedCorners = data.corners;
+                    } else if (data.message) {
+                        console.log("API Msg:", data.message);
+                    }
+                }
+            } catch (err) {
+                console.error("Corner detection failed", err);
+            }
+
+            p.innerText = originalText;
+            input.parentElement.style.opacity = '1';
+            input.disabled = false;
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 origImage.onload = function() {
                     document.getElementById('step-1').style.display = 'none';
                     document.getElementById('step-2').style.display = 'block';
                     document.getElementById('step-3').style.display = 'none';
+                    
+                    if (detectedCorners) {
+                        corners = detectedCorners;
+                    } else {
+                        corners = [
+                            { x: 0.05, y: 0.05 },
+                            { x: 0.95, y: 0.05 },
+                            { x: 0.95, y: 0.95 },
+                            { x: 0.05, y: 0.95 }
+                        ];
+                    }
                     
                     initEditor();
                 };
@@ -652,5 +709,19 @@
         document.getElementById('step-2').style.display = 'none';
         document.getElementById('step-1').style.display = 'block';
     }
+
+    // Add Paste Support (Ctrl+V)
+    window.addEventListener('paste', function(e) {
+        if (e.clipboardData && e.clipboardData.files.length > 0) {
+            const file = e.clipboardData.files[0];
+            if (file.type.startsWith('image/')) {
+                const input = document.getElementById('file-input');
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                input.files = dataTransfer.files;
+                handleImageUpload(input);
+            }
+        }
+    });
 </script>
 @endsection

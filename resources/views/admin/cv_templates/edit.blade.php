@@ -76,7 +76,16 @@
                 </ul>
             </div>
 
-            <textarea name="content" required class="form-control" rows="15" style="width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-family: monospace;">{{ $cvTemplate->content }}</textarea>
+            <!-- HTML Upload Feature -->
+            <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 8px;">
+                <div>
+                    <strong style="color: #60a5fa;">HTML ফাইল আপলোড করুন (ঐচ্ছিক):</strong>
+                    <div style="font-size: 0.8rem; color: #cbd5e1;">আপনার কাছে রেডিমেড HTML ফাইল থাকলে সেটি আপলোড করে সরাসরি ইম্পোর্ট করতে পারেন।</div>
+                </div>
+                <input type="file" id="html_file_upload" accept=".html" style="background: rgba(0,0,0,0.2); color: #fff; padding: 5px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);">
+            </div>
+
+            <textarea id="cv_content" name="content" class="form-control" rows="15" style="width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-family: monospace;">{{ $cvTemplate->content }}</textarea>
         </div>
 
         <div style="text-align: right; margin-top: 20px;">
@@ -86,4 +95,44 @@
         </div>
     </form>
 </div>
+
+<!-- Add Summernote Editor -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#cv_content').summernote({
+            height: 400,
+            callbacks: {
+                onInit: function() {
+                    $('.note-editable').css('background', '#fff');
+                    $('.note-editable').css('color', '#000');
+                    $('.note-toolbar').css('background', '#f1f5f9');
+                }
+            }
+        });
+
+        $('#html_file_upload').on('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#cv_content').summernote('code', e.target.result);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'সফল!',
+                    text: 'HTML ফাইলটি সফলভাবে ইম্পোর্ট করা হয়েছে।',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            };
+            reader.readAsText(file);
+        });
+    });
+</script>
 @endsection

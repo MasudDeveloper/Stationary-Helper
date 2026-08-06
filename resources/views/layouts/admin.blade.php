@@ -117,6 +117,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.users') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                        <i class="material-icons-round">group</i>ইউজার লিস্ট
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.payments') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.payments') ? 'active' : '' }}">
                         <i class="material-icons-round">payments</i>পেমেন্ট রিকোয়েস্ট
                     </a>

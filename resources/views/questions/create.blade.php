@@ -8,6 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- MathJax for rendering LaTeX/Math formulas -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
@@ -161,13 +168,13 @@
 <div class="builder-fullscreen">
     <!-- Sidebar / Inputs -->
     <div class="builder-sidebar">
-        <div class="sidebar-header">
-            <h5 style="margin: 0; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                <i class="material-icons-round" style="color: #3b82f6;">edit_document</i> 
-                {{ strtoupper($type) }} প্রশ্ন মেকার
+        <div class="sidebar-header" style="padding: 15px 20px; gap: 10px;">
+            <h5 class="mb-0 text-white fw-bold d-flex align-items-center" style="font-size: 1.05rem; line-height: 1.3; flex: 1;">
+                <i class="material-icons-round flex-shrink-0" style="color: #3b82f6; margin-right: 5px;">edit_document</i> 
+                <span>{{ strtoupper($type) }} প্রশ্ন মেকার</span>
             </h5>
-            <a href="{{ route('questions.index') }}" class="btn btn-sm btn-outline-light" style="border-color: rgba(255,255,255,0.2); padding: 4px 10px;">
-                <i class="material-icons-round" style="font-size: 16px; vertical-align: text-bottom;">close</i> বন্ধ করুন
+            <a href="{{ route('questions.index') }}" class="btn btn-sm btn-outline-light d-flex align-items-center flex-shrink-0" style="border-color: rgba(255,255,255,0.2); padding: 4px 8px; font-size: 0.85rem;">
+                <i class="material-icons-round flex-shrink-0" style="font-size: 16px; margin-right: 3px;">close</i> বন্ধ করুন
             </a>
         </div>
         
@@ -236,6 +243,8 @@
             </div>
 
             <hr style="border-color: rgba(255,255,255,0.1); margin: 0 0 20px 0;">
+
+            @include('partials.question_tools_buttons')
 
             <div id="editor-fields">
                 <input type="hidden" id="edit_index" value="-1">
@@ -362,7 +371,7 @@
             <div id="preview_wrapper" style="display: flex; gap: 40px; width: 100%;">
                 
                 <!-- COPY 1 -->
-                <div id="preview_col_1" style="flex: 1;">
+                <div id="preview_col_1" style="flex: 1; height: 100%; column-fill: auto;">
                     <div class="preview_header" style="text-align: center; margin-bottom: 25px; break-inside: avoid; font-family: 'Kalpurush', 'Siyam Rupali', 'SolaimanLipi', Arial, sans-serif;">
                         <h1 class="view_school" style="font-weight: 800; margin: 0 0 5px 0; font-size: 26px; color: #000; letter-spacing: 0.5px;">স্কুলের / প্রতিষ্ঠানের নাম</h1>
                         <h3 class="view_address" style="font-weight: 600; margin: 0 0 6px 0; font-size: 17px; color: #111;">ঠিকানা / স্থান</h3>
@@ -378,7 +387,7 @@
                 </div>
 
                 <!-- COPY 2 (Hidden by default) -->
-                <div id="preview_col_2" style="flex: 1; display: none;">
+                <div id="preview_col_2" style="flex: 1; display: none; height: 100%; column-fill: auto;">
                     <div class="preview_header" style="text-align: center; margin-bottom: 25px; font-family: 'Kalpurush', 'Siyam Rupali', 'SolaimanLipi', Arial, sans-serif;">
                         <h1 class="view_school" style="font-weight: 800; margin: 0 0 5px 0; font-size: 26px; color: #000; letter-spacing: 0.5px;">স্কুলের / প্রতিষ্ঠানের নাম</h1>
                         <h3 class="view_address" style="font-weight: 600; margin: 0 0 6px 0; font-size: 17px; color: #111;">ঠিকানা / স্থান</h3>
@@ -450,23 +459,27 @@
         // Update orientation dimensions
         if (orientation === 'landscape') {
             paper.style.maxWidth = '297mm';
-            paper.style.minHeight = '210mm';
+            paper.style.height = '210mm';
         } else {
             paper.style.maxWidth = '210mm';
-            paper.style.minHeight = '297mm';
+            paper.style.height = '297mm';
         }
 
         if (layout === '2' && isDuplicate) {
             col2.style.display = 'block';
             col1.style.columnCount = '1';
             col2.style.columnCount = '1';
+            col1.style.columnFill = 'auto';
+            col2.style.columnFill = 'auto';
         } else {
             col2.style.display = 'none';
             if (layout === '2') {
                 col1.style.columnCount = '2';
                 col1.style.columnGap = '40px';
+                col1.style.columnFill = 'auto';
             } else {
                 col1.style.columnCount = '1';
+                col1.style.columnFill = 'auto';
             }
         }
         
@@ -706,7 +719,7 @@
             } else if (q.type === 'mcq' || 'options' in q) {
                 // MCQ
                 qHtml = `
-                    <div style="margin-bottom: 10px; padding-right: 70px; display: flex; justify-content: space-between;">
+                    <div style="margin-bottom: 10px; display: flex; justify-content: space-between;">
                         <div><strong>${idx + 1}.</strong> ${q.text}</div>
                         ${q.marks ? `<div>${q.marks}</div>` : ''}
                     </div>
@@ -720,7 +733,7 @@
             } else {
                 // CQ
                 qHtml = `
-                    <div style="margin-bottom: 10px; padding-right: 70px; text-align: justify; display: flex; justify-content: space-between;">
+                    <div style="margin-bottom: 10px; text-align: justify; display: flex; justify-content: space-between;">
                         <div><strong>${idx + 1}.</strong> ${q.stem}</div>
                         ${q.marks ? `<div>${q.marks}</div>` : ''}
                     </div>
@@ -737,6 +750,9 @@
                 const wrapper = document.createElement('div');
                 wrapper.className = 'question-card';
                 wrapper.style.breakInside = 'avoid';
+                wrapper.style.position = 'relative'; // Ensure absolute buttons position correctly
+                
+                wrapper.innerHTML = qHtml;
 
                 // Only show action buttons on the first copy
                 if (areaIdx === 0) {
@@ -760,7 +776,6 @@
                     wrapper.appendChild(actions);
                 }
 
-                wrapper.innerHTML += qHtml;
                 area.appendChild(wrapper);
             });
         });
@@ -837,5 +852,7 @@
     }
 </style>
 
+@include('partials.question_modals')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

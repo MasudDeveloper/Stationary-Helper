@@ -1,29 +1,40 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'জব ফটো ও সিগনেচার রিসাইজ - penghor.com')
 
 @section('content')
 <style>
-    .tool-header { text-align: center; margin-bottom: 30px; }
+    .tool-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
     .upload-box {
         border: 2px dashed var(--border-color);
         padding: 30px;
         text-align: center;
         border-radius: 12px;
-        background: rgba(255,255,255,0.05);
+        background: rgba(255, 255, 255, 0.05);
         position: relative;
         cursor: pointer;
         transition: all 0.2s;
     }
+
     .upload-box:hover {
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         border-color: var(--primary-color);
     }
+
     .upload-box input[type="file"] {
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        opacity: 0; cursor: pointer;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
     }
+
     .result-img {
         max-width: 100%;
         border-radius: 8px;
@@ -31,6 +42,7 @@
         display: none;
         margin-top: 15px;
     }
+
     .info-text {
         color: #10b981;
         font-weight: bold;
@@ -49,7 +61,7 @@
     </div>
 
     <div class="glass" style="padding: 40px;">
-        
+
         <div class="grid-2" style="margin-bottom: 30px;">
             <!-- Photo Section -->
             <div style="text-align: center;">
@@ -63,7 +75,7 @@
                 <p id="info-photo" class="info-text"></p>
                 <div id="action-photo" style="display: none; margin-top: 15px;">
                     <button class="btn btn-primary" onclick="downloadFile('photo')" style="width: 100%; margin-bottom: 10px;">ডাউনলোড ছবি</button>
-                    
+
                     <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                         <p style="color: #fff; margin-bottom: 10px; font-size: 0.9rem;">এটাকে কি পেইজে সাজাতে চাচ্ছেন?</p>
                         <button onclick="arrangePassportPhoto()" class="btn" style="width: 100%; background: #f59e0b; color: #fff; border: none;">
@@ -91,8 +103,14 @@
 </div>
 
 <script>
-    let finalDataUrls = { photo: null, sig: null };
-    let filenames = { photo: 'Photo_300x300.jpg', sig: 'Signature_300x80.jpg' };
+    let finalDataUrls = {
+        photo: null,
+        sig: null
+    };
+    let filenames = {
+        photo: 'Photo_300x300.jpg',
+        sig: 'Signature_300x80.jpg'
+    };
 
     function processImage(input, type) {
         if (!input.files || !input.files[0]) return;
@@ -112,7 +130,7 @@
                 canvas.width = targetW;
                 canvas.height = targetH;
                 const ctx = canvas.getContext('2d');
-                
+
                 // Draw white background in case of transparent png
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, targetW, targetH);
@@ -121,12 +139,6 @@
                 // but better to cover/crop. Let's do a stretch for now as it ensures exact dimension without cropping parts)
                 ctx.drawImage(img, 0, 0, targetW, targetH);
 
-                // Compress until it fits maxKb
-                let quality = 1.0;
-                let dataUrl = canvas.toDataURL('image/jpeg', quality);
-                let sizeBytes = Math.ceil((dataUrl.length - 22) * 0.75);
-
-                while (sizeBytes > maxBytes && quality > 0.1) {
                 const compress = (quality) => {
                     return new Promise((resolve) => {
                         canvas.toBlob((blob) => {
@@ -135,7 +147,7 @@
                     });
                 };
 
-                const findQuality = async (quality = 0.9) => {
+                const findQuality = async (quality = 1.0) => {
                     let blob = await compress(quality);
                     if (blob.size > maxBytes && quality > 0.1) {
                         return findQuality(quality - 0.05);
@@ -143,7 +155,7 @@
                     return blob;
                 };
 
-                findQuality().then(blob => {
+                findQuality(1.0).then(blob => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         finalDataUrls[type] = e.target.result;
@@ -165,8 +177,8 @@
                     };
                     reader.readAsDataURL(blob);
                 });
-            }
-        }
+            };
+        };
         reader.readAsDataURL(file);
     }
 
@@ -179,7 +191,7 @@
         a.click();
         document.body.removeChild(a);
     }
-    
+
     function arrangePassportPhoto() {
         if (!finalDataUrls['photo']) return;
         localStorage.setItem('transfer_job_photo', finalDataUrls['photo']);

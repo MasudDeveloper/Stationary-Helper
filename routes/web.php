@@ -173,7 +173,10 @@ Route::middleware('auth')->group(function () {
 
     // Feature 11 & 12
     Route::get('/pdf/tools/bg-remover', [PdfController::class, 'bgRemover'])->name('pdf.tools.bg_remover');
+    Route::post('/pdf/tools/bg-remover/process', [PdfController::class, 'processBgRemover'])->name('pdf.tools.bg_remover.process');
     Route::post('/pdf/tools/bg-remover/deduct', [PdfController::class, 'deductBgRemoverCredit'])->name('pdf.tools.bg_remover.deduct');
+    Route::post('/pdf/tools/detect-document-corners', [PdfController::class, 'detectDocumentCorners'])->name('pdf.tools.detect_document_corners');
+    Route::post('/pdf/tools/auto-crop-document', [PdfController::class, 'autoCropDocument'])->name('pdf.tools.auto_crop_document');
     Route::get('/pdf/tools/job-photo', [PdfController::class, 'jobPhoto'])->name('pdf.tools.job_photo');
     Route::get('/pdf/tools/passport-print', [PdfController::class, 'passportPrint'])->name('pdf.tools.passport_print');
 
@@ -183,6 +186,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pdf/tools/qr-generator', [PdfController::class, 'qrGenerator'])->name('pdf.tools.qr_generator');
     Route::get('/pdf/tools/image-resize', [PdfController::class, 'imageResize'])->name('pdf.tools.image_resize');
     Route::get('/pdf/tools/joint-photo', [PdfController::class, 'jointPhoto'])->name('pdf.tools.joint_photo');
+    Route::get('/pdf/tools/advanced-photo', [PdfController::class, 'advancedPhoto'])->name('pdf.tools.advanced_photo');
     Route::get('/pdf/tools/document-scanner', [PdfController::class, 'documentScanner'])->name('pdf.tools.document_scanner');
     Route::get('/pdf/tools/jpg-to-pdf', [PdfController::class, 'jpgToPdf'])->name('pdf.tools.jpg_to_pdf');
 
@@ -205,6 +209,9 @@ Route::middleware('auth')->group(function () {
     // Admin Control Panel routes (only for admins)
     Route::middleware(\App\Http\Middleware\IsAdmin::class)->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        
+        // Users Management
+        Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
         
         // Payments
         Route::get('/payments', [PaymentController::class, 'adminPayments'])->name('admin.payments');

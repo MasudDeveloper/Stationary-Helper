@@ -58,9 +58,20 @@
             @foreach($fields as $field)
                 @php
                     $isPhoto = in_array(strtolower($field), ['photo', 'image', 'profile_photo', 'avatar', 'pic', 'picture', 'user_photo', 'candidate_photo']);
-                    $isTextarea = ! $isPhoto && preg_match('/(objective|skills|experience|education|qualifications|hobbies|address|summary|description|list|details|projects|references)/i', $field);
+                    $isTableEducation = preg_match('/(table_education)/i', $field);
+                    $isTableLanguage = preg_match('/(table_language)/i', $field);
+                    $isTextarea = ! $isPhoto && preg_match('/(objective|skills|experience|education|qualifications|hobbies|address|summary|description|list|details|projects|references|table_)/i', $field);
                     $isList = preg_match('/(skills|hobbies|qualifications|experience_list)/i', $field);
-                    $isEducation = preg_match('/(education)/i', $field);
+                    $isEducation = ! $isTableEducation && preg_match('/(education)/i', $field);
+                    
+                    $defaultValue = $savedData['['.$field.']'] ?? '';
+                    if (empty($defaultValue)) {
+                        if (strtolower($field) === 'table_education_details') {
+                            $defaultValue = "Higher Secondary Certificate\nName of Institute : \nGroup : \nPassing Year : \nResult : \nBoard : \n\nSecondary School Certificate \nName of Institute : \nGroup : \nResult : \nPassing Year : \nBoard :";
+                        } elseif (strtolower($field) === 'career_objective') {
+                            $defaultValue = "I am hardworking, quick learner & always ready to give my best to accomplish the assigned job. I am full of enthusiasm & prepared for any worse situation to work under pressure.";
+                        }
+                    }
                 @endphp
                 <div class="form-group" style="margin-bottom: 18px;">
                     <label style="display: block; color: #ffffff; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5); letter-spacing: 0.3px;">
@@ -71,16 +82,25 @@
                         <input type="hidden" class="cv-input" id="photo-hidden-{{ $field }}" data-target="[{{ $field }}]" value="{{ $savedData['['.$field.']'] ?? '' }}">
                         <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">* পাসপোর্ট সাইজ ছবি আপলোড করুন</small>
                     @elseif($isTextarea)
-                        <textarea class="form-control cv-input" data-target="[{{ $field }}]" data-field-type="{{ $isEducation ? 'education' : ($isList ? 'list' : 'text') }}" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." rows="{{ $isEducation ? '6' : '4' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; line-height: 1.5; font-family: monospace; font-weight: 500;">{{ $savedData['['.$field.']'] ?? '' }}</textarea>
-                        @if($isEducation)
+                        @php
+                            $fieldTypeStr = 'text';
+                            if ($isTableEducation) $fieldTypeStr = 'table_education';
+                            elseif ($isTableLanguage) $fieldTypeStr = 'table_language';
+                            elseif ($isEducation) $fieldTypeStr = 'education';
+                            elseif ($isList) $fieldTypeStr = 'list';
+                        @endphp
+                        <textarea class="form-control cv-input" data-target="[{{ $field }}]" data-field-type="{{ $fieldTypeStr }}" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." rows="{{ ($isEducation || $isTableEducation) ? '6' : '4' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; line-height: 1.5; font-family: monospace; font-weight: 500;">{{ $defaultValue }}</textarea>
+                        @if($isEducation || $isTableEducation)
                             <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: প্রথমে ডিগ্রির নাম (যেমন: S.S.C on 2013), নিচের লাইনে কোলন দিয়ে রেজাল্ট (যেমন: Result : GPA-5.00) লিখলে স্বয়ংক্রিয়ভাবে সুন্দর ফরম্যাট হয়ে যাবে!</small>
+                        @elseif($isTableLanguage)
+                            <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: প্রতি লাইনে ভাষা ও দক্ষতা <code>|</code> (pipe) দিয়ে লিখুন। যেমন: English | Good | Good | Good</small>
                         @elseif($isList)
                             <small style="color: #fef08a; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: এন্টার (Enter) দিয়ে প্রতি লাইনে একটি করে লিখলে স্বয়ংক্রিয়ভাবে বুলেট পয়েন্ট হয়ে যাবে!</small>
                         @else
                             <small style="color: #e2e8f0; font-size: 0.8rem; font-weight: 500; display: block; margin-top: 5px;">💡 টিপস: এন্টার (Enter) দিয়ে নতুন লাইন করতে পারবেন।</small>
                         @endif
                     @else
-                        <input type="text" class="form-control cv-input" data-target="[{{ $field }}]" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." value="{{ $savedData['['.$field.']'] ?? '' }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; font-weight: 500;">
+                        <input type="text" class="form-control cv-input" data-target="[{{ $field }}]" placeholder="{{ str_replace('_', ' ', $field) }} লিখুন..." value="{{ $defaultValue }}" style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; color: #ffffff; font-size: 0.95rem; font-weight: 500;">
                     @endif
                 </div>
             @endforeach
@@ -132,9 +152,14 @@
         body * {
             visibility: hidden;
         }
-        .app-container {
-            margin: 0 !important;
+        .no-print, .no-print * {
+            display: none !important;
+        }
+        html, body, .app-container {
+            height: auto !important;
+            min-height: 0 !important;
             padding: 0 !important;
+            margin: 0 !important;
         }
         .print-only, .print-only * {
             visibility: visible;
@@ -148,10 +173,6 @@
             color: #000;
             margin: 0;
             padding: 0;
-        }
-        @page {
-            size: A4;
-            margin: 0;
         }
     }
     .print-only {
@@ -204,6 +225,45 @@
                         // For skills, hobbies, qualifications: each new line becomes a bullet item <li>...</li>
                         let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
                         replacement = lines.map(l => `<li>${l}</li>`).join('');
+                    } else if (fieldType === 'table_education') {
+                        let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
+                        let eduHtml = '';
+                        lines.forEach(line => {
+                            if (!line.includes(':')) {
+                                if (eduHtml !== '') eduHtml += '</table>';
+                                eduHtml += `<div class="sub-heading" style="text-decoration: underline; font-size: 16px; font-weight: bold; margin-bottom: 5px; margin-top: 10px;">${line}</div>`;
+                                eduHtml += `<table class="info-table" style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 15px;">`;
+                            } else {
+                                if (eduHtml === '') eduHtml += `<table class="info-table" style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 15px;">`;
+                                let parts = line.split(':');
+                                let label = parts[0].trim();
+                                let value = parts.slice(1).join(':').trim();
+                                eduHtml += `<tr><td style="width: 150px; padding: 3px 0;">${label}</td><td style="width: 15px; padding: 3px 0;">:</td><td style="padding: 3px 0;">${value}</td></tr>`;
+                            }
+                        });
+                        if (eduHtml.includes('<table')) eduHtml += '</table>';
+                        replacement = eduHtml;
+                    } else if (fieldType === 'table_language') {
+                        let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
+                        let langHtml = `<table class="lang-table" style="width: 100%; border-collapse: collapse; text-align: center; margin-top: 10px;">`;
+                        langHtml += `<tr style="border: 1px solid #000; background-color: #5b9bd5; color: #000;">
+                                        <th style="border: 1px solid #000; padding: 5px;">Language</th>
+                                        <th style="border: 1px solid #000; padding: 5px;">Reading</th>
+                                        <th style="border: 1px solid #000; padding: 5px;">Writing</th>
+                                        <th style="border: 1px solid #000; padding: 5px;">Speaking</th>
+                                     </tr>`;
+                        lines.forEach(line => {
+                            let parts = line.split('|').map(p => p.trim());
+                            if(parts.length > 0) {
+                                langHtml += `<tr>`;
+                                for(let i=0; i<4; i++) {
+                                    langHtml += `<td style="border: 1px solid #000; padding: 5px;">${parts[i] || ''}</td>`;
+                                }
+                                langHtml += `</tr>`;
+                            }
+                        });
+                        langHtml += `</table>`;
+                        replacement = langHtml;
                     } else if (fieldType === 'education') {
                         // Smart Education formatting from new lines
                         let lines = val.split('\n').map(l => l.trim()).filter(l => l !== '');
@@ -213,9 +273,9 @@
                                 let parts = line.split(':');
                                 let label = parts[0].trim();
                                 let value = parts.slice(1).join(':').trim();
-                                eduHtml += `<div style="padding-left: 15px; margin-bottom: 2px; font-size: 13px;">${label} &nbsp;&nbsp;: &nbsp;<strong>${value}</strong></div>`;
+                                eduHtml += `<div style="padding-left: 15px; margin-bottom: 2px; font-size: 14px;">${label} &nbsp;&nbsp;: &nbsp;<strong>${value}</strong></div>`;
                             } else {
-                                eduHtml += `<div style="font-weight: bold; color: #0d47a1; font-size: 14px; margin-top: 6px; margin-bottom: 2px;">${line}</div>`;
+                                eduHtml += `<div style="font-weight: bold; color: #0d47a1; font-size: 15px; margin-top: 6px; margin-bottom: 2px;">${line}</div>`;
                             }
                         });
                         replacement = eduHtml;
@@ -351,6 +411,12 @@
             const data = await response.json();
             if (data.success) {
                 Swal.fire('সফল!', data.message, 'success');
+                // Update URL to include saved_id without reloading
+                if (data.id) {
+                    let newUrl = new URL(window.location.href);
+                    newUrl.searchParams.set('saved_id', data.id);
+                    window.history.pushState({path: newUrl.href}, '', newUrl.href);
+                }
             } else {
                 Swal.fire('ত্রুটি!', 'সংরক্ষণ করা সম্ভব হয়নি।', 'error');
             }

@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'যৌথ পাসপোর্ট ছবি মেকার (Husband-Wife Joint Photo) - penghor.com')
 
@@ -265,7 +265,24 @@
     </div>
 </div>
 
+<!-- Cropper Modal -->
+<div id="cropModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;">
+    <div style="background: rgba(30, 41, 59, 1); padding: 20px; border-radius: 12px; width: 90%; max-width: 600px; display: flex; flex-direction: column; gap: 15px;">
+        <h3 style="color: #fff; margin: 0; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">ছবি ক্রপ করুন (Passport Size)</h3>
+        <div style="height: 60vh; background: #000; border-radius: 8px; display: flex; justify-content: center; align-items: center;">
+            <img id="cropImage" src="" style="max-width: 100%; max-height: 100%; display: block;">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="cancelCropBtn" class="btn" style="padding: 10px 20px; background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+            <button id="saveCropBtn" class="btn-primary" style="padding: 10px 20px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Crop & Save</button>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 <script>
     let fileP1 = null;
     let fileP2 = null;
@@ -273,22 +290,60 @@
     let imgObj2 = null;
     let currentBgColor = '#0054a6';
 
+    let cropperInstance = null;
+    let currentCropPerson = null;
+
     function previewImage(input, personNum) {
         if (input.files && input.files[0]) {
+            currentCropPerson = personNum;
             const file = input.files[0];
-            if (personNum === 1) fileP1 = file;
-            if (personNum === 2) fileP2 = file;
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById(`placeholder-p${personNum}`).style.display = 'none';
-                const thumb = document.getElementById(`thumb-p${personNum}`);
-                thumb.src = e.target.result;
-                thumb.style.display = 'block';
+                document.getElementById('cropImage').src = e.target.result;
+                document.getElementById('cropModal').style.display = 'flex';
+                
+                if (cropperInstance) cropperInstance.destroy();
+                cropperInstance = new Cropper(document.getElementById('cropImage'), {
+                    aspectRatio: 0.8, // 4:5 passport size ratio
+                    viewMode: 1,
+                    autoCropArea: 0.9,
+                });
             }
             reader.readAsDataURL(file);
+            input.value = ''; // Reset input to allow re-upload
         }
     }
+
+    document.getElementById('cancelCropBtn').onclick = () => {
+        document.getElementById('cropModal').style.display = 'none';
+        if(cropperInstance) {
+            cropperInstance.destroy();
+            cropperInstance = null;
+        }
+    };
+
+    document.getElementById('saveCropBtn').onclick = () => {
+        if (!cropperInstance) return;
+        const canvas = cropperInstance.getCroppedCanvas({
+            width: 400,
+            height: 500,
+            fillColor: '#fff'
+        });
+        canvas.toBlob((blob) => {
+            if (currentCropPerson === 1) fileP1 = blob;
+            if (currentCropPerson === 2) fileP2 = blob;
+            
+            const thumbUrl = URL.createObjectURL(blob);
+            document.getElementById(`placeholder-p${currentCropPerson}`).style.display = 'none';
+            const thumb = document.getElementById(`thumb-p${currentCropPerson}`);
+            thumb.src = thumbUrl;
+            thumb.style.display = 'block';
+            
+            document.getElementById('cropModal').style.display = 'none';
+            cropperInstance.destroy();
+            cropperInstance = null;
+        }, 'image/jpeg', 1.0);
+    };
 
     async function startProcessing() {
         if (!fileP1 || !fileP2) {
@@ -310,51 +365,49 @@
             const useBgRemover = document.getElementById('remove-bg-checkbox').checked;
 
             if (!useBgRemover) {
-                document.getElementById('loading-status-text').innerText = '??? ????? ??? ?????...';
+                document.getElementById('loading-status-text').innerText = 'ছবি লোড করা হচ্ছে...';
                 imgObj1 = await blobToImage(fileP1);
                 document.getElementById('progress-bar').style.width = '50%';
                 imgObj2 = await blobToImage(fileP2);
                 document.getElementById('progress-bar').style.width = '100%';
             } else {
-                document.getElementById('loading-status-text').innerText = '??? ????????? ??? ? ?? ???? ????????????? ????? ??? ?????...';
+                document.getElementById('loading-status-text').innerText = '১ম ছবির ব্যাকগ্রাউন্ড রিমুভ করা হচ্ছে...';
                 
-                const module = await import('https://esm.sh/@imgly/background-removal@1.4.5');
-                const removeBg = module.default || module.removeBackground;
-                if (!removeBg) throw new Error("??? ????????? ??? ??? ?????? ??????");
-
-                const configP1 = {
-                    publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
-                    progress: (key, current, total) => {
-                        let percent = Math.round((current / total) * 45);
-                        document.getElementById('progress-bar').style.width = percent + '%';
+                async function removeBgWithAPI(file) {
+                    const formData = new FormData();
+                    formData.append('image', file, 'image.jpg');
+                    formData.append('tool_name', 'Joint Photo Maker');
+                    
+                    const res = await fetch("{{ route('pdf.tools.bg_remover.process') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+                    
+                    const data = await res.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'সার্ভার এরর!');
                     }
-                };
+                    return data.image; // data:image/png;base64,...
+                }
 
                 // Remove BG for Person 1
-                const url1 = URL.createObjectURL(fileP1);
-                let rawBlob1 = await removeBg(url1, configP1);
-                let cleanBlob1 = await cleanEdges(rawBlob1);
-                imgObj1 = await blobToImage(cleanBlob1);
-
+                let base64_1 = await removeBgWithAPI(fileP1);
+                imgObj1 = await base64ToImage(base64_1);
+                
                 document.getElementById('progress-bar').style.width = '50%';
-                document.getElementById('loading-status-text').innerText = '?? ???? ????????????? ????? ??? ?????...';
+                document.getElementById('loading-status-text').innerText = '২য় ছবির ব্যাকগ্রাউন্ড রিমুভ করা হচ্ছে...';
 
                 // Remove BG for Person 2
-                const configP2 = {
-                    publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
-                    progress: (key, current, total) => {
-                        let percent = 50 + Math.round((current / total) * 45);
-                        document.getElementById('progress-bar').style.width = percent + '%';
-                    }
-                };
-                const url2 = URL.createObjectURL(fileP2);
-                let rawBlob2 = await removeBg(url2, configP2);
-                let cleanBlob2 = await cleanEdges(rawBlob2);
-                imgObj2 = await blobToImage(cleanBlob2);
+                let base64_2 = await removeBgWithAPI(fileP2);
+                imgObj2 = await base64ToImage(base64_2);
             }
 
             document.getElementById('progress-bar').style.width = '100%';
-            document.getElementById('loading-status-text').innerText = '??? ??????? ??????? ?????, ??????? ????...';
+            document.getElementById('loading-status-text').innerText = 'ছবি মার্জ করা হচ্ছে, অপেক্ষা করুন...';
 
             setTimeout(() => {
                 document.getElementById('step-upload').style.display = 'none';
@@ -414,6 +467,14 @@
             const img = new Image();
             img.onload = () => resolve(img);
             img.src = URL.createObjectURL(blob);
+        });
+    }
+
+    function base64ToImage(base64) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = base64;
         });
     }
 

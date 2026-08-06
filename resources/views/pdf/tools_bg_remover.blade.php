@@ -109,7 +109,7 @@
         if (cost > 0) {
             Swal.fire({
                 title: 'নিশ্চিত করুন',
-                text: `এই ছবির ব্যাকগ্রাউন্ড রিমুভ করতে আপনার একাউন্ট থেকে ${cost} ক্রেডিট কাটা হবে। আপনি কি রাজি?`,
+                text: `এই ছবির ব্যাকগ্রাউন্ড রিমুভ করতে আপনার একাউন্ট থেকে ${cost} ক্রেডিট কাটা হবে (সফল হলে)। আপনি কি রাজি?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3b82f6',
@@ -118,34 +118,52 @@
                 cancelButtonText: 'না, বাতিল করুন'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deductAndProcess(file);
+                    processImage(file);
                 } else {
                     input.value = ''; // Reset file input
                 }
             });
         } else {
-            deductAndProcess(file);
+            processImage(file);
         }
     }
 
-    async function deductAndProcess(file) {
+    async function processImage(file) {
         document.getElementById('upload-area').style.display = 'none';
         document.getElementById('loading').style.display = 'block';
+        document.getElementById('preview-container').style.display = 'none';
+        
+        // Simulate progress bar since server-side processing doesn't provide easy live progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 5;
+            if (progress > 90) progress = 90;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }, 500);
+
+        originalFilename = file.name.split('.')[0] + '_transparent.png';
+        const formData = new FormData();
+        formData.append('image', file);
 
         try {
-            const res = await fetch("{{ route('pdf.deduct.bg_remover') }}", {
+            const res = await fetch("{{ route('pdf.tools.bg_remover.process') }}", {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: formData
             });
             const data = await res.json();
+            
+            clearInterval(progressInterval);
+            document.getElementById('progress-bar').style.width = '100%';
             
             if (!data.success) {
                 document.getElementById('upload-area').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
-                Swal.fire('ত্রুটি!', data.message || 'পর্যাপ্ত ক্রেডিট নেই!', 'error');
+                Swal.fire('ত্রুটি!', data.message || 'সার্ভার এরর!', 'error');
+                resetTool();
                 return;
             }
 
@@ -153,52 +171,21 @@
             const balanceEl = document.getElementById('credit-balance');
             if (balanceEl) balanceEl.innerText = data.new_balance;
 
-            startProcessing(file);
-        } catch(err) {
-            document.getElementById('upload-area').style.display = 'block';
-            document.getElementById('loading').style.display = 'none';
-            Swal.fire('সার্ভার এরর!', 'অনুগ্রহ করে আবার চেষ্টা করুন।', 'error');
-        }
-    }
-
-    async function startProcessing(file) {
-        originalFilename = file.name.split('.')[0] + '_transparent.png';
-
-        document.getElementById('upload-area').style.display = 'none';
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('preview-container').style.display = 'none';
-        document.getElementById('progress-bar').style.width = '0%';
-
-        try {
-            const module = await import('https://esm.sh/@imgly/background-removal@1.4.5');
-            const removeBg = module.default || module.removeBackground;
-
-            if (!removeBg) throw new Error("লাইব্রেরি লোড হতে ব্যর্থ হয়েছে।");
-
-            const config = {
-                publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.4.5/dist/',
-                progress: (key, current, total) => {
-                    let percent = Math.round((current / total) * 100);
-                    if (percent > 100) percent = 100;
-                    document.getElementById('progress-bar').style.width = percent + '%';
-                }
-            };
-
-            const imageUrl = URL.createObjectURL(file);
-            let rawBlob = await removeBg(imageUrl, config);
-            
-            // Clean Edges (Defringe/Burn for white artifacts near hair)
-            currentBlob = await cleanEdges(rawBlob);
-            
-            const resultUrl = URL.createObjectURL(currentBlob);
-            
-            document.getElementById('result-img').src = resultUrl;
+            // Display image
+            document.getElementById('result-img').src = data.image;
             document.getElementById('loading').style.display = 'none';
             document.getElementById('preview-container').style.display = 'block';
 
-        } catch (error) {
-            console.error(error);
-            Swal.fire('ত্রুটি', 'ব্যাকগ্রাউন্ড রিমুভ করতে সমস্যা হয়েছে: ' + error.message, 'error');
+            // Convert base64 data to blob for download/passport function
+            const response = await fetch(data.image);
+            currentBlob = await response.blob();
+
+        } catch(err) {
+            clearInterval(progressInterval);
+            document.getElementById('upload-area').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            Swal.fire('সার্ভার এরর!', 'অনুগ্রহ করে আবার চেষ্টা করুন।', 'error');
+            console.error(err);
             resetTool();
         }
     }

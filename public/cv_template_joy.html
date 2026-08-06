@@ -1,0 +1,331 @@
+<style>
+    /* 
+     * Scoped CSS: We prefix everything with .cv-template-wrapper 
+     * so it doesn't affect the dark mode admin panel or other UI elements.
+     */
+    .cv-template-wrapper {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 16px;
+        line-height: 1.4;
+        color: #000;
+        background-color: #fff;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px;
+        box-sizing: border-box;
+        position: relative;
+    }
+    
+    /* Hide empty list items automatically */
+    .cv-template-wrapper ul.custom-list li:empty {
+        display: none !important;
+    }
+    
+    /* Print Adjustments */
+    @media print {
+        @page {
+            margin: 15mm 20mm 15mm 20mm; /* Standard print margin for all pages */
+            size: A4;
+        }
+        * {
+            -webkit-print-color-adjust: exact !important; /* Force background colors */
+            print-color-adjust: exact !important;
+        }
+        body, html {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+        .cv-template-wrapper {
+            padding: 0 !important; /* Margin is handled by @page */
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .cv-template-wrapper .cv-photo-container {
+            top: 0 !important;
+            right: 0 !important;
+        }
+        
+        /* Prevent page breaks inside important sections */
+        .cv-template-wrapper .section-header, 
+        .cv-template-wrapper .sub-heading {
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+        .cv-template-wrapper .info-table, 
+        .cv-template-wrapper .lang-table, 
+        .cv-template-wrapper .custom-list, 
+        .cv-template-wrapper .signature-section {
+            page-break-inside: avoid;
+        }
+        
+        /* Force a page break before specific elements if needed */
+        .cv-template-wrapper .force-page-break {
+            page-break-before: always;
+        }
+    }
+    
+    .cv-template-wrapper .header-title {
+        text-align: center;
+        font-size: 26px;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+    .cv-template-wrapper .header-name {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .cv-template-wrapper .section-header {
+        background-color: #5b9bd5;
+        color: #000;
+        font-weight: bold;
+        font-size: 18px;
+        padding: 3px 5px;
+        margin-top: 12px;
+        margin-bottom: 8px;
+    }
+    .cv-template-wrapper .sub-heading {
+        font-weight: bold;
+        text-decoration: underline;
+        font-size: 17px;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .cv-template-wrapper .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+    }
+    .cv-template-wrapper .info-table td {
+        padding: 3px 0;
+        vertical-align: top;
+        color: #000;
+    }
+    .cv-template-wrapper .info-table td:nth-child(1) {
+        width: 25%;
+    }
+    .cv-template-wrapper .info-table td:nth-child(2) {
+        width: 2%;
+        text-align: center;
+        font-weight: bold;
+    }
+    .cv-template-wrapper .info-table td:nth-child(3) {
+        width: 73%;
+    }
+    
+    .cv-template-wrapper .personal-table td:nth-child(1) {
+        width: 32%;
+    }
+    .cv-template-wrapper .personal-table td:nth-child(2) {
+        width: 2%;
+    }
+    .cv-template-wrapper .personal-table td:nth-child(3) {
+        width: 66%;
+    }
+    
+    .cv-template-wrapper ul.custom-list {
+        list-style: none;
+        padding-left: 20px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    .cv-template-wrapper ul.custom-list li {
+        position: relative;
+        margin-bottom: 4px;
+        color: #000;
+    }
+    .cv-template-wrapper ul.custom-list li::before {
+        content: "➢";
+        position: absolute;
+        left: -20px;
+        font-size: 15px;
+    }
+    
+    .cv-template-wrapper .lang-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 5px;
+    }
+    .cv-template-wrapper .lang-table th, 
+    .cv-template-wrapper .lang-table td {
+        border: 1px solid #000;
+        padding: 5px;
+        color: #000;
+    }
+    .cv-template-wrapper .lang-table th {
+        background-color: #6C98E1;
+        font-weight: bold;
+        color: #000;
+    }
+    
+    .cv-template-wrapper .signature-section {
+        margin-top: 50px;
+        display: table;
+        width: 100%;
+    }
+    .cv-template-wrapper .signature-box {
+        display: table-cell;
+        width: 40%;
+        text-align: center;
+        vertical-align: bottom;
+    }
+    .cv-template-wrapper .date-box {
+        display: table-cell;
+        width: 60%;
+        vertical-align: bottom;
+        color: #000;
+    }
+    .cv-template-wrapper .signature-line {
+        border-top: 1.5px solid #000;
+        margin-top: 10px;
+        padding-top: 5px;
+        color: #000;
+    }
+    .cv-template-wrapper .cv-photo-container {
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        width: 140px;
+        height: 175px;
+    }
+</style>
+
+<div class="cv-template-wrapper">
+    <!-- Image Placed Absolutely to not affect centering -->
+    <div class="cv-photo-container">
+        <img src="[Photo]" alt="Photo" style="width: 100%; height: 100%; border: 1px solid #000; object-fit: cover;">
+    </div>
+
+    <!-- Title perfectly centered -->
+    <div class="header-title">CURRICULUM VITAE</div>
+    <div style="text-align: center; font-size: 18px; font-weight: bold; margin: 2px 0;">of</div>
+    <div class="header-name">[Name]</div>
+    
+    <div style="margin-top: 30px; margin-bottom: 15px; padding-right: 140px;">
+        <span style="font-weight: bold; text-decoration: underline;">Present Address:</span><br>
+        [Present_Address]<br>
+        Contact: [Phone]
+    </div>
+
+    <!-- Career Objective -->
+    <div class="section-header">Career Objective:</div>
+    <div style="text-align: justify; color: #000;">
+        [Career_Objective]
+    </div>
+
+    <!-- Academic Qualification -->
+    <div class="section-header">Academic Qualification:</div>
+    
+    <div style="margin-top: 5px; margin-bottom: 5px;">
+        [Table_Education_Details]
+    </div>
+
+    <!-- Computer Skills -->
+    <div class="section-header">Computer Skills:</div>
+    <ul class="custom-list">
+        [Computer_Skills]
+    </ul>
+
+    <!-- Language Proficiency -->
+    <div class="section-header force-page-break">Language Proficiency:</div>
+    <div style="margin-top: 5px;">
+        [Table_Language_Details]
+    </div>
+
+    <!-- Working Skills -->
+    <div class="section-header">Working Skills:</div>
+    <ul class="custom-list">
+        [Working_Skills]
+    </ul>
+
+    <!-- Personal Information -->
+    <div class="section-header">Personal Information:</div>
+    <table class="info-table personal-table">
+        <tr>
+            <td>Name</td>
+            <td>:</td>
+            <td>[Name]</td>
+        </tr>
+        <tr>
+            <td>Father’s Name</td>
+            <td>:</td>
+            <td>[Father_Name]</td>
+        </tr>
+        <tr>
+            <td>Mother’s Name</td>
+            <td>:</td>
+            <td>[Mother_Name]</td>
+        </tr>
+        <tr>
+            <td>Permanent Address</td>
+            <td>:</td>
+            <td>[Permanent_Address]</td>
+        </tr>
+        <tr>
+            <td>Date of Birth</td>
+            <td>:</td>
+            <td>[Date_of_Birth]</td>
+        </tr>
+        <tr>
+            <td>Height</td>
+            <td>:</td>
+            <td>[Height]</td>
+        </tr>
+        <tr>
+            <td>Religion</td>
+            <td>:</td>
+            <td>[Religion]</td>
+        </tr>
+        <tr>
+            <td>Marital Status</td>
+            <td>:</td>
+            <td>[Marital_Status]</td>
+        </tr>
+        <tr>
+            <td>Gender</td>
+            <td>:</td>
+            <td>[Gender]</td>
+        </tr>
+        <tr>
+            <td>Weight</td>
+            <td>:</td>
+            <td>[Weight]</td>
+        </tr>
+        <tr>
+            <td>Nationality</td>
+            <td>:</td>
+            <td>[Nationality]</td>
+        </tr>
+        <tr>
+            <td>Blood Group</td>
+            <td>:</td>
+            <td>[Blood_Group]</td>
+        </tr>
+    </table>
+
+    <!-- Declaration -->
+    <div class="section-header">Declaration:</div>
+    <div style="text-align: justify; color: #000;">
+        I do hereby declare that the information furnished above is true to the best of my knowledge.
+    </div>
+
+    <!-- Signature -->
+    <div class="signature-section">
+        <div class="date-box">
+            Date:...............................
+        </div>
+        <div class="signature-box">
+            <div style="height: 40px; text-align: center; font-family: 'Brush Script MT', cursive, serif; font-style: italic; font-size: 24px; color: #000;">
+                [Name]
+            </div>
+            <div class="signature-line">
+                Signature
+            </div>
+        </div>
+    </div>
+</div>

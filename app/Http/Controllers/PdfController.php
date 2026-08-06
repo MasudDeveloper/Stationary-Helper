@@ -19,6 +19,12 @@ class PdfController extends Controller
                 ['icon' => 'people_alt', 'gradient_class' => 'grad-purple', 'is_hot' => true, 'route_name' => 'pdf.tools.joint_photo', 'order' => 17, 'is_active' => true]
             );
         }
+        if (\App\Models\PdfTool::where('route_name', 'pdf.tools.advanced_photo')->doesntExist()) {
+            \App\Models\PdfTool::updateOrCreate(
+                ['title' => 'অ্যাডভান্স ফটো স্টুডিও (Advanced Passport)'],
+                ['icon' => 'camera_enhance', 'gradient_class' => 'grad-teal', 'is_hot' => true, 'route_name' => 'pdf.tools.advanced_photo', 'order' => 17, 'is_active' => true]
+            );
+        }
         if (\App\Models\PdfTool::where('route_name', 'pdf.tools.document_scanner')->doesntExist()) {
             \App\Models\PdfTool::updateOrCreate(
                 ['title' => 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)'],
@@ -38,19 +44,27 @@ class PdfController extends Controller
             );
         }
         $tools = \App\Models\PdfTool::where('is_active', true)->orderBy('order')->get();
-        
+
         $pdfTitles = [
-            'পেজ রিমুভ', 'পিডিএফ ওয়াটারমার্ক', 'পিডিএফ পারমিশন', 'পিডিএফ রিসাইজ', 
-            'পিডিএফ ক্রপ', 'পিডিএফ টু এক্সেল', 'পিডিএফ রিপেয়ার', 'এনআইডি টু পিডিএফ', 
-            'পাসপোর্ট টু পিডিএফ', 'জেপিজি টু পিডিএফ (JPG to PDF)', 'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)',
+            'পেজ রিমুভ',
+            'পিডিএফ ওয়াটারমার্ক',
+            'পিডিএফ পারমিশন',
+            'পিডিএফ রিসাইজ',
+            'পিডিএফ ক্রপ',
+            'পিডিএফ টু এক্সেল',
+            'পিডিএফ রিপেয়ার',
+            'এনআইডি টু পিডিএফ',
+            'পাসপোর্ট টু পিডিএফ',
+            'জেপিজি টু পিডিএফ (JPG to PDF)',
+            'ছবি ও ডকুমেন্ট সোজা করুন (CamScanner)',
             'পিডিএফ টু ওয়ার্ড (PDF to Word)'
         ];
 
-        $pdfTools = $tools->filter(function($tool) use ($pdfTitles) {
+        $pdfTools = $tools->filter(function ($tool) use ($pdfTitles) {
             return in_array($tool->title, $pdfTitles) || str_contains(strtolower($tool->title), 'pdf') || str_contains($tool->title, 'পিডিএফ');
         });
 
-        $imageTools = $tools->reject(function($tool) use ($pdfTools) {
+        $imageTools = $tools->reject(function ($tool) use ($pdfTools) {
             return $pdfTools->contains('id', $tool->id);
         });
 
@@ -136,7 +150,7 @@ class PdfController extends Controller
             // Log transaction
             \App\Models\AccountingTransaction::create([
                 'user_id' => $user->id,
-                'type' => 'debit',
+                'type' => 'expense',
                 'amount' => $cost,
                 'description' => 'Background Removal Tool Usage',
                 'date' => now(),
@@ -147,6 +161,75 @@ class PdfController extends Controller
             'success' => true,
             'new_balance' => number_format($user->credits)
         ]);
+    }
+
+    public function processBgRemover(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
+            'tool_name' => 'nullable|string|max:50'
+        ]);
+
+        $toolName = $request->input('tool_name', 'Background Removal');
+        $desc = $toolName . ' Tool Usage';
+
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $costSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
+        $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
+
+        // Check credit before processing
+        if ($cost > 0 && $user->credits < $cost) {
+            return response()->json(['success' => false, 'message' => 'অপর্যাপ্ত ক্রেডিট! দয়া করে রিচার্জ করুন।'], 403);
+        }
+
+        try {
+            $imageFile = $request->file('image');
+
+            // Please replace 'YOUR_PYTHON_VPS_IP' with the actual IP address of your Python VPS server
+            $pythonApiUrl = 'http://importentapi.rootvabd.com/python_api/proxy.php';
+
+            $response = \Illuminate\Support\Facades\Http::timeout(60)
+                ->withHeaders([
+                    'x-api-key' => 'penghor_secret_key_121'
+                ])
+                ->attach(
+                    'file',
+                    file_get_contents($imageFile->getRealPath()),
+                    $imageFile->getClientOriginalName()
+                )->post($pythonApiUrl);
+
+            if ($response->successful()) {
+                // Deduct credit only after success
+                if ($cost > 0) {
+                    $user->deductCreditAndPayCommission($cost, $toolName);
+                    \App\Models\AccountingTransaction::create([
+                        'user_id' => $user->id,
+                        'type' => 'expense',
+                        'amount' => $cost,
+                        'description' => $desc,
+                        'date' => now(),
+                    ]);
+                }
+
+                // Return image as base64
+                $base64 = base64_encode($response->body());
+                $mime = 'image/png';
+                $dataUrl = 'data:' . $mime . ';base64,' . $base64;
+
+                return response()->json([
+                    'success' => true,
+                    'new_balance' => number_format($user->credits),
+                    'image' => $dataUrl
+                ]);
+            } else {
+                \Illuminate\Support\Facades\Log::error('Python API Error: ' . $response->body());
+                return response()->json(['success' => false, 'message' => 'সার্ভার প্রসেস করতে ব্যর্থ হয়েছে।'], 500);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Python API Connection Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'পাইথন সার্ভারের সাথে কানেক্ট করা যাচ্ছে না।'], 500);
+        }
     }
 
     public function jobPhoto()
@@ -192,5 +275,73 @@ class PdfController extends Controller
     public function jpgToPdf()
     {
         return view('pdf.tools_jpg_to_pdf');
+    }
+
+    public function advancedPhoto()
+    {
+        return view('pdf.tools_advanced_photo');
+    }
+
+    public function detectDocumentCorners(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240'
+        ]);
+
+        try {
+            $imagePath = $request->file('image')->getPathname();
+            $imageName = $request->file('image')->getClientOriginalName();
+            $mimeType = $request->file('image')->getMimeType();
+
+            $response = \Illuminate\Support\Facades\Http::attach(
+                'file',
+                file_get_contents($imagePath),
+                $imageName,
+                ['Content-Type' => $mimeType]
+            )
+            ->withHeaders([
+                'x-api-key' => 'penghor_secret_key_121',
+                'Accept' => 'application/json'
+            ])
+            ->timeout(60)
+            ->post('http://importentapi.rootvabd.com:8000/detect-document-corners');
+
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'API Connection failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function autoCropDocument(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240'
+        ]);
+
+        try {
+            $imagePath = $request->file('image')->getPathname();
+            $imageName = $request->file('image')->getClientOriginalName();
+            $mimeType = $request->file('image')->getMimeType();
+
+            $response = \Illuminate\Support\Facades\Http::attach(
+                'file',
+                file_get_contents($imagePath),
+                $imageName,
+                ['Content-Type' => $mimeType]
+            )
+            ->withHeaders([
+                'x-api-key' => 'penghor_secret_key_121'
+            ])
+            ->timeout(60)
+            ->post('http://importentapi.rootvabd.com:8000/auto-crop-document');
+
+            if ($response->successful()) {
+                return response($response->body(), 200)->header('Content-Type', 'image/jpeg');
+            } else {
+                return response()->json(['success' => false, 'message' => 'Processing Failed'], $response->status());
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'API Connection failed: ' . $e->getMessage()], 500);
+        }
     }
 }

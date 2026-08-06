@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'এনআইডি টু পিডিএফ - penghor.com')
 
@@ -80,17 +80,58 @@
 </div>
 
 <script>
-    function previewImage(input, previewId) {
+    async function previewImage(input, previewId) {
         if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById(previewId);
-                img.src = e.target.result;
-                img.style.display = 'inline-block';
-                input.parentElement.querySelector('i').style.display = 'none';
-                input.parentElement.querySelector('p').style.display = 'none';
+            const originalFile = input.files[0];
+            const p = input.parentElement.querySelector('p');
+            const originalText = p.innerText;
+            p.innerText = 'AI অটো-ক্রপ করছে...';
+            input.parentElement.style.opacity = '0.7';
+            input.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('image', originalFile);
+
+                const res = await fetch("{{ route('pdf.tools.auto_crop_document') }}", {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: formData
+                });
+
+                let blobToUse = originalFile;
+                if (res.ok) {
+                    blobToUse = await res.blob();
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(new File([blobToUse], originalFile.name, { type: 'image/jpeg' }));
+                    input.files = dataTransfer.files;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(previewId);
+                    img.src = e.target.result;
+                    img.style.display = 'inline-block';
+                    input.parentElement.querySelector('i').style.display = 'none';
+                    p.style.display = 'none';
+                    input.parentElement.style.opacity = '1';
+                    input.disabled = false;
+                }
+                reader.readAsDataURL(blobToUse);
+            } catch (err) {
+                console.error("Auto-crop failed, using original.", err);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(previewId);
+                    img.src = e.target.result;
+                    img.style.display = 'inline-block';
+                    input.parentElement.querySelector('i').style.display = 'none';
+                    p.style.display = 'none';
+                    input.parentElement.style.opacity = '1';
+                    input.disabled = false;
+                }
+                reader.readAsDataURL(originalFile);
             }
-            reader.readAsDataURL(input.files[0]);
         }
     }
 
@@ -174,5 +215,32 @@
             document.getElementById('process-btn').style.display = 'inline-block';
         }
     }
+
+    // Add Paste Support (Ctrl+V)
+    window.addEventListener('paste', function(e) {
+        if (e.clipboardData && e.clipboardData.files.length > 0) {
+            const file = e.clipboardData.files[0];
+            if (file.type.startsWith('image/')) {
+                const frontInput = document.getElementById('nid-front');
+                const backInput = document.getElementById('nid-back');
+                
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                
+                // If front is empty, paste there. Else if back is empty, paste there.
+                if (!frontInput.files || frontInput.files.length === 0) {
+                    frontInput.files = dataTransfer.files;
+                    previewImage(frontInput, 'preview-front');
+                } else if (!backInput.files || backInput.files.length === 0) {
+                    backInput.files = dataTransfer.files;
+                    previewImage(backInput, 'preview-back');
+                } else {
+                    // Both filled, replace front
+                    frontInput.files = dataTransfer.files;
+                    previewImage(frontInput, 'preview-front');
+                }
+            }
+        }
+    });
 </script>
 @endsection
