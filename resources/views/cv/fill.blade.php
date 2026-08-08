@@ -109,7 +109,11 @@
         <div style="margin-top: 30px; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <span style="color: #ffffff; font-size: 1rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">প্রিন্টিং চার্জ:</span>
-                <span style="color: #4ade80; font-weight: 800; font-size: 1.25rem;">{{ $template->credit_cost }} Credits</span>
+                @if(Auth::user()->hasActiveSubscription())
+                    <span style="color: #4ade80; font-weight: 800; font-size: 1.25rem;">ফ্রি সাবস্ক্রিপশন</span>
+                @else
+                    <span style="color: #4ade80; font-weight: 800; font-size: 1.25rem;">{{ $template->credit_cost }} Credits</span>
+                @endif
             </div>
             <button id="saveCvBtn" data-id="{{ $template->id }}" data-type="cv" data-title="{{ $template->name }}" class="btn w-100" style="background: #4f46e5; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);">
                 <i class="material-icons-round" style="font-size: 1.3rem;">save</i> সংরক্ষণ করুন (Save)
@@ -118,7 +122,7 @@
                 <i class="material-icons-round" style="font-size: 1.3rem;">print</i> প্রিন্ট করুন
             </button>
             @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
-            <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn w-100" style="background: #25D366; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);">
+            <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ Auth::user()->hasActiveSubscription() ? 0 : ($template->credit_cost ?? 5) }}" data-name="{{ $template->name }}" class="btn w-100" style="background: #25D366; color: #fff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);">
                 <i class="material-icons-round" style="font-size: 1.3rem;">chat</i> WhatsApp-এ পাঠান
             </button>
             @endif
@@ -303,7 +307,7 @@
         // Print & Deduct Credit
         $('#print-btn').click(function() {
             let btn = $(this);
-            let cost = {{ $template->credit_cost ?? 0 }};
+            let cost = {{ Auth::user()->hasActiveSubscription() ? 0 : ($template->credit_cost ?? 0) }};
 
             if (cost > 0) {
                 Swal.fire({

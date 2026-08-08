@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Add Template - penghor.com')
 
@@ -83,22 +83,26 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px;">
                 <div class="form-group">
-                    <label class="form-label">Top Margin (mm)</label>
-                    <input type="number" name="margin_top" class="form-control" value="10" required>
+                    <label class="form-label">Top Margin (1st Page - in)</label>
+                    <input type="number" step="0.01" name="margin_top_first" class="form-control" value="4.5" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Bottom Margin (mm)</label>
-                    <input type="number" name="margin_bottom" class="form-control" value="20" required>
+                    <label class="form-label">Top Margin (Others - in)</label>
+                    <input type="number" step="0.01" name="margin_top" class="form-control" value="1.0" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Left Margin (mm)</label>
-                    <input type="number" name="margin_left" class="form-control" value="20" required>
+                    <label class="form-label">Bottom Margin (in)</label>
+                    <input type="number" step="0.01" name="margin_bottom" class="form-control" value="1.0" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Right Margin (mm)</label>
-                    <input type="number" name="margin_right" class="form-control" value="20" required>
+                    <label class="form-label">Left Margin (in)</label>
+                    <input type="number" step="0.01" name="margin_left" class="form-control" value="1.0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Right Margin (in)</label>
+                    <input type="number" step="0.01" name="margin_right" class="form-control" value="1.0" required>
                 </div>
             </div>
 

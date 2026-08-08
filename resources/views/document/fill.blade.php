@@ -14,15 +14,20 @@ $pageHeight = '279mm';
 }
 
 if ($orientation == 'landscape') {
-$temp = $pageWidth;
-$pageWidth = $pageHeight;
-$pageHeight = $temp;
+    $temp = $pageWidth;
+    $pageWidth = $pageHeight;
+    $pageHeight = $temp;
 }
 
-$marginTop = $template->margin_top ?? 10;
-$marginBottom = $template->margin_bottom ?? 20;
-$marginLeft = $template->margin_left ?? 20;
-$marginRight = $template->margin_right ?? 20;
+// Calculate pdfPageHeight as exactly 1mm shorter than pageHeight to prevent browser rounding overflows
+$pdfPageHeight = (intval(filter_var($pageHeight, FILTER_SANITIZE_NUMBER_INT)) - 1) . 'mm';
+
+$marginTopInch = $template->margin_top ?? 1.0;
+$marginBottomInch = $template->margin_bottom ?? 1.0;
+$marginLeftInch = $template->margin_left ?? 1.0;
+$marginRightInch = $template->margin_right ?? 1.0;
+
+
 @endphp
 <!DOCTYPE html>
 <html lang="bn">
@@ -69,16 +74,62 @@ $marginRight = $template->margin_right ?? 20;
         .a4-paper {
             background: #fff;
             width: var(--page-w, 210mm);
-            min-height: var(--page-h, 297mm);
-            padding: var(--page-p, 10mm 20mm 20mm 20mm);
+            height: var(--page-h, 297mm);
+            overflow: hidden;
+            padding-top: var(--page-margin-top, 1.0in) !important;
+            padding-bottom: var(--page-margin-bottom, 1.0in) !important;
+            padding-left: var(--page-margin-left, 1.0in) !important;
+            padding-right: var(--page-margin-right, 1.0in) !important;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-family: 'Kalpurush', Arial, sans-serif;
             font-size: 16pt;
             line-height: 1.6;
             color: #000;
-            margin: 0 auto;
+            margin: 0 auto 30px auto;
             position: relative;
+            outline: none;
+            page-break-after: always;
+            break-after: page;
         }
+
+        .a4-paper:last-child {
+            margin-bottom: 0;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        /* PDF Generation Overrides */
+        #printable-doc-container.pdf-generation .a4-paper {
+            margin: 0 auto !important;
+            box-shadow: none !important;
+            height: {{ $pdfPageHeight }} !important;
+            overflow: hidden !important;
+        }
+
+        @media print {
+            #printable-doc-container {
+                background: transparent !important;
+            }
+
+            .a4-paper {
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: var(--page-w) !important;
+                height: auto !important;
+                min-height: 0 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+
+            .a4-paper+.a4-paper {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+        }
+
+
 
         .placeholder-highlight {
             background-color: #e0f2fe;
@@ -112,7 +163,8 @@ $marginRight = $template->margin_right ?? 20;
             font-size: inherit !important;
         }
 
-        .bijoy-label-auto, .bijoy-label-force {
+        .bijoy-label-auto,
+        .bijoy-label-force {
             font-family: 'SutonnyMJ', 'Sutonnymj', 'Kalpurush', Arial, sans-serif !important;
             font-size: 1.15rem !important;
         }
@@ -174,7 +226,8 @@ $marginRight = $template->margin_right ?? 20;
             overflow-y: auto;
         }
 
-        .form-control, .dynamic-input {
+        .form-control,
+        .dynamic-input {
             width: 100%;
             padding: 12px 14px;
             border: 1.5px solid #cbd5e1;
@@ -187,14 +240,16 @@ $marginRight = $template->margin_right ?? 20;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
-        .form-control:focus, .dynamic-input:focus {
+        .form-control:focus,
+        .dynamic-input:focus {
             outline: none;
             border-color: #3b82f6;
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
         }
 
-        .form-control:hover, .dynamic-input:hover {
+        .form-control:hover,
+        .dynamic-input:hover {
             border-color: #94a3b8;
         }
 
@@ -316,14 +371,28 @@ $marginRight = $template->margin_right ?? 20;
 
         /* Print Styles */
         @media print {
+
             body,
-            html {
-                margin: 0;
-                padding: 0;
+            html,
+            .app-container,
+            .app-content,
+            .content-body {
+                margin: 0 !important;
+                padding: 0 !important;
                 background: #ffffff !important;
                 color: #000000 !important;
-                height: auto;
-                overflow: visible;
+                height: auto !important;
+                overflow: visible !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+            }
+
+            .app-sidebar,
+            .top-navbar,
+            .no-print {
+                display: none !important;
             }
 
             .layout-wrapper {
@@ -345,14 +414,16 @@ $marginRight = $template->margin_right ?? 20;
             }
 
             .a4-paper {
-                margin: 0;
-                padding: var(--page-p, 10mm 20mm 20mm 20mm);
-                box-shadow: none;
-                width: var(--page-w, 210mm);
-                min-height: auto;
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: var(--page-w) !important;
+                height: auto !important;
+                min-height: 0 !important;
                 background: #ffffff !important;
                 color: #000000 !important;
                 position: relative !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             .placeholder-highlight {
@@ -407,8 +478,23 @@ $marginRight = $template->margin_right ?? 20;
         }
     </style>
     @php
-    echo '<style>@media print { @page { size: ' . $pageSize . ' ' . $orientation . '; margin: 0; } }</style>';
+    echo '<style>
+        :root {
+            --page-margin-top: ' . $marginTopInch . 'in;
+            --page-margin-bottom: ' . $marginBottomInch . 'in;
+            --page-margin-left: ' . $marginLeftInch . 'in;
+            --page-margin-right: ' . $marginRightInch . 'in;
+        }
+
+        @media print {
+            @page {
+                size: ' . $pageSize . ' ' . $orientation . ';
+                margin: 0 !important;
+            }
+        }
+    </style>';
     @endphp
+
 </head>
 
 <body class="no-watermark">
@@ -416,86 +502,108 @@ $marginRight = $template->margin_right ?? 20;
     <div class="layout-wrapper">
         <!-- Document Preview -->
         <div class="doc-preview-pane">
-            <div class="a4-paper" id="printable-doc" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}" style="--page-w: {{ $pageWidth }}; --page-h: {{ $pageHeight }}; --page-p: {{ $marginTop }}mm {{ $marginRight }}mm {{ $marginBottom }}mm {{ $marginLeft }}mm;">
+            <div id="printable-doc-container" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}">
                 @php
                 $previewContent = $template->content;
                 foreach ($fields as $field) {
-                    $safeFieldId = base64_encode($field);
-                    $previewContent = str_replace('['.$field.']', '<span class="placeholder-highlight" data-field="'.$safeFieldId.'">'.$field.'</span>', $previewContent);
+                $safeFieldId = base64_encode($field);
+                $previewContent = str_replace('['.$field.']', '<span class="placeholder-highlight" data-field="'.$safeFieldId.'">'.$field.'</span>', $previewContent);
                 }
+
+                // Split template content by page breaks using hash # delimiters to avoid slash escaping issues
+                $pagesContent = preg_split('#<img[^>]*class="mce-pagebreak"[^>]*>|<p[^>]*class="mce-pagebreak"[^>]*>.*?</p>|<div[^>]*class="mce-pagebreak"[^>]*>.*?</div>|<!-- pagebreak -->#is', $previewContent);
                 @endphp
-                {!! $previewContent !!}
+
+                                    @foreach($pagesContent as $index => $pageHtml)
+                                    @php
+                                    // Filter out empty page residues left by pagebreak tag splits
+                                    $stripped = trim(strip_tags($pageHtml));
+                                    $stripped = str_replace(['&nbsp;', "\r", "\n", "\t", ' '], '', $stripped);
+                                    $hasContent = !empty($stripped) || str_contains($pageHtml, '<img') || str_contains($pageHtml, '<table' ) || str_contains($pageHtml, '<iframe' ) || str_contains($pageHtml, '<hr' );
+                                        @endphp
+                                        @if($hasContent)
+                                        <div class="a4-paper" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}" style="--page-w: {{ $pageWidth }}; --page-h: {{ $pageHeight }};">
+                                        {!! $pageHtml !!}
+            </div>
+            @endif
+            @endforeach
+        </div>
+    </div>
+
+
+    <!-- Form Sidebar -->
+    <div class="form-sidebar" id="form-sidebar">
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+            <i class="material-icons-round" id="toggle-icon">chevron_right</i>
+        </button>
+
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: bold; margin-bottom: 2px; color: #111827;">{{ $template->name }}</h3>
+                    <p style="color: #6b7280; font-size: 0.85rem;">ফরমটি পূরণ করুন</p>
+                </div>
+                <!-- Back/Close Button -->
+                <a href="{{ route('document.index') }}" class="close-btn" title="Back to Documents">
+                    <i class="material-icons-round" style="font-size: 18px;">close</i>
+                </a>
+            </div>
+
+            <div class="sidebar-body">
+
+
+
+
+
+                <!-- Global Font Toggle -->
+                <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Label Font:</span>
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; user-select: none; color: #fff; font-weight: 500;">
+                        <input type="checkbox" id="bijoyLabelToggle" onchange="document.querySelectorAll('.field-label').forEach(el => el.classList.toggle('bijoy-label-force', this.checked))" style="accent-color: #3b82f6; width: 16px; height: 16px;">
+                        Use Bijoy (SutonnyMJ)
+                    </label>
+                </div>
+
+                @foreach($fields as $field)
+                @php
+                $safeFieldId = base64_encode($field);
+                $cleanText = strip_tags($field);
+                $cleanText = html_entity_decode($cleanText);
+
+                // Heuristic: If it has extended ASCII OR contains common English-based Bijoy syllables
+                $isBijoy = preg_match('/[\x80-\xFF]/', $cleanText) ||
+                preg_match('/(wjLyb|wjLyB|bvg|wVKvbv|welq|ZvwiL|cÖwZôv|gva¨g|msL¨v|Rb|UvKv|wefvM|‡Rjv|_vbv|MÖvg|WvK|BDwbqb|Dct|WvKvbv)/i', $cleanText);
+                $labelClass = $isBijoy ? 'field-label bijoy-label-auto' : 'field-label';
+                @endphp
+                <div style="margin-bottom: 20px;">
+                    <label class="{{ $labelClass }}" style="font-weight: 500; color: #374151; font-size: 0.9rem; margin-bottom: 5px; display: block;">
+                        {!! $field !!}
+                    </label>
+                    <input type="text" class="form-control dynamic-input" data-target="{{ $safeFieldId }}" data-real-key="{{ $field }}" placeholder="Enter data..." value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
+                </div>
+                @endforeach
+            </div>
+
+            <div class="sidebar-footer">
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <button onclick="printDemo()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #6b7280;">
+                        <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">visibility</i> ডেমো দেখুন (জলছাপ সহ)
+                    </button>
+                    <button id="saveDocBtn" data-id="{{ $template->id }}" data-type="document" data-title="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #4f46e5; color: #fff;">
+                        <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">save</i> সংরক্ষণ করুন (Save)
+                    </button>
+                        <button id="finalPrintBtn" data-id="{{ $template->id }}" data-cost="{{ Auth::user()->hasActiveSubscription() ? 0 : ($template->credit_cost ?? 5) }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
+                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ {{ Auth::user()->hasActiveSubscription() ? '' : '(ক্রেডিট লাগবে)' }}
+                        </button>
+                    @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
+                    <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ Auth::user()->hasActiveSubscription() ? 0 : ($whatsappCost ?? 5) }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
+                        <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">chat</i> WhatsApp-এ পাঠান
+                    </button>
+                    @endif
+                </div>
             </div>
         </div>
-
-        <!-- Form Sidebar -->
-        <div class="form-sidebar" id="form-sidebar">
-            <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
-                <i class="material-icons-round" id="toggle-icon">chevron_right</i>
-            </button>
-
-            <div class="sidebar-content">
-                <div class="sidebar-header">
-                    <div>
-                        <h3 style="font-size: 1.1rem; font-weight: bold; margin-bottom: 2px; color: #111827;">{{ $template->name }}</h3>
-                        <p style="color: #6b7280; font-size: 0.85rem;">ফরমটি পূরণ করুন</p>
-                    </div>
-                    <!-- Back/Close Button -->
-                    <a href="{{ route('document.index') }}" class="close-btn" title="Back to Documents">
-                        <i class="material-icons-round" style="font-size: 18px;">close</i>
-                    </a>
-                </div>
-
-                <div class="sidebar-body">
-                    <!-- Global Font Toggle -->
-                    <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.85rem; color: #475569; font-weight: 500;">Label Font:</span>
-                        <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; user-select: none; color: #1e293b; font-weight: 500;">
-                            <input type="checkbox" id="bijoyLabelToggle" onchange="document.querySelectorAll('.field-label').forEach(el => el.classList.toggle('bijoy-label-force', this.checked))" style="accent-color: #3b82f6; width: 16px; height: 16px;"> 
-                            Use Bijoy (SutonnyMJ)
-                        </label>
-                    </div>
-
-                    @foreach($fields as $field)
-                    @php
-                        $safeFieldId = base64_encode($field);
-                        $cleanText = strip_tags($field);
-                        $cleanText = html_entity_decode($cleanText);
-                        
-                        // Heuristic: If it has extended ASCII OR contains common English-based Bijoy syllables
-                        $isBijoy = preg_match('/[\x80-\xFF]/', $cleanText) || 
-                                   preg_match('/(wjLyb|wjLyB|bvg|wVKvbv|welq|ZvwiL|cÖwZôv|gva¨g|msL¨v|Rb|UvKv|wefvM|‡Rjv|_vbv|MÖvg|WvK|BDwbqb|Dct|WvKvbv)/i', $cleanText);
-                        $labelClass = $isBijoy ? 'field-label bijoy-label-auto' : 'field-label';
-                    @endphp
-                    <div style="margin-bottom: 20px;">
-                        <label class="{{ $labelClass }}" style="font-weight: 500; color: #374151; font-size: 0.9rem; margin-bottom: 5px; display: block;">
-                            {!! $field !!}
-                        </label>
-                        <input type="text" class="form-control dynamic-input" data-target="{{ $safeFieldId }}" data-real-key="{{ $field }}" placeholder="Enter data..." value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
-                    </div>
-                    @endforeach
-                </div>
-
-                <div class="sidebar-footer">
-                    <div style="display: flex; gap: 10px; flex-direction: column;">
-                        <button onclick="printDemo()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #6b7280;">
-                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">visibility</i> ডেমো দেখুন (জলছাপ সহ)
-                        </button>
-                        <button id="saveDocBtn" data-id="{{ $template->id }}" data-type="document" data-title="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #4f46e5; color: #fff;">
-                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">save</i> সংরক্ষণ করুন (Save)
-                        </button>
-                        <button id="finalPrintBtn" data-id="{{ $template->id }}" data-cost="{{ $template->credit_cost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
-                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ (ক্রেডিট লাগবে)
-                        </button>
-                        @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
-                        <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ $whatsappCost ?? 5 }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
-                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">chat</i> WhatsApp-এ পাঠান
-                        </button>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
     </div>
 
     <script>
@@ -529,7 +637,7 @@ $marginRight = $template->margin_right ?? 20;
                 } else {
                     span.innerText = value;
                 }
-                
+
                 // Keep the placeholder-highlight class always active so the user can easily spot editable fields on screen
                 span.classList.add('placeholder-highlight');
             });
@@ -541,24 +649,22 @@ $marginRight = $template->margin_right ?? 20;
                 toggleSidebar(); // Auto-collapse on small screens
             }
 
+
             document.querySelectorAll('.dynamic-input').forEach(input => {
                 if (input.value) updatePreview(input);
             });
 
-            // Add watermark div inside the A4 paper container
-            const watermarkDiv = document.createElement('div');
-            watermarkDiv.className = 'watermark';
-            let wmHtml = '';
-            for (let i = 0; i < 6; i++) {
-                wmHtml += '<div class="watermark-item">penghor.com</div>';
-            }
-            watermarkDiv.innerHTML = wmHtml;
-            const paperDoc = document.getElementById('printable-doc');
-            if (paperDoc) {
+            // Add watermark div inside each page sheet container
+            document.querySelectorAll('.a4-paper').forEach(paperDoc => {
+                const watermarkDiv = document.createElement('div');
+                watermarkDiv.className = 'watermark';
+                let wmHtml = '';
+                for (let i = 0; i < 6; i++) {
+                    wmHtml += '<div class="watermark-item">penghor.com</div>';
+                }
+                watermarkDiv.innerHTML = wmHtml;
                 paperDoc.appendChild(watermarkDiv);
-            } else {
-                document.body.appendChild(watermarkDiv);
-            }
+            });
 
             // Attach click listeners to buttons to avoid inline Blade evaluation in attributes
             const finalPrintBtn = document.getElementById('finalPrintBtn');
@@ -593,7 +699,9 @@ $marginRight = $template->margin_right ?? 20;
         });
 
         async function saveDocument(id, type, defaultTitle) {
-            const { value: title } = await Swal.fire({
+            const {
+                value: title
+            } = await Swal.fire({
                 title: 'ডকুমেন্ট সংরক্ষণ করুন',
                 input: 'text',
                 inputLabel: 'ডকুমেন্টের একটি নাম দিন',
@@ -613,6 +721,7 @@ $marginRight = $template->margin_right ?? 20;
                 const realKey = input.getAttribute('data-real-key');
                 formData[realKey] = input.value;
             });
+
 
             const btn = document.getElementById('saveDocBtn');
             const originalText = btn.innerHTML;
@@ -659,24 +768,26 @@ $marginRight = $template->margin_right ?? 20;
             window.addEventListener('afterprint', () => {
                 document.body.classList.add('no-watermark');
                 document.body.classList.remove('pdf-generation');
-            }, { once: true });
+            }, {
+                once: true
+            });
         }
 
         async function finalPrint(id, creditCost, templateName = 'Document') {
             if (creditCost > 0) {
-            const result = await Swal.fire({
-                title: 'আপনি কি নিশ্চিত?',
-                text: `ফাইনাল প্রিন্ট করার জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3b82f6',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'হ্যাঁ, প্রিন্ট করুন',
-                cancelButtonText: 'বাতিল'
-            });
+                const result = await Swal.fire({
+                    title: 'আপনি কি নিশ্চিত?',
+                    text: `ফাইনাল প্রিন্ট করার জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'হ্যাঁ, প্রিন্ট করুন',
+                    cancelButtonText: 'বাতিল'
+                });
 
-            if (!result.isConfirmed) {
-                return;
+                if (!result.isConfirmed) {
+                    return;
                 }
             }
 
@@ -710,29 +821,40 @@ $marginRight = $template->margin_right ?? 20;
                         showConfirmButton: false
                     });
 
-                    // 1. Automatically save/download PDF to user's computer
-                    const element = document.getElementById('printable-doc');
+                    // Automatically save/download PDF to user's computer
+                    const element = document.getElementById('printable-doc-container');
                     const opt = {
                         margin: 0,
                         filename: templateName + '.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { scale: 2, useCORS: true },
+                        image: {
+                            type: 'jpeg',
+                            quality: 0.98
+                        },
+                        html2canvas: {
+                            scale: 2,
+                            useCORS: true
+                        },
                         jsPDF: {
                             unit: 'mm',
                             format: element ? (element.getAttribute('data-size') || 'a4') : 'a4',
                             orientation: element ? (element.getAttribute('data-orientation') || 'portrait') : 'portrait'
+                        },
+                        pagebreak: {
+                            mode: 'css'
                         }
                     };
 
                     setTimeout(async () => {
                         Swal.close();
                         if (typeof html2pdf !== 'undefined' && element) {
+                            element.classList.add('pdf-generation');
                             await html2pdf().set(opt).from(element).save();
+                            element.classList.remove('pdf-generation');
                         }
-                        
+
                         document.body.classList.remove('pdf-generation'); // Restore highlights
-                        
-                        // 2. Open print dialog after 500ms
+
+                        // Open print dialog after 500ms
                         setTimeout(() => {
                             window.print();
                         }, 500);
@@ -765,17 +887,17 @@ $marginRight = $template->margin_right ?? 20;
 
             if (creditCost > 0) {
                 const confirmResp = await Swal.fire({
-                title: 'আপনি কি নিশ্চিত?',
-                text: `ফাইলটি WhatsApp-এ পাঠানোর জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#10b981',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'হ্যাঁ, সেন্ড করুন',
-                cancelButtonText: 'বাতিল'
-            });
+                    title: 'আপনি কি নিশ্চিত?',
+                    text: `ফাইলটি WhatsApp-এ পাঠানোর জন্য আপনার অ্যাকাউন্ট থেকে ${creditCost} ক্রেডিট কাটা হবে।`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'হ্যাঁ, সেন্ড করুন',
+                    cancelButtonText: 'বাতিল'
+                });
 
-            if (!confirmResp.isConfirmed) return;
+                if (!confirmResp.isConfirmed) return;
             }
 
             const btn = document.getElementById('whatsappBtn');
@@ -788,7 +910,7 @@ $marginRight = $template->margin_right ?? 20;
                 document.body.classList.add('no-watermark');
                 document.body.classList.add('pdf-generation');
 
-                const element = document.getElementById('printable-doc');
+                const element = document.getElementById('printable-doc-container');
 
                 // Configure html2pdf
                 const opt = {
@@ -806,11 +928,16 @@ $marginRight = $template->margin_right ?? 20;
                         unit: 'mm',
                         format: element.getAttribute('data-size') || 'a4',
                         orientation: element.getAttribute('data-orientation') || 'portrait'
+                    },
+                    pagebreak: {
+                        mode: 'css'
                     }
                 };
 
                 // Generate PDF as base64 string
+                element.classList.add('pdf-generation');
                 const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');
+                element.classList.remove('pdf-generation');
 
                 // Restore watermark and highlights
                 document.body.classList.remove('no-watermark');
@@ -852,4 +979,3 @@ $marginRight = $template->margin_right ?? 20;
 </body>
 
 </html>
-

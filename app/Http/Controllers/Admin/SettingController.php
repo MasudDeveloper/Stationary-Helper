@@ -39,6 +39,10 @@ class SettingController extends Controller
             'payment_nagad' => 'nullable|string',
             'payment_rocket' => 'nullable|string',
             'upgrade_banner_url' => 'nullable|string',
+            'gateway_manual_status' => 'nullable|string',
+            'gateway_amargateway_status' => 'nullable|string',
+            'gateway_merchant_key' => 'nullable|string',
+            'gateway_webhook_secret' => 'nullable|string',
         ]);
 
         Setting::updateOrCreate(['key' => 'ocr_engine'], ['value' => $request->ocr_engine]);
@@ -56,6 +60,10 @@ class SettingController extends Controller
         Setting::updateOrCreate(['key' => 'payment_nagad'], ['value' => $request->payment_nagad]);
         Setting::updateOrCreate(['key' => 'payment_rocket'], ['value' => $request->payment_rocket]);
         Setting::updateOrCreate(['key' => 'upgrade_banner_url'], ['value' => $request->upgrade_banner_url]);
+        Setting::updateOrCreate(['key' => 'gateway_manual_status'], ['value' => $request->gateway_manual_status ?? 'disabled']);
+        Setting::updateOrCreate(['key' => 'gateway_amargateway_status'], ['value' => $request->gateway_amargateway_status ?? 'disabled']);
+        Setting::updateOrCreate(['key' => 'gateway_merchant_key'], ['value' => $request->gateway_merchant_key]);
+        Setting::updateOrCreate(['key' => 'gateway_webhook_secret'], ['value' => $request->gateway_webhook_secret]);
 
         return redirect()->back()->with('success', 'Settings updated successfully.');
     }

@@ -64,7 +64,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'public',
-            'credits' => 0,
+            'credits' => 50, // 50 free trial credits
             'referred_by' => $referredBy,
         ]);
         

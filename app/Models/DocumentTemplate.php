@@ -19,6 +19,7 @@ class DocumentTemplate extends Model
         'credit_cost',
         'page_size',
         'page_orientation',
+        'margin_top_first',
         'margin_top',
         'margin_bottom',
         'margin_left',

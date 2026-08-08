@@ -97,6 +97,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('subscription.index') }}" class="sidebar-link {{ request()->routeIs('subscription.*') ? 'active' : '' }}">
+                        <i class="material-icons-round">workspace_premium</i><span>সাবস্ক্রিপশন প্ল্যান</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('recharge') }}" class="sidebar-link {{ request()->routeIs('recharge') ? 'active' : '' }}">
                         <i class="material-icons-round">payment</i><span>ক্রেডিট রিচার্জ</span>
                     </a>
@@ -167,11 +172,18 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    <div class="credit-badge" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--secondary-color);">
-                        <i class="material-icons-round" style="font-size: 1.1rem;">account_balance_wallet</i> 
-                        <span style="font-weight: bold; font-size: 1rem;" id="credit-balance">{{ Auth::user()->credits }}</span>
-                        <span style="font-size: 0.75rem; opacity: 0.8;">ক্রেডিট</span>
-                    </div>
+                    @if (Auth::user()->hasActiveSubscription())
+                        <a href="{{ route('subscription.index') }}" class="credit-badge" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; display: flex; align-items: center; gap: 5px; padding: 6px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; text-decoration: none;">
+                            <i class="material-icons-round" style="font-size: 1.1rem; color: #34d399;">workspace_premium</i> 
+                            <span>Premium Active</span>
+                        </a>
+                    @else
+                        <div class="credit-badge" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--secondary-color);">
+                            <i class="material-icons-round" style="font-size: 1.1rem;">account_balance_wallet</i> 
+                            <span style="font-weight: bold; font-size: 1rem;" id="credit-balance">{{ Auth::user()->credits }}</span>
+                            <span style="font-size: 0.75rem; opacity: 0.8;">ক্রেডিট</span>
+                        </div>
+                    @endif
 
                     <div style="display: flex; align-items: center; gap: 15px; color: var(--text-muted);">
                         <i class="material-icons-round" style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">notifications_none</i>

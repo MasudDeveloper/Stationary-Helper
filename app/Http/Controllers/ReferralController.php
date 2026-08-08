@@ -15,11 +15,15 @@ class ReferralController extends Controller
         
         $earnings = ReferralEarning::where('referrer_id', $user->id)
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(10, ['*'], 'earnings_page');
+            
+        $referredUsers = $user->referrals()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'users_page');
             
         $totalEarned = ReferralEarning::where('referrer_id', $user->id)->sum('amount');
         $totalReferrals = $user->referrals()->count();
 
-        return view('referrals.index', compact('earnings', 'totalEarned', 'totalReferrals'));
+        return view('referrals.index', compact('earnings', 'referredUsers', 'totalEarned', 'totalReferrals'));
     }
 }

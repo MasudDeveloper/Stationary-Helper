@@ -53,18 +53,60 @@ class PaymentController extends Controller
             $paymentRequest->status = 'approved';
             $paymentRequest->save();
 
-            // Add credits to user
             $user = $paymentRequest->user;
-            $user->credits += $paymentRequest->credits;
-            $user->save();
             
-            // Give commission to referrer (10% of recharged credits)
-            if ($user->referred_by) {
-                $referrer = User::find($user->referred_by);
-                if ($referrer) {
-                    $commission = $paymentRequest->credits * 0.10; // 10% commission
-                    $referrer->credits += $commission;
-                    $referrer->save();
+            if ($paymentRequest->request_type === 'subscription') {
+                $months = 1;
+                if ($paymentRequest->subscription_plan === '6_months') {
+                    $months = 6;
+                } elseif ($paymentRequest->subscription_plan === '1_year') {
+                    $months = 12;
+                }
+
+                $currentExpiry = $user->subscription_expires_at && $user->subscription_expires_at->isFuture()
+                    ? $user->subscription_expires_at
+                    : now();
+
+                $user->subscription_expires_at = $currentExpiry->addMonths($months);
+                $user->subscription_plan = $paymentRequest->subscription_plan;
+                $user->save();
+
+                // Pay 20% commission to referrer if applicable
+                if ($user->referred_by) {
+                    $referrer = User::find($user->referred_by);
+                    if ($referrer) {
+                        $commission = $paymentRequest->amount * 0.20; // 20% commission
+                        $referrer->credits += $commission;
+                        $referrer->save();
+
+                        \App\Models\ReferralEarning::create([
+                            'referrer_id' => $referrer->id,
+                            'referred_user_id' => $user->id,
+                            'amount' => $commission,
+                            'source_type' => 'Subscription Purchase (' . $paymentRequest->subscription_plan . ')',
+                        ]);
+                    }
+                }
+            } else {
+                // Add credits to user
+                $user->credits += $paymentRequest->credits;
+                $user->save();
+                
+                // Give commission to referrer (10% of recharged credits)
+                if ($user->referred_by) {
+                    $referrer = User::find($user->referred_by);
+                    if ($referrer) {
+                        $commission = $paymentRequest->credits * 0.10; // 10% commission
+                        $referrer->credits += $commission;
+                        $referrer->save();
+
+                        \App\Models\ReferralEarning::create([
+                            'referrer_id' => $referrer->id,
+                            'referred_user_id' => $user->id,
+                            'amount' => $commission,
+                            'source_type' => 'Credit Recharge',
+                        ]);
+                    }
                 }
             }
             

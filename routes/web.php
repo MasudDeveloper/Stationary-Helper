@@ -47,6 +47,10 @@ use App\Http\Controllers\Admin\BusinessUpgradeController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\ShopkeeperOrderController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\GatewayController;
+
+Route::post('/api/payment/callback', [GatewayController::class, 'handleWebhook']);
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -73,6 +77,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-orders', [ShopkeeperOrderController::class, 'index'])->name('shopkeeper.orders.index');
     Route::post('/my-orders/{id}/accept', [ShopkeeperOrderController::class, 'accept'])->name('shopkeeper.orders.accept');
     Route::post('/my-orders/{id}/complete', [ShopkeeperOrderController::class, 'complete'])->name('shopkeeper.orders.complete');
+
+    // Subscription Routes
+    Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
+    Route::post('/subscription/buy', [SubscriptionController::class, 'buy'])->name('subscription.buy');
+
+    // Gateway Payment Routes
+    Route::post('/gateway/payment/create', [GatewayController::class, 'createOrder'])->name('gateway.payment.create');
+    Route::post('/gateway/payment/status', [GatewayController::class, 'checkStatus'])->name('gateway.payment.status');
 
     // Referral Routes
     Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');

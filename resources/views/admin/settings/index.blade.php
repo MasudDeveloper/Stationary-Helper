@@ -319,6 +319,47 @@
                     </div>
                 </div>
 
+                <div class="settings-card mt-4">
+                    <div class="settings-card-title text-success">
+                        <i class="material-icons-round">payment</i> AmarGateway Auto-Verification Configuration
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Manual Bkash Payment Status</label>
+                            <select name="gateway_manual_status" class="form-control form-control-custom">
+                                <option value="enabled" {{ ($settings['gateway_manual_status'] ?? 'enabled') === 'enabled' ? 'selected' : '' }}>Enabled</option>
+                                <option value="disabled" {{ ($settings['gateway_manual_status'] ?? 'enabled') === 'disabled' ? 'selected' : '' }}>Disabled</option>
+                            </select>
+                            <div class="settings-hint">যদি এটি ইনেবল থাকে, ইউজাররা ম্যানুয়ালি Bkash পেমেন্ট করতে পারবে।</div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">AmarGateway Auto Payment Status</label>
+                            <select name="gateway_amargateway_status" class="form-control form-control-custom">
+                                <option value="enabled" {{ ($settings['gateway_amargateway_status'] ?? 'disabled') === 'enabled' ? 'selected' : '' }}>Enabled</option>
+                                <option value="disabled" {{ ($settings['gateway_amargateway_status'] ?? 'disabled') === 'disabled' ? 'selected' : '' }}>Disabled</option>
+                            </select>
+                            <div class="settings-hint">যদি এটি ইনেবল থাকে, ইউজাররা গেটওয়ের মাধ্যমে অটোমেটিক পেমেন্ট করতে পারবে।</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Merchant Secret Key (X-Merchant-Key)</label>
+                            <input type="text" name="gateway_merchant_key" value="{{ $settings['gateway_merchant_key'] ?? '' }}" class="form-control form-control-custom" placeholder="mc_r15KAbL9...">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Webhook Secret Key (MERCHANT_WEBHOOK_SECRET)</label>
+                            <input type="text" name="gateway_webhook_secret" value="{{ $settings['gateway_webhook_secret'] ?? '' }}" class="form-control form-control-custom" placeholder="webhook_secret_key...">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Gateway Webhook Callback URL</label>
+                            <input type="text" readonly value="{{ url('/api/payment/callback') }}" class="form-control form-control-custom" style="background: rgba(0,0,0,0.3); color: #818cf8; font-family: monospace;">
+                            <div class="settings-hint">আপনার AmarGateway মার্চেন্ট প্যানেলে এই Webhook URL টি সেভ করুন।</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="settings-card mb-0">
                     <div class="settings-card-title" style="color: #c084fc;">
                         <i class="material-icons-round">image</i> Upgrade Page Banner

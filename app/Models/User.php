@@ -28,6 +28,8 @@ class User extends Authenticatable
         'referral_code',
         'account_id',
         'account_type',
+        'subscription_expires_at',
+        'subscription_plan',
     ];
 
     /**
@@ -50,6 +52,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'subscription_expires_at' => 'datetime',
         ];
     }
 
@@ -84,7 +87,16 @@ class User extends Authenticatable
         static::creating(function ($user) {
             $user->referral_code = \Illuminate\Support\Str::random(10);
             $user->account_id = 'UID-' . strtoupper(\Illuminate\Support\Str::random(8));
+            $user->credits = 50; // Give 50 free trial credits on signup
         });
+    }
+
+    /**
+     * Check if user has an active subscription.
+     */
+    public function hasActiveSubscription()
+    {
+        return $this->subscription_expires_at && $this->subscription_expires_at->isFuture();
     }
 
     /**
@@ -92,6 +104,10 @@ class User extends Authenticatable
      */
     public function deductCreditAndPayCommission($amount, $sourceType = 'Service Usage')
     {
+        if ($this->hasActiveSubscription()) {
+            return true;
+        }
+
         $this->credits -= $amount;
         $this->save();
 

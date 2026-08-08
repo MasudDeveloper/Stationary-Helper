@@ -24,7 +24,7 @@
                     <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">তারিখ</th>
                     <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">ইউজার</th>
                     <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">টাকার পরিমাণ</th>
-                    <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">ক্রেডিট</th>
+                    <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">ক্রেডিট / সাবস্ক্রিপশন</th>
                     <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">সেন্ডার নম্বর</th>
                     <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">TrxID</th>
                     <th style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-weight: 600;">স্ট্যাটাস</th>
@@ -37,7 +37,18 @@
                     <td style="padding: 15px; color: #94a3b8;">{{ $req->created_at->format('d M, Y h:i A') }}</td>
                     <td style="padding: 15px; color: #e2e8f0;">{{ $req->user->name }}<br><small style="color: #64748b;">{{ $req->user->email }}</small></td>
                     <td style="padding: 15px; color: #34d399; font-weight: 700;">৳{{ $req->amount }}</td>
-                    <td style="padding: 15px; color: #e2e8f0; font-weight: 600;">{{ $req->credits }}</td>
+                    <td style="padding: 15px; color: #e2e8f0; font-weight: 600;">
+                        @if (isset($req->request_type) && $req->request_type === 'subscription')
+                            <span style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
+                                @if ($req->subscription_plan === '1_month') ১ মাসের সাবস্ক্রিপশন
+                                @elseif ($req->subscription_plan === '6_months') ৬ মাসের সাবস্ক্রিপশন
+                                @elseif ($req->subscription_plan === '1_year') ১ বছরের সাবস্ক্রিপশন
+                                @endif
+                            </span>
+                        @else
+                            {{ $req->credits }} ক্রেডিট
+                        @endif
+                    </td>
                     <td style="padding: 15px; color: #cbd5e1;">{{ $req->sender_number }}</td>
                     <td style="padding: 15px; color: #cbd5e1; font-family: monospace;">{{ $req->transaction_id }}</td>
                     <td style="padding: 15px;">

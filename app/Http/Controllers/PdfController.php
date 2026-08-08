@@ -187,7 +187,7 @@ class PdfController extends Controller
             $imageFile = $request->file('image');
 
             // Please replace 'YOUR_PYTHON_VPS_IP' with the actual IP address of your Python VPS server
-            $pythonApiUrl = 'http://importentapi.rootvabd.com/python_api/proxy.php';
+            $pythonApiUrl = 'http://importentapi.rootvabd.com/python_api/proxy.php?endpoint=remove-bg';
 
             $response = \Illuminate\Support\Facades\Http::timeout(60)
                 ->withHeaders([
@@ -304,7 +304,7 @@ class PdfController extends Controller
                 'Accept' => 'application/json'
             ])
             ->timeout(60)
-            ->post('http://importentapi.rootvabd.com:8000/detect-document-corners');
+            ->post('http://importentapi.rootvabd.com/python_api/proxy.php?endpoint=detect-document-corners');
 
             return response()->json($response->json(), $response->status());
         } catch (\Exception $e) {
@@ -333,7 +333,7 @@ class PdfController extends Controller
                 'x-api-key' => 'penghor_secret_key_121'
             ])
             ->timeout(60)
-            ->post('http://importentapi.rootvabd.com:8000/auto-crop-document');
+            ->post('http://importentapi.rootvabd.com/python_api/proxy.php?endpoint=auto-crop-document');
 
             if ($response->successful()) {
                 return response($response->body(), 200)->header('Content-Type', 'image/jpeg');
