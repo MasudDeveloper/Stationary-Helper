@@ -94,6 +94,15 @@ $marginRight = $template->margin_right ?? 20;
         }
 
         body.no-watermark .placeholder-highlight {
+            /* Keep highlights visible on screen even in no-watermark mode */
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px dashed #7dd3fc;
+        }
+
+        body.pdf-generation .placeholder-highlight {
             background-color: transparent !important;
             color: #000000 !important;
             padding: 0 !important;
@@ -101,6 +110,11 @@ $marginRight = $template->margin_right ?? 20;
             font-weight: inherit !important;
             font-family: inherit !important;
             font-size: inherit !important;
+        }
+
+        .bijoy-label-auto, .bijoy-label-force {
+            font-family: 'SutonnyMJ', 'Sutonnymj', 'Kalpurush', Arial, sans-serif !important;
+            font-size: 1.15rem !important;
         }
 
         /* Right Side: Form Sidebar */
@@ -406,7 +420,8 @@ $marginRight = $template->margin_right ?? 20;
                 @php
                 $previewContent = $template->content;
                 foreach ($fields as $field) {
-                $previewContent = str_replace('['.$field.']', '<span class="placeholder-highlight" data-field="'.$field.'">'.$field.'</span>', $previewContent);
+                    $safeFieldId = base64_encode($field);
+                    $previewContent = str_replace('['.$field.']', '<span class="placeholder-highlight" data-field="'.$safeFieldId.'">'.$field.'</span>', $previewContent);
                 }
                 @endphp
                 {!! $previewContent !!}
@@ -432,12 +447,31 @@ $marginRight = $template->margin_right ?? 20;
                 </div>
 
                 <div class="sidebar-body">
-                    @foreach($fields as $field)
-                    <div style="margin-bottom: 20px;">
-                        <label style="font-weight: 500; color: #374151; font-size: 0.9rem; margin-bottom: 5px; display: block;">
-                            {{ str_replace('-', ' ', Str::title($field)) }}
+                    <!-- Global Font Toggle -->
+                    <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        <span style="font-size: 0.85rem; color: #475569; font-weight: 500;">Label Font:</span>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; user-select: none; color: #1e293b; font-weight: 500;">
+                            <input type="checkbox" id="bijoyLabelToggle" onchange="document.querySelectorAll('.field-label').forEach(el => el.classList.toggle('bijoy-label-force', this.checked))" style="accent-color: #3b82f6; width: 16px; height: 16px;"> 
+                            Use Bijoy (SutonnyMJ)
                         </label>
-                        <input type="text" class="form-control dynamic-input" data-target="{{ $field }}" placeholder="Enter {{ str_replace('-', ' ', $field) }}" value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
+                    </div>
+
+                    @foreach($fields as $field)
+                    @php
+                        $safeFieldId = base64_encode($field);
+                        $cleanText = strip_tags($field);
+                        $cleanText = html_entity_decode($cleanText);
+                        
+                        // Heuristic: If it has extended ASCII OR contains common English-based Bijoy syllables
+                        $isBijoy = preg_match('/[\x80-\xFF]/', $cleanText) || 
+                                   preg_match('/(wjLyb|wjLyB|bvg|wVKvbv|welq|ZvwiL|cÖwZôv|gva¨g|msL¨v|Rb|UvKv|wefvM|‡Rjv|_vbv|MÖvg|WvK|BDwbqb|Dct|WvKvbv)/i', $cleanText);
+                        $labelClass = $isBijoy ? 'field-label bijoy-label-auto' : 'field-label';
+                    @endphp
+                    <div style="margin-bottom: 20px;">
+                        <label class="{{ $labelClass }}" style="font-weight: 500; color: #374151; font-size: 0.9rem; margin-bottom: 5px; display: block;">
+                            {!! $field !!}
+                        </label>
+                        <input type="text" class="form-control dynamic-input" data-target="{{ $safeFieldId }}" data-real-key="{{ $field }}" placeholder="Enter data..." value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
                     </div>
                     @endforeach
                 </div>
@@ -478,21 +512,26 @@ $marginRight = $template->margin_right ?? 20;
         }
 
         function updatePreview(inputElement) {
-            const fieldName = inputElement.getAttribute('data-target');
+            const safeFieldId = inputElement.getAttribute('data-target');
             const value = inputElement.value;
 
-            // Find all spans with this field name
-            const spans = document.querySelectorAll(`.placeholder-highlight[data-field="${fieldName}"]`);
+            // Use manual attribute comparison instead of CSS selector
+            // because base64 can contain '=', '+', '/' that break CSS attribute selectors
+            const allSpans = document.querySelectorAll('.placeholder-highlight, [data-field]');
+            allSpans.forEach(span => {
+                if (span.getAttribute('data-field') !== safeFieldId) return;
 
-            spans.forEach(span => {
+                if (!span.hasAttribute('data-original')) {
+                    span.setAttribute('data-original', span.innerHTML);
+                }
                 if (value.trim() === '') {
-                    // If empty, show the placeholder name again and keep highlight
-                    span.innerText = fieldName;
-                    span.classList.add('placeholder-highlight');
+                    span.innerHTML = span.getAttribute('data-original');
                 } else {
-                    // If filled, show the value
                     span.innerText = value;
                 }
+                
+                // Keep the placeholder-highlight class always active so the user can easily spot editable fields on screen
+                span.classList.add('placeholder-highlight');
             });
         }
 
@@ -571,8 +610,8 @@ $marginRight = $template->margin_right ?? 20;
 
             const formData = {};
             document.querySelectorAll('.dynamic-input').forEach(input => {
-                const target = input.getAttribute('data-target');
-                formData[target] = input.value;
+                const realKey = input.getAttribute('data-real-key');
+                formData[realKey] = input.value;
             });
 
             const btn = document.getElementById('saveDocBtn');
@@ -611,12 +650,15 @@ $marginRight = $template->margin_right ?? 20;
 
         function printDemo() {
             document.body.classList.remove('no-watermark');
+            document.body.classList.add('pdf-generation'); // Hide highlights for print dialog
             window.print();
             setTimeout(() => {
                 document.body.classList.add('no-watermark');
+                document.body.classList.remove('pdf-generation');
             }, 1000);
             window.addEventListener('afterprint', () => {
                 document.body.classList.add('no-watermark');
+                document.body.classList.remove('pdf-generation');
             }, { once: true });
         }
 
@@ -655,8 +697,9 @@ $marginRight = $template->margin_right ?? 20;
                 const data = await response.json();
 
                 if (data.success) {
-                    // Ensure watermark is hidden
+                    // Ensure watermark and highlights are hidden for generation
                     document.body.classList.add('no-watermark');
+                    document.body.classList.add('pdf-generation');
 
                     // Show success alert briefly without blocking
                     Swal.fire({
@@ -681,11 +724,14 @@ $marginRight = $template->margin_right ?? 20;
                         }
                     };
 
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         Swal.close();
                         if (typeof html2pdf !== 'undefined' && element) {
-                            html2pdf().set(opt).from(element).save();
+                            await html2pdf().set(opt).from(element).save();
                         }
+                        
+                        document.body.classList.remove('pdf-generation'); // Restore highlights
+                        
                         // 2. Open print dialog after 500ms
                         setTimeout(() => {
                             window.print();
@@ -738,8 +784,9 @@ $marginRight = $template->margin_right ?? 20;
             btn.disabled = true;
 
             try {
-                // Remove watermark temporarily for PDF generation
+                // Remove watermark and highlights temporarily for PDF generation
                 document.body.classList.add('no-watermark');
+                document.body.classList.add('pdf-generation');
 
                 const element = document.getElementById('printable-doc');
 
@@ -765,8 +812,9 @@ $marginRight = $template->margin_right ?? 20;
                 // Generate PDF as base64 string
                 const pdfBase64 = await html2pdf().set(opt).from(element).output('datauristring');
 
-                // Restore watermark if needed
+                // Restore watermark and highlights
                 document.body.classList.remove('no-watermark');
+                document.body.classList.remove('pdf-generation');
 
                 btn.innerHTML = '<i class="material-icons-round spin" style="vertical-align: middle;">sync</i> পাঠানো হচ্ছে...';
 

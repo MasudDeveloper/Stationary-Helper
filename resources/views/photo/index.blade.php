@@ -143,6 +143,9 @@
             <button class="tool-btn" id="bgRemoveBtn">
                 <i class="material-icons-round">auto_fix_high</i> BG-AI (5c)
             </button>
+            <button class="tool-btn" id="applyCropBtn" style="background: rgba(255,255,255,0.15);">
+                <i class="material-icons-round">crop</i> Apply Crop
+            </button>
             <button class="tool-btn danger" id="openEraserBtn">
                 <i class="material-icons-round">format_paint</i> Erase
             </button>
@@ -232,13 +235,19 @@
         </div>
         
         <div style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-            <span style="color: var(--text-muted); font-size: 0.85rem;">Brush Size:</span>
-            <input type="range" id="eraserSize" min="5" max="100" value="20" style="flex-grow: 1;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1;">
+                <span style="color: var(--text-muted); font-size: 0.85rem; white-space: nowrap;">Size:</span>
+                <input type="range" id="eraserSize" min="5" max="150" value="30" style="flex-grow: 1;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; flex-grow: 1;">
+                <span style="color: var(--text-muted); font-size: 0.85rem; white-space: nowrap;">Softness:</span>
+                <input type="range" id="eraserSoftness" min="0" max="100" value="50" style="flex-grow: 1;">
+            </div>
         </div>
 
-        <div id="eraserCanvasContainer" style="width: 100%; height: 50vh; overflow: auto; display: flex; align-items: flex-start; justify-content: center; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect width=\"10\" height=\"10\" fill=\"%23ddd\"/><rect x=\"10\" width=\"10\" height=\"10\" fill=\"%23fff\"/><rect y=\"10\" width=\"10\" height=\"10\" fill=\"%23fff\"/><rect x=\"10\" y=\"10\" width=\"10\" height=\"10\" fill=\"%23ddd\"/></svg>'); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; position: relative;">
-            <canvas id="eraserCanvas" style="cursor: none; touch-action: none; transform-origin: top center;"></canvas>
-            <div id="brushCursor" style="pointer-events: none; position: fixed; border: 1px solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); display: none; transform: translate(-50%, -50%); z-index: 10000; background: rgba(255,255,255,0.1);"></div>
+        <div id="eraserCanvasContainer" style="width: 100%; height: 50vh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZv4zMDD8Z0TRxAAS5KjHY8CAYcAAw4CRaMCoMGBwGAAAn+ELABU29kMAAAAASUVORK5CYII='); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; position: relative;">
+            <canvas id="eraserCanvas" style="cursor: none; touch-action: none; position: absolute; max-width: 100%; max-height: 100%;"></canvas>
+            <div id="brushCursor" style="pointer-events: none; position: fixed; border: 1px solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); display: none; transform: translate(-50%, -50%); z-index: 10000; background: rgba(255,255,255,0.2);"></div>
         </div>
     </div>
 </div>
@@ -368,15 +377,9 @@ $(document).ready(function() {
     $('#brightness, #contrast, #saturation').on('input', updatePreviewStyles);
 
     // Python API BG Removal
-    $('#bgRemoveBtn').click(async function() {
-        if (!cropper) {
-            Swal.fire({ title: "Upload Image", text: "Please upload an image first.", icon: "warning", background: '#1e293b', color: '#fff' });
-            return;
-        }
-
+    $('#bgRemoveBtn').click(function() {
+        if (!cropper) return;
         let btn = $(this);
-        let originalText = btn.html();
-
         Swal.fire({
             title: 'Confirm AI Removal',
             text: "This will deduct 5 Credits. Proceed?",
@@ -388,10 +391,46 @@ $(document).ready(function() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 btn.prop('disabled', true).html('<i class="material-icons-round" style="animation: spin 1s linear infinite;">autorenew</i> Processing...');
+                
+                Swal.fire({
+                    title: 'Background Removing...',
+                    html: 'Please wait, our AI is processing your image.',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    background: '#1e293b',
+                    color: '#fff',
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
 
                 try {
-                    let originalCanvas = cropper.getCroppedCanvas();
-                    let imageBlob = await new Promise(resolve => originalCanvas.toBlob(resolve, 'image/png'));
+                    // Get the currently cropped area instead of states[0].
+                    // This ensures the AI processes exactly what the user selected, and effectively applies the crop.
+                    let croppedCanvas = cropper.getCroppedCanvas();
+                    
+                    let maxDim = 1200;
+                    let width = croppedCanvas.width;
+                    let height = croppedCanvas.height;
+                    
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                        
+                        let tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = width;
+                        tempCanvas.height = height;
+                        let ctx = tempCanvas.getContext('2d');
+                        ctx.drawImage(croppedCanvas, 0, 0, width, height);
+                        croppedCanvas = tempCanvas;
+                    }
+                    
+                    let imageBlob = await new Promise(resolve => croppedCanvas.toBlob(resolve, 'image/png'));
                     
                     const formData = new FormData();
                     formData.append('image', imageBlob, 'temp.png');
@@ -409,21 +448,54 @@ $(document).ready(function() {
                     let data = await res.json();
 
                     if(data.success) {
-                        saveState(data.image); // Save for undo
-                        cropper.replace(data.image);
-                        setTimeout(updatePreviewStyles, 500);
+                        // Because we sent the cropped canvas, the returned image IS the cropped image.
+                        saveState(data.image); // Save transparent image to history state
                         
-                        Swal.fire({ title: "Success!", text: "Background removed.", icon: "success", background: '#1e293b', color: '#fff', timer: 1500, showConfirmButton: false });
+                        // Replace the image in the cropper. It will reset the crop box to cover this entire new image.
+                        cropper.replace(data.image);
+                        
+                        setTimeout(() => {
+                            updatePreviewStyles();
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Background removed successfully',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                background: '#1e293b', color: '#fff'
+                            });
+                        }, 500);
                     } else {
                         throw new Error(data.message || 'Error occurred');
                     }
                 } catch (error) {
-                    Swal.fire({ title: "Error", text: error.message, icon: "error", background: '#1e293b', color: '#fff' });
+                    Swal.close();
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: 'Error: ' + error.message,
+                        background: '#1e293b', color: '#fff'
+                    });
+                } finally {
+                    btn.prop('disabled', false).html('<i class="material-icons-round">auto_fix_high</i> BG-AI (5c)');
                 }
-
-                btn.prop('disabled', false).html(originalText);
             }
         });
+    });
+        
+    // Apply Crop Button
+    $('#applyCropBtn').click(function() {
+        if(!cropper) return;
+        let canvas = cropper.getCroppedCanvas();
+        let dataUrl = canvas.toDataURL('image/png');
+        saveState(dataUrl);
+        cropper.replace(dataUrl);
+        // Flash effect for feedback
+        let preview = $('#imagePreview');
+        preview.css('opacity', '0.5');
+        setTimeout(() => { preview.css('opacity', '1'); }, 200);
     });
 
     // Final Processing
@@ -493,11 +565,12 @@ $(document).ready(function() {
         window.location.href = "{{ route('pdf.tools.passport_print') }}";
     });
 
-    // --- Eraser Tool (Simplified for stability) ---
+    // --- Eraser Tool (Advanced with size & softness) ---
     let eraserCanvas = document.getElementById('eraserCanvas');
     let eraserCtx = eraserCanvas.getContext('2d');
     let isErasing = false;
-    let eraserSize = 20;
+    let eraserSize = 30;
+    let eraserSoftness = 0.5;
 
     $('#openEraserBtn').click(function() {
         if (!cropper) return;
@@ -507,29 +580,104 @@ $(document).ready(function() {
         eraserCtx.drawImage(originalCanvas, 0, 0);
         
         $('#eraserModal').css('display', 'flex');
+        
+        // Let CSS max-width/max-height handle scaling, we don't need manual CSS transform logic
+        updateBrushCursor(0, 0, false);
     });
 
-    $('#closeEraserBtn').click(function() { $('#eraserModal').hide(); });
+    $('#closeEraserBtn').click(function() { 
+        $('#eraserModal').hide(); 
+    });
 
-    $('#eraserSize').on('input', function() { eraserSize = parseInt($(this).val()); });
+    $('#eraserSize').on('input', function() { 
+        eraserSize = parseInt($(this).val()); 
+        updateBrushCursor(lastMouseX, lastMouseY, true);
+    });
+    
+    $('#eraserSoftness').on('input', function() { 
+        eraserSoftness = parseInt($(this).val()) / 100; // 0 to 1
+    });
+
+    let lastMouseX = -100;
+    let lastMouseY = -100;
+
+    function getCanvasScale() {
+        // Since canvas uses max-width/max-height in a flex container, 
+        // rect.width / original.width gives the true scale ratio.
+        let rect = eraserCanvas.getBoundingClientRect();
+        return rect.width / eraserCanvas.width;
+    }
+
+    function updateBrushCursor(clientX, clientY, visible) {
+        lastMouseX = clientX;
+        lastMouseY = clientY;
+        let scale = getCanvasScale();
+        let displaySize = eraserSize * scale;
+        $('#brushCursor').css({
+            width: displaySize + 'px',
+            height: displaySize + 'px',
+            left: clientX + 'px',
+            top: clientY + 'px',
+            display: visible ? 'block' : 'none'
+        });
+    }
+
+    $('#eraserCanvasContainer').on('mousemove touchmove', function(e) {
+        let clientX = e.clientX || (e.originalEvent.touches ? e.originalEvent.touches[0].clientX : 0);
+        let clientY = e.clientY || (e.originalEvent.touches ? e.originalEvent.touches[0].clientY : 0);
+        updateBrushCursor(clientX, clientY, true);
+    });
+
+    $('#eraserCanvasContainer').on('mouseleave touchend', function() {
+        $('#brushCursor').hide();
+    });
 
     function erase(e) {
         if (!isErasing) return;
         let rect = eraserCanvas.getBoundingClientRect();
-        let scaleX = eraserCanvas.width / rect.width;
-        let scaleY = eraserCanvas.height / rect.height;
-        let x = (e.clientX || e.originalEvent.touches[0].clientX) - rect.left;
-        let y = (e.clientY || e.originalEvent.touches[0].clientY) - rect.top;
-        x *= scaleX; y *= scaleY;
+        let scale = getCanvasScale();
+        
+        let clientX = e.clientX || (e.originalEvent.touches ? e.originalEvent.touches[0].clientX : 0);
+        let clientY = e.clientY || (e.originalEvent.touches ? e.originalEvent.touches[0].clientY : 0);
+        
+        // Coordinate relative to canvas element
+        let x = clientX - rect.left;
+        let y = clientY - rect.top;
+        
+        // Scale to actual image coordinates
+        x /= scale;
+        y /= scale;
 
         eraserCtx.globalCompositeOperation = 'destination-out';
+        
+        let radgrad = eraserCtx.createRadialGradient(x, y, 0, x, y, eraserSize/2);
+        
+        // Softness logic: 0 = hard edge, 1 = completely soft
+        let colorStop = 1 - eraserSoftness;
+        if(colorStop < 0.01) colorStop = 0.01;
+        if(colorStop > 0.99) colorStop = 0.99;
+        
+        radgrad.addColorStop(0, 'rgba(0,0,0,1)');
+        radgrad.addColorStop(colorStop, 'rgba(0,0,0,1)');
+        radgrad.addColorStop(1, 'rgba(0,0,0,0)');
+        
+        eraserCtx.fillStyle = radgrad;
         eraserCtx.beginPath();
         eraserCtx.arc(x, y, eraserSize/2, 0, Math.PI * 2, false);
         eraserCtx.fill();
     }
 
-    $(eraserCanvas).on('mousedown touchstart', function(e) { isErasing = true; erase(e); });
-    $(eraserCanvas).on('mousemove touchmove', erase);
+    $(eraserCanvas).on('mousedown touchstart', function(e) { 
+        if(e.type === 'touchstart') e.preventDefault();
+        isErasing = true; 
+        erase(e); 
+    });
+    
+    $(eraserCanvas).on('mousemove touchmove', function(e) {
+        if(e.type === 'touchmove') e.preventDefault();
+        erase(e);
+    });
+    
     $(window).on('mouseup touchend', function() { isErasing = false; });
 
     $('#saveEraserBtn').click(function() {

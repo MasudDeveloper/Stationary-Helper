@@ -140,7 +140,7 @@
                                 @if($tx->type == 'income') + @else - @endif৳{{ number_format($tx->amount, 2) }}
                             </td>
                             <td style="padding: 15px 25px; text-align: right;">
-                                <form action="{{ route('accounting.delete', $tx->id) }}" method="POST" onsubmit="return confirm('মুছে ফেলার জন্য নিশ্চিত?');">
+                                <form action="{{ route('accounting.transaction.delete', $tx->id) }}" method="POST" onsubmit="return confirm('মুছে ফেলার জন্য নিশ্চিত?');">
                                     @csrf
                                     <button type="submit" class="btn-delete">মুছুন</button>
                                 </form>

@@ -1,23 +1,41 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Header, Form
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Header
 from fastapi.responses import Response, JSONResponse
 from rembg import remove, new_session
 from PIL import Image
 import io
 import cv2
 import numpy as np
-import json
-
-app = FastAPI(title="Background Removal API")
-
-# Initialize the rembg session once at startup to save time
-# u2net_human_seg is specifically trained for human portraits, fixing issues with hair and missing body parts
-session = new_session("u2net_human_seg")
-
-# u2net is excellent for detecting generic objects like ID cards on noisy backgrounds
-card_session = new_session("u2net")
 
 # Secret API Key to protect your server from unauthorized use
 SECRET_API_KEY = "penghor_secret_key_121"
+
+# Global session variables — loaded once at startup
+session = None
+card_session = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load AI models once at startup and release on shutdown."""
+    global session, card_session
+    print("[Startup] Loading AI models...")
+
+    # silueta: better than u2net_human_seg for complex outdoor backgrounds and full-body portraits
+    session = new_session("silueta")
+
+    # u2net: best general-purpose model for objects, ID cards, documents
+    card_session = new_session("u2net")
+
+    print("[Startup] Models loaded successfully.")
+    yield
+    print("[Shutdown] Releasing resources.")
+
+app = FastAPI(
+    title="Background Removal API",
+    description="AI-powered background removal and document detection API",
+    version="2.0.0",
+    lifespan=lifespan,
+)
 
 def verify_api_key(x_api_key: str = Header(None)):
     if x_api_key != SECRET_API_KEY:
@@ -25,30 +43,68 @@ def verify_api_key(x_api_key: str = Header(None)):
 
 @app.get("/")
 def read_root():
-    return {"status": "running", "message": "Background Removal API is online"}
+    return {"status": "running", "message": "Background Removal API is online", "version": "2.0.0"}
+
+@app.get("/health")
+def health_check():
+    """Check if the API and models are ready."""
+    models_ready = session is not None and card_session is not None
+    return JSONResponse(
+        status_code=200 if models_ready else 503,
+        content={
+            "status": "healthy" if models_ready else "not_ready",
+            "models_loaded": models_ready,
+        }
+    )
+
+@app.get("/models")
+def list_models():
+    """Return info about the loaded AI models."""
+    return {
+        "portrait_model": "silueta",
+        "object_model": "u2net",
+        "info": "silueta model — optimized for full-body and outdoor portrait backgrounds."
+    }
 
 @app.post("/remove-bg", dependencies=[Depends(verify_api_key)])
 async def remove_background(file: UploadFile = File(...)):
-    if not file.content_type.startswith("image/"):
+    """Remove background from a portrait/human image using silueta model with alpha matting."""
+    if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
 
     try:
         input_data = await file.read()
-        input_image = Image.open(io.BytesIO(input_data))
-        output_image = remove(
-            input_image, 
-            session=session,
-            post_process_mask=True
-        )
-        
+        # RGB is required — silueta and u2net are both trained on RGB images
+        input_image = Image.open(io.BytesIO(input_data)).convert("RGB")
+
+        try:
+            # Try with alpha matting first (requires pymatting — gives best edge quality)
+            output_image = remove(
+                input_image,
+                session=session,
+                post_process_mask=True,
+                alpha_matting=True,
+                alpha_matting_foreground_threshold=230,
+                alpha_matting_background_threshold=20,
+                alpha_matting_erode_size=5,
+            )
+        except Exception:
+            # Fallback: alpha matting not available (pymatting not installed)
+            output_image = remove(
+                input_image,
+                session=session,
+                post_process_mask=True,
+            )
+
         img_byte_arr = io.BytesIO()
-        output_image.save(img_byte_arr, format='PNG')
+        output_image.save(img_byte_arr, format="PNG")
         output_data = img_byte_arr.getvalue()
-        
+
         return Response(content=output_data, media_type="image/png")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
+
 
 def order_points(pts):
     rect = np.zeros((4, 2), dtype="float32")
