@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>পরিসংখ্যান (Statistics) — সম্পূর্ণ গাইড</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Noto+Serif+Bengali:wght@500;600;700&display=swap');
+
+*{box-sizing:border-box}
+:root{
+  --navy:#082b4c; --green:#17843b; --blue:#12649b; --purple:#704c91;
+  --orange:#b65b14; --pink:#b42f73; --olive:#657d1d; --brown:#946025;
+  --border:#9e9e9e; --paper:#fff; --soft:#f7fafc; --ink:#17212b;
+}
+body{
+  margin:0;background:#f1f3f5;color:var(--ink);
+  font-family:"Noto Sans Bengali","Nirmala UI",Arial,sans-serif;
+}
+.page{
+  width:min(1200px,calc(100% - 20px));margin:10px auto;
+  background:#fff;padding:7px;border:1px solid #b7b7b7;
+  box-shadow:0 2px 12px #0002;
+}
+.hero{
+  min-height:88px;border-radius:6px;background:var(--navy);color:#fff;
+  display:flex;align-items:center;gap:18px;padding:10px 18px;
+  border:2px solid #0b3154;overflow:hidden;
+}
+.hero .icons{font-size:40px;letter-spacing:4px;white-space:nowrap}
+.hero h1{font-family:"Noto Serif Bengali","Noto Sans Bengali",serif;font-size:32px;margin:0;font-weight:800;line-height:1.2;flex:1}
+.hero h1 span{font-family:Georgia,serif}
+.hero .chart{font-size:38px;white-space:nowrap}
+
+.grid3{display:grid;grid-template-columns:1.08fr 1fr 1fr;gap:8px;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.card{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 10px;overflow:hidden;
+}
+.card h2{font-size:20px;margin:0 0 3px;font-weight:800;line-height:1.25}
+.card h3{font-size:14px;margin:7px 0 2px;font-weight:800}
+.card p{font-size:13px;line-height:1.55;margin:3px 0}
+.card li{font-size:12.5px;line-height:1.5;margin:1px 0}
+.card ul{margin:3px 0 3px 18px;padding:0}
+.green{border-color:#5b9b70}.green h2,.green h3{color:var(--green)}
+.blue{border-color:#7aa2c1}.blue h2,.blue h3{color:var(--blue)}
+.purple{border-color:#a487b5}.purple h2,.purple h3{color:var(--purple)}
+.orange{border-color:#c99b72}.orange h2,.orange h3{color:var(--orange)}
+.olive{border-color:#a7b47c}.olive h2,.olive h3{color:var(--olive)}
+.pink{border-color:#d58db1}.pink h2,.pink h3{color:var(--pink)}
+.brown{border-color:#c69d72}.brown h2,.brown h3{color:var(--brown)}
+
+.example{color:#8a3e13;font-weight:800;margin-top:5px}
+.solution{color:#075b31;font-weight:800}
+.note{
+  border:1px solid #8aa78f;border-radius:6px;text-align:center;
+  margin-top:7px;padding:4px;font-size:12px;font-weight:700;
+}
+.formula{
+  text-align:center;font-family:"Times New Roman","Noto Serif Bengali",serif;
+  font-size:18px;margin:5px 0;font-weight:600;
+}
+.small-formula{font-size:15px}
+.eq{font-family:"Times New Roman",serif;font-style:italic}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.definition{margin:4px 0}
+.data{font-family:Georgia,serif;letter-spacing:.2px}
+table{border-collapse:collapse;width:100%;margin:5px 0;font-size:12px;background:#fff}
+th,td{border:1px solid #7597ae;padding:3px 5px;text-align:center;vertical-align:middle}
+th{font-weight:800;background:#eef4f8}
+.table-orange th,.table-orange td{border-color:#b58b60}
+.table-purple th,.table-purple td{border-color:#9277a5}
+.table-green th,.table-green td{border-color:#73936b}
+.tally{font-family:"Courier New",monospace;font-weight:700}
+.callout{
+  display:grid;grid-template-columns:1fr 1fr;border:1px solid #86a69a;
+  border-radius:6px;overflow:hidden;margin-top:7px;text-align:center
+}
+.callout div{padding:5px;font-size:11.5px}.callout div+div{border-left:1px solid #86a69a}
+.badge{
+  display:inline-block;border:1px solid #7796ad;border-radius:12px;
+  padding:2px 10px;font-size:11.5px;margin-top:5px;font-weight:700
+}
+.graphs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.graph-card{border:1.5px solid #74a1a4;border-radius:7px;padding:6px;min-height:205px}
+.graph-card h3{font-size:13px;color:#0b6b70;margin:0 0 3px}
+.graph-wrap{height:140px;position:relative}
+svg{width:100%;height:100%;display:block}
+.footer-grid{
+  display:grid;grid-template-columns:2.2fr 2.2fr 1.7fr 1fr;gap:8px;margin-top:8px
+}
+.footer-box{border:1.5px solid #b65d70;border-radius:7px;padding:6px 9px;min-height:70px}
+.footer-box h3{margin:0;color:#a43e53;font-size:14px}
+.footer-box p,.footer-box li{font-size:11px;line-height:1.45;margin:2px 0}
+.footer-box ul{margin:2px 0 2px 16px;padding:0}
+.credit{font-size:10px;color:#777;text-align:center;margin-top:5px}
+
+@media(max-width:850px){
+  .hero h1{font-size:24px}.hero .icons{font-size:28px}.hero .chart{font-size:27px}
+  .grid3,.graphs{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .page{width:100%;margin:0;padding:4px;border:0;box-shadow:none}
+  .hero{min-height:74px;padding:7px;gap:7px}.hero h1{font-size:18px}.hero .icons{font-size:21px}.hero .chart{font-size:21px}
+  .grid3,.grid2,.graphs,.footer-grid{grid-template-columns:1fr}
+  .card{padding:7px}.card h2{font-size:18px}.card p,.card li{font-size:12px}
+  .two-col{gap:7px}
+  table{font-size:11px}
+}
+.tally{font-family:monospace;letter-spacing:2px;font-size:14px;white-space:nowrap}
+
+</style>
+
+<style>
+/* ====== UPGRADED STATISTICS LAB ====== */
+.stats-lab{margin-top:12px;border:2px solid #073b62;border-radius:12px;background:#fff;overflow:hidden}
+.stats-lab-head{background:linear-gradient(135deg,#073b62,#12649b);color:#fff;padding:14px 16px}
+.stats-lab-head h2{margin:0;font-size:23px}
+.stats-lab-head p{margin:4px 0 0;font-size:12px}
+.lab-nav{display:flex;gap:6px;overflow:auto;padding:8px;background:#eef5f9;border-bottom:1px solid #c6d6df}
+.lab-nav button{white-space:nowrap;border:1px solid #9bb4c3;background:#fff;color:#174b66;border-radius:7px;padding:8px 11px;font-family:inherit;font-weight:800;cursor:pointer}
+.lab-nav button.active{background:#073b62;color:#fff}
+.lab-panel{display:none;padding:10px}.lab-panel.active{display:block}
+.lab-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lab-field{border:1px solid #c6d4dc;border-radius:8px;padding:9px;background:#fbfdff}
+.lab-field label{display:block;font-size:13px;font-weight:800;margin-bottom:5px;color:#263f4d}
+.lab-field input,.lab-field textarea,.lab-field select{width:100%;padding:9px;border:1px solid #a9bdc9;border-radius:6px;font-family:inherit;font-size:14px;background:#fff}
+.lab-field textarea{min-height:78px;resize:vertical}
+.lab-help{font-size:11px;color:#63727c;margin-top:4px}
+.lab-actions{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}
+.lab-actions button{border:0;border-radius:7px;padding:9px 14px;background:#087348;color:#fff;font-family:inherit;font-weight:800;cursor:pointer}
+.lab-actions .gray{background:#68747c}
+.lab-result{display:none;border:1px solid #83ac90;border-radius:8px;background:#f7fff9;padding:9px;margin-top:8px}
+.lab-result.show{display:block}
+.lab-step{border-left:3px solid #43815c;background:#fff;padding:7px 9px;margin:5px 0;font-size:12px;line-height:1.6}
+.lab-cards{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.lab-card{border:1px solid #86ad91;border-radius:7px;background:#fff;padding:7px 11px;text-align:center;min-width:120px}
+.lab-card b{display:block;font-size:11px;color:#53636e}.lab-card strong{font-size:18px;color:#08653b}
+.paper-wrap{border:1px solid #b9cbd5;border-radius:9px;overflow:hidden;background:#fff}
+#graphPaper{width:100%;height:430px;display:block;touch-action:none;cursor:crosshair;background-color:#fff;
+ background-image:
+ linear-gradient(#d9e6ef 1px,transparent 1px),
+ linear-gradient(90deg,#d9e6ef 1px,transparent 1px),
+ linear-gradient(#a8c2d1 1px,transparent 1px),
+ linear-gradient(90deg,#a8c2d1 1px,transparent 1px);
+ background-size:20px 20px,20px 20px,100px 100px,100px 100px;
+}
+.paper-tools{display:flex;flex-wrap:wrap;gap:6px;padding:7px;background:#f2f7fa;border-top:1px solid #c6d6df}
+.paper-tools button{border:1px solid #9bb4c3;background:#fff;border-radius:6px;padding:7px 10px;font-family:inherit;font-weight:700;cursor:pointer}
+.paper-note{font-size:11px;color:#5b6d78;padding:6px 8px;background:#fbfdff}
+@media(max-width:720px){.lab-grid{grid-template-columns:1fr}.lab-nav{flex-wrap:nowrap}.stats-lab-head h2{font-size:19px}#graphPaper{height:360px}}
+</style>
+
+</head>
+<body>
+<main class="page">
+
+<header class="hero">
+  <div class="icons">◕▥</div>
+  <h1>পরিসংখ্যান <span>(Statistics)</span> — সম্পূর্ণ গাইড</h1>
+  <div class="chart">↗︎📈</div>
+</header>
+
+<section class="grid3">
+  <article class="card green">
+    <h2>1. উপাত্ত (Data)</h2>
+    <p>কোনো বিষয় সম্পর্কে সংগৃহীত তথ্য বা পরিমাপককে উপাত্ত বলে।</p>
+    <p class="example">উদাহরণ:</p>
+    <p>একটি শ্রেণির ১০ জন শিক্ষার্থীর উচ্চতা (সে.মি.):</p>
+    <p class="data">145, 150, 148, 152, 149, 151, 147, 153, 150, 149</p>
+    <p class="example">উপাত্তের প্রকারভেদ:</p>
+    <p>ক) প্রাথমিক উপাত্ত : সরাসরি সংগ্রহ করা তথ্য</p>
+    <p>খ) গৌণ উপাত্ত : অন্যের দ্বারা সংগৃহীত তথ্য</p>
+    <div class="callout">
+      <div><b>সংখ্যাত্মক উপাত্ত</b><br>যে উপাত্ত সংখ্যা দিয়ে প্রকাশ করা যায়।</div>
+      <div><b>গুণগত উপাত্ত</b><br>যে উপাত্ত সংখ্যা দিয়ে প্রকাশ করা যায় না।</div>
+    </div>
+  </article>
+
+  <article class="card blue">
+    <h2>2. গণসংখ্যা (Frequency)</h2>
+    <p>কোনো উপাত্তের প্রতিটি মান কতবার এসেছে তাকে গণসংখ্যা বলে।</p>
+    <p class="example">উদাহরণ:</p>
+    <p>নিচের উপাত্তের গণসংখ্যা নির্ণয় কর।</p>
+    <p class="data">2, 3, 2, 5, 3, 2, 4, 3, 5, 2</p>
+    <p class="solution">সমাধান:</p>
+    <table>
+      <tr><th>উপাত্ত (x)</th><th>গণসংখ্যা (f)</th><th>চিহ্ন</th></tr>
+      <tr><td>2</td><td>4</td><td class="tally">||||</td></tr>
+      <tr><td>3</td><td>3</td><td class="tally">|||</td></tr>
+      <tr><td>4</td><td>1</td><td class="tally">|</td></tr>
+      <tr><td>5</td><td>2</td><td class="tally">||</td></tr>
+      <tr><th></th><th>মোট = 10</th><th></th></tr>
+    </table>
+    <div class="badge">মোট গণসংখ্যা (n) = 10</div>
+  </article>
+
+  <article class="card purple">
+    <h2>3. শ্রেণিবিন্যাস (Classification)</h2>
+    <p>উপাত্তকে নির্দিষ্ট শ্রেণিতে ভাগ করাকে শ্রেণিবিন্যাস বলে।</p>
+    <p class="example">উদাহরণ:</p>
+    <p>নিচের উপাত্তকে শ্রেণিবিন্যাস কর।</p>
+    <p class="data">23, 25, 28, 31, 33, 37, 41, 43, 45, 47, 50, 53, 55, 57, 60</p>
+    <p class="solution">সমাধান:</p>
+    <p>শ্রেণিপ্রস্থ (Class Interval) = 10</p>
+    <table class="table-purple">
+      <tr><th>শ্রেণি</th><th>শ্রেণিসীমা</th><th>গণসংখ্যা (f)</th></tr>
+      <tr><td>20 – 29</td><td>20 – 29</td><td>3</td></tr>
+      <tr><td>30 – 39</td><td>30 – 39</td><td>4</td></tr>
+      <tr><td>40 – 49</td><td>40 – 49</td><td>5</td></tr>
+      <tr><td>50 – 59</td><td>50 – 59</td><td>3</td></tr>
+      <tr><td>60 – 69</td><td>60 – 69</td><td>0</td></tr>
+      <tr><th colspan="2"></th><th>মোট = 15</th></tr>
+    </table>
+    <p><b>শ্রেণিচিহ্ন (Class Mark) =</b>
+      <span class="formula small-formula">(<span class="eq">উচ্চসীমা + নিম্নসীমা</span>) / 2</span>
+    </p>
+  </article>
+</section>
+
+<section class="grid2">
+  <article class="card orange">
+    <h2>4. গড় (গড়/Average)</h2>
+    <h3>ক) অশ্রেণিবদ্ধ উপাত্তের গড়</h3>
+    <div class="formula">x̄ = Σx / n</div>
+    <p>যেখানে, Σx = সকল উপাত্তের যোগফল<br>মোট সংখ্যা = উপাত্তের সংখ্যা</p>
+    <p class="example">উদাহরণ:</p>
+    <p class="data">5, 7, 8, 6, 4</p>
+    <p class="solution">সমাধান:</p>
+    <div class="formula">x̄ = (5 + 7 + 8 + 6 + 4) / 5 = 30 / 5 = 6</div>
+    <h3>খ) গণসংখ্যাসহ উপাত্তের গড়</h3>
+    <div class="two-col">
+      <div>
+        <div class="formula">x̄ = মান×কতবারের যোগফল / মোট কতবার</div>
+        <p>যেখানে, মান×কতবারের যোগফল = (উপাত্ত × গণসংখ্যা)-এর যোগফল<br>মোট কতবার = মোট গণসংখ্যা</p>
+      </div>
+      <table class="table-orange">
+        <tr><th>উপাত্তের মান</th><th>কতবার এসেছে</th><th>মান × কতবার</th></tr>
+        <tr><td>2</td><td>4</td><td>8</td></tr>
+        <tr><td>3</td><td>3</td><td>9</td></tr>
+        <tr><td>4</td><td>1</td><td>4</td></tr>
+        <tr><td>5</td><td>2</td><td>10</td></tr>
+        <tr><th>মোট কতবার = 10</th><th></th><th>মান×কতবারের যোগফল = 31</th></tr>
+      </table>
+    </div>
+    <p class="solution">সমাধান: x̄ = মান×কতবারের যোগফল / মোট কতবার = 31 / 10 = 3.1</p>
+  </article>
+
+  <article class="card olive">
+    <h2>5. মধ্যক (মধ্যক)</h2>
+    <p>উপাত্তকে ছোট থেকে বড় ক্রমে সাজালে মাঝখানের যে মান থাকে তাকে মধ্যক বলে।</p>
+    <div class="two-col">
+      <div>
+        <h3>ক) অশ্রেণিবদ্ধ উপাত্ত (বিজোড়)</h3>
+        <p>উদাহরণ: 7, 3, 8, 2, 6</p>
+        <p>সাজানো উপাত্ত: 2, 3, 6, 7, 8</p>
+        <p><b>মধ্যক = 6</b></p>
+      </div>
+      <div>
+        <h3>খ) অশ্রেণিবদ্ধ উপাত্ত (জোড়)</h3>
+        <p>উদাহরণ: 4, 1, 9, 3, 7, 5</p>
+        <p>সাজানো উপাত্ত: 1, 3, 4, 5, 7, 9</p>
+        <div class="formula small-formula">মধ্যক = (4 + 5) / 2 = 4.5</div>
+      </div>
+    </div>
+    <h3>গ) শ্রেণিবিন্যাসযুক্ত উপাত্তের মধ্যক</h3>
+    <div class="formula">Md = L + ((n/2 − cf) / f) × h</div>
+    <p>L = মধ্যক শ্রেণির নিম্নসীমা &nbsp; মোট সংখ্যা = মোট গণসংখ্যা &nbsp; cf = মধ্যক শ্রেণির পূর্ববর্তী শ্রেণির সমষ্টি গণসংখ্যা</p>
+    <p>f = মধ্যক শ্রেণির গণসংখ্যা &nbsp; h = শ্রেণিপ্রস্থ</p>
+    <table class="table-green">
+      <tr><th>শ্রেণি</th><th>কতবার এসেছে</th><th>জমা গণসংখ্যা</th></tr>
+      <tr><td>20–29</td><td>3</td><td>3</td></tr>
+      <tr><td>30–39</td><td>4</td><td>7</td></tr>
+      <tr><td>40–49</td><td>5</td><td>12</td></tr>
+      <tr><td>50–59</td><td>3</td><td>15</td></tr>
+      <tr><td>60–69</td><td>0</td><td>15</td></tr>
+    </table>
+    <p>মোট সংখ্যা = 15, মোট সংখ্যার অর্ধেক = 7.5 → মধ্যক শ্রেণি = 40–49</p>
+    <div class="formula small-formula">Md = 40 + ((7.5 − 7) / 5) × 10 = 41</div>
+  </article>
+</section>
+
+<section class="grid2">
+  <article class="card pink">
+    <h2>6. প্রচুরক (প্রচুরক)</h2>
+    <p>যে মানটি সর্বাধিক বার (সর্বাধিক গণসংখ্যা) আসে তাকে প্রচুরক বলে।</p>
+    <div class="two-col">
+      <div>
+        <h3>ক) অশ্রেণিবদ্ধ উপাত্ত</h3>
+        <p>উদাহরণ: 2, 3, 2, 5, 3, 2, 4</p>
+        <p class="solution">সমাধান:</p>
+        <p>2 মানটি সর্বাধিক (৩ বার) এসেছে, প্রচুরক = 2</p>
+      </div>
+      <div>
+        <h3>খ) শ্রেণিবিন্যাসযুক্ত উপাত্ত</h3>
+        <div class="formula small-formula">Mo = L + ((f₁ − f₀)/(2f₁ − f₀ − f₂)) × h</div>
+        <p>L = প্রচুরক শ্রেণির নিম্নসীমা<br>f₁ = প্রচুরক শ্রেণির গণসংখ্যা<br>f₀ = পূর্ববর্তী শ্রেণির গণসংখ্যা<br>f₂ = পরবর্তী শ্রেণির গণসংখ্যা<br>h = শ্রেণিপ্রস্থ</p>
+      </div>
+    </div>
+    <div class="two-col">
+      <table class="table-orange">
+        <tr><th>শ্রেণি</th><th>কতবার এসেছে</th></tr>
+        <tr><td>20–29</td><td>3</td></tr><tr><td>30–39</td><td>4</td></tr>
+        <tr><td>40–49</td><td>5</td></tr><tr><td>50–59</td><td>3</td></tr><tr><td>60–69</td><td>0</td></tr>
+      </table>
+      <div>
+        <p><b>প্রচুরক শ্রেণি = 40–49</b></p>
+        <div class="formula small-formula">Mo = 40 + ((5−4)/(2×5−4−3)) × 10</div>
+        <div class="formula small-formula">= 40 + (1/3) × 10 = 43.33</div>
+      </div>
+    </div>
+  </article>
+
+  <article class="card brown">
+    <h2>7. ছক (Table)</h2>
+    <p>উপাত্তকে সারি ও কলামের মাধ্যমে সাজিয়ে উপস্থাপন করাকে ছক বলে।</p>
+    <div class="two-col">
+      <div>
+        <h3>ক) সাধারণ ছক (Simple Table)</h3>
+        <table class="table-orange">
+          <tr><th>উপাত্ত (x)</th><th>গণসংখ্যা (f)</th></tr>
+          <tr><td>2</td><td>4</td></tr><tr><td>3</td><td>3</td></tr>
+          <tr><td>4</td><td>1</td></tr><tr><td>5</td><td>2</td></tr>
+          <tr><th>মোট</th><th>10</th></tr>
+        </table>
+      </div>
+      <div>
+        <h3>খ) সঞ্চিত গণসংখ্যার ছক (Cumulative Frequency Table)</h3>
+        <table class="table-orange">
+          <tr><th>শ্রেণি</th><th>কতবার এসেছে</th><th>জমা গণসংখ্যা</th></tr>
+          <tr><td>20–29</td><td>3</td><td>3</td></tr><tr><td>30–39</td><td>4</td><td>7</td></tr>
+          <tr><td>40–49</td><td>5</td><td>12</td></tr><tr><td>50–59</td><td>3</td><td>15</td></tr>
+          <tr><td>60–69</td><td>0</td><td>15</td></tr>
+        </table>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="graphs">
+  <article class="graph-card">
+    <h3>(১) বার লেখচিত্র (Bar Diagram)</h3>
+    <p style="font-size:10px;margin:0">উদাহরণ:</p>
+    <div class="graph-wrap">
+      <svg viewBox="0 0 260 145" aria-label="bar chart">
+        <line x1="28" y1="8" x2="28" y2="118" stroke="#555"/>
+        <line x1="28" y1="118" x2="250" y2="118" stroke="#555"/>
+        <g fill="#2d65a0">
+          <rect x="45" y="38" width="27" height="80"/><rect x="88" y="23" width="27" height="95"/>
+          <rect x="131" y="44" width="27" height="74"/><rect x="174" y="11" width="27" height="107"/>
+          <rect x="217" y="29" width="27" height="89"/>
+        </g>
+        <g font-size="8" text-anchor="middle" fill="#333">
+          <text x="58" y="130">বাংলা</text><text x="101" y="130">ইংরেজি</text>
+          <text x="144" y="130">গণিত</text><text x="187" y="130">বিজ্ঞান</text><text x="230" y="130">ইতিহাস</text>
+          <text x="17" y="118">0</text><text x="17" y="74">50</text><text x="17" y="30">100</text>
+        </g>
+      </svg>
+    </div>
+  </article>
+
+  <article class="graph-card">
+    <h3>(২) রেখা লেখচিত্র (Line Graph)</h3>
+    <p style="font-size:10px;margin:0">উদাহরণ:</p>
+    <div class="graph-wrap">
+      <svg viewBox="0 0 260 145" aria-label="line graph">
+        <line x1="30" y1="10" x2="30" y2="118" stroke="#555"/><line x1="30" y1="118" x2="250" y2="118" stroke="#555"/>
+        <polyline points="45,80 95,48 145,67 195,20 240,42" fill="none" stroke="#2d65a0" stroke-width="2.5"/>
+        <g fill="#2d65a0"><circle cx="45" cy="80" r="3.5"/><circle cx="95" cy="48" r="3.5"/><circle cx="145" cy="67" r="3.5"/><circle cx="195" cy="20" r="3.5"/><circle cx="240" cy="42" r="3.5"/></g>
+        <g font-size="9" text-anchor="middle" fill="#333">
+          <text x="45" y="132">2019</text><text x="95" y="132">2020</text><text x="145" y="132">2021</text><text x="195" y="132">2022</text><text x="240" y="132">2023</text>
+        </g>
+      </svg>
+    </div>
+  </article>
+
+  <article class="graph-card">
+    <h3>(৩) বৃত্ত লেখচিত্র (Pie Chart)</h3>
+    <p style="font-size:10px;margin:0">উদাহরণ:</p>
+    <div class="graph-wrap">
+      <svg viewBox="0 0 260 145" aria-label="pie chart">
+        <circle cx="88" cy="70" r="50" fill="#f3a6a6" stroke="#555"/>
+        <path d="M88 70 L88 20 A50 50 0 0 1 137 79 Z" fill="#e37c61" stroke="#555"/>
+        <path d="M88 70 L137 79 A50 50 0 0 1 63 114 Z" fill="#f0c34e" stroke="#555"/>
+        <path d="M88 70 L63 114 A50 50 0 0 1 88 20 Z" fill="#8bbd57" stroke="#555"/>
+        <g font-size="9" font-weight="700" text-anchor="middle"><text x="106" y="45">90°</text><text x="117" y="78">72°</text><text x="72" y="94">60°</text><text x="75" y="51">48°</text></g>
+        <g font-size="9"><text x="155" y="35">বাংলা — 90°</text><text x="155" y="55">কলা — 72°</text><text x="155" y="75">আলবেনা — 60°</text><text x="155" y="95">কামান — 48°</text><text x="155" y="115">গেমস — 90°</text></g>
+      </svg>
+    </div>
+  </article>
+
+  <article class="graph-card">
+    <h3>(৪) দণ্ড লেখচিত্র (Histogram)</h3>
+    <p style="font-size:10px;margin:0">উদাহরণ:</p>
+    <div class="graph-wrap">
+      <svg viewBox="0 0 260 145" aria-label="histogram">
+        <line x1="30" y1="10" x2="30" y2="118" stroke="#555"/><line x1="30" y1="118" x2="250" y2="118" stroke="#555"/>
+        <g fill="#5db66c">
+          <rect x="40" y="77" width="35" height="41"/><rect x="75" y="35" width="35" height="83"/>
+          <rect x="110" y="18" width="35" height="100"/><rect x="145" y="58" width="35" height="60"/><rect x="180" y="77" width="35" height="41"/>
+        </g>
+        <g font-size="8" text-anchor="middle" fill="#333"><text x="58" y="132">20–29</text><text x="93" y="132">30–39</text><text x="128" y="132">40–49</text><text x="163" y="132">50–59</text><text x="198" y="132">60–69</text></g>
+      </svg>
+    </div>
+  </article>
+</section>
+
+<section class="footer-grid">
+  <div class="footer-box">
+    <h3>গুরুত্বপূর্ণ সূত্রসমূহ এক নজরে</h3>
+    <div class="two-col">
+      <ul><li>গড়, x̄ = Σx / n</li><li>গড়, x̄ = মান×কতবারের যোগফল / মোট কতবার</li></ul>
+      <ul><li>মধ্যক (শ্রেণিবিন্যাসযুক্ত)</li><li>Md = L + ((n/2 − cf)/f) × h</li></ul>
+    </div>
+  </div>
+  <div class="footer-box">
+    <h3>প্রচুরক (শ্রেণিবিন্যাসযুক্ত)</h3>
+    <p class="formula small-formula">Mo = L + ((f₁ − f₀)/(2f₁ − f₀ − f₂)) × h</p>
+  </div>
+  <div class="footer-box">
+    <h3>চিহ্নের অর্থ</h3>
+    <ul>
+      <li>L = নিম্নসীমা</li><li>মোট সংখ্যা = মোট গণসংখ্যা</li><li>cf = পূর্ববর্তী সঞ্চিত গণসংখ্যা</li>
+      <li>f = গণসংখ্যা</li><li>h = শ্রেণিপ্রস্থ</li>
+    </ul>
+  </div>
+  <div class="footer-box">
+    <h3>স্মরণীয়</h3>
+    <p>গড়, মধ্যক ও প্রচুরককে একসাথে কেন্দ্রীয় প্রবণতার পরিমাপ (Measures of Central Tendency) বলা হয়।</p>
+  </div>
+</section>
+
+<div class="credit">SSC / Class 9–10 Statistics Guide • Responsive single-page HTML</div>
+</main>
+
+
+<style>
+/* ===== COMPLETE SSC STATISTICS SOLVER ===== */
+.complete-solver{margin-top:10px;border:2px solid #073b62;border-radius:10px;background:#fff;padding:10px}
+.complete-head{background:#073b62;color:#fff;border-radius:8px;padding:10px 12px;font-size:21px;font-weight:800}
+.complete-sub{font-size:12px;color:#53636e;margin:5px 2px 9px}
+.solver-menu{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.solver-menu button{border:1px solid #86a8ba;background:#f8fbfd;border-radius:6px;padding:8px 5px;font-family:inherit;font-weight:800;color:#174b66;cursor:pointer}
+.solver-menu button.active{background:#073b62;color:#fff}
+.solver-box{display:none;border:1px solid #bfd0da;border-radius:8px;padding:9px;background:#fbfdff}
+.solver-box.active{display:block}
+.solver-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.solver-field{border:1px solid #c6d4dc;border-radius:7px;padding:8px;background:#fff}
+.solver-field label{display:block;font-size:13px;font-weight:800;margin-bottom:4px;color:#263f4d}
+.solver-field input,.solver-field textarea,.solver-field select{
+ width:100%;padding:8px;border:1px solid #a9bdc9;border-radius:5px;font-family:inherit;font-size:14px;background:#fff
+}
+.solver-field textarea{min-height:72px;resize:vertical}
+.solver-note{font-size:11px;color:#60717c;margin-top:4px}
+.solver-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.solver-actions button{border:0;border-radius:6px;padding:8px 14px;background:#087348;color:#fff;font-family:inherit;font-weight:800;cursor:pointer}
+.solver-actions .reset{background:#68747c}
+.full-result{display:none;border:1px solid #83ac90;border-radius:8px;background:#f7fff9;padding:9px;margin-top:8px}
+.full-result.show{display:block}
+.full-result h3{margin:0 0 6px;color:#09653a;font-size:17px}
+.full-result table{font-size:12px}
+.answer{display:inline-block;min-width:125px;border:1px solid #86ad91;border-radius:6px;background:#fff;padding:6px 9px;margin:3px;text-align:center}
+.answer b{display:block;font-size:11px;color:#4d6570}.answer strong{font-size:17px;color:#08653b}
+.step{border-left:3px solid #43815c;background:#fff;padding:6px 8px;margin:5px 0;font-size:12px;line-height:1.55}
+.chart-output{height:240px;margin-top:8px;border:1px solid #ccd9df;border-radius:7px;background:#fff}
+.chart-output svg{width:100%;height:100%}
+@media(max-width:720px){.solver-menu{grid-template-columns:repeat(2,1fr)}.solver-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.solver-menu{grid-template-columns:1fr 1fr}.complete-head{font-size:18px}.answer{min-width:105px}}
+
+.tally{font-family:"Courier New",monospace;letter-spacing:2px;white-space:nowrap}.tally-big{font-size:16px;font-weight:700}.tally-five{display:inline-block;letter-spacing:0}.tally-rem{display:inline-block;letter-spacing:1px}
+</style>
+
+<section class="complete-solver" id="completeStatisticsSolver">
+  <div class="complete-head">🧮 SSC পরিসংখ্যান — সম্পূর্ণ Math Solver</div>
+  <div class="complete-sub">ছবিতে থাকা প্রতিটি অধ্যায়/অপশন থেকে সংখ্যা দিয়ে সরাসরি সমাধান নেওয়া যাবে।</div>
+
+  <div class="solver-menu">
+    <button class="active" onclick="showStatBox('sData',this)">1. উপাত্ত</button>
+    <button onclick="showStatBox('sFreq',this)">2. গণসংখ্যা</button>
+    <button onclick="showStatBox('sClass',this)">3. শ্রেণিবিন্যাস</button>
+    <button onclick="showStatBox('sগড়',this)">4. গড়</button>
+    <button onclick="showStatBox('sমধ্যক',this)">5. মধ্যক</button>
+    <button onclick="showStatBox('sপ্রচুরক',this)">6. প্রচুরক</button>
+    <button onclick="showStatBox('sTable',this)">7. ছক</button>
+    <button onclick="showStatBox('sGraph',this)">8. লেখচিত্র</button>
+  </div>
+
+  <!-- DATA -->
+  <div id="sData" class="solver-box active">
+    <div class="solver-field">
+      <label>উপাত্ত লিখুন</label>
+      <textarea id="allData" placeholder="145, 150, 148, 152, 149, 151, 147, 153, 150, 149"></textarea>
+      <div class="solver-note">উদাহরণ: 2, 3, 2, 5, 3, 2, 4 — শুধু সংখ্যাগুলো লিখুন।</div>
+    </div>
+    <div class="solver-actions">
+      <button onclick="runAllData()">সমাধান</button><button class="reset" onclick="resetBox('allData','rData')">মুছে ফেলুন</button>
+    </div>
+    <div id="rData" class="full-result"></div>
+  </div>
+
+  <!-- FREQUENCY -->
+  <div id="sFreq" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field"><label>উপাত্তের মান</label><input id="allX" placeholder="2, 3, 4, 5"></div>
+      <div class="solver-field"><label>কতবার এসেছে</label><input id="allF" placeholder="4, 3, 1, 2"></div>
+    </div>
+    <div class="solver-actions">
+      <button onclick="runAllFreq()">সমাধান</button><button class="reset" onclick="resetBox2(['allX','allF'],'rFreq')">মুছে ফেলুন</button>
+    </div>
+    <div id="rFreq" class="full-result"></div>
+  </div>
+
+  <!-- CLASSIFICATION -->
+  <div id="sClass" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field">
+        <label>শ্রেণি লিখুন — প্রতি লাইনে একটি</label>
+        <textarea id="allClass" placeholder="20-29&#10;30-39&#10;40-49&#10;50-59&#10;60-69"></textarea>
+      </div>
+      <div class="solver-field">
+        <label>কতবার এসেছে</label>
+        <input id="allClassF" placeholder="3, 4, 5, 3, 0">
+        <div class="solver-note">উপরের শ্রেণিগুলোর ক্রম অনুযায়ী কতবার এসেছে তা লিখুন।</div>
+      </div>
+    </div>
+    <div class="solver-actions">
+      <button onclick="runAllClass()">সমাধান</button><button class="reset" onclick="resetBox2(['allClass','allClassF'],'rClass')">মুছে ফেলুন</button>
+    </div>
+    <div id="rClass" class="full-result"></div>
+  </div>
+
+  <!-- MEAN -->
+  <div id="sগড়" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field"><label>প্রশ্নের ধরন বেছে নিন</label><select id="meanType" onchange="toggleগড়Fields()"><option value="raw">সরাসরি দেওয়া উপাত্ত</option><option value="freq">কতবার এসেছে দেওয়া আছে</option><option value="group">শ্রেণি করে দেওয়া আছে</option></select></div>
+      <div class="solver-field" id="meanClassesField" style="display:none"><label>শ্রেণি</label><textarea id="meanClasses" placeholder="20-29&#10;30-39&#10;40-49"></textarea></div>
+    </div>
+    <div class="solver-grid">
+      <div class="solver-field"><label>উপাত্তের মান / শ্রেণিচিহ্ন</label><textarea id="meanX" placeholder="5, 7, 8, 6, 4"></textarea></div>
+      <div class="solver-field"><label>কতবার এসেছে — প্রয়োজন হলে</label><textarea id="meanF" placeholder="4, 3, 1, 2"></textarea></div>
+    </div>
+    <div class="solver-actions"><button onclick="runগড়()">গড় নির্ণয়</button><button class="reset" onclick="resetBox2(['meanX','meanF','meanClasses'],'rগড়')">মুছে ফেলুন</button></div>
+    <div id="rগড়" class="full-result"></div>
+  </div>
+
+  <!-- MEDIAN -->
+  <div id="sমধ্যক" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field"><label>প্রশ্নের ধরন বেছে নিন</label><select id="medType"><option value="raw">সরাসরি দেওয়া উপাত্ত</option><option value="freq">কতবার এসেছে দেওয়া আছে</option><option value="group">শ্রেণি করে দেওয়া আছে</option></select></div>
+      <div class="solver-field"><label>উপাত্তের মান</label><textarea id="medX" placeholder="4, 1, 9, 3, 7, 5"></textarea></div>
+    </div>
+    <div class="solver-grid">
+      <div class="solver-field"><label>কতবার এসেছে — এই ধরনের প্রশ্নে</label><input id="medF" placeholder="4, 3, 5, 3, 0"></div>
+      <div class="solver-field"><label>শ্রেণি — শ্রেণিবদ্ধ প্রশ্ন হলে</label><textarea id="medClass" placeholder="20-29&#10;30-39&#10;40-49&#10;50-59&#10;60-69"></textarea></div>
+    </div>
+    <div class="solver-actions"><button onclick="runমধ্যক()">মধ্যক নির্ণয়</button><button class="reset" onclick="resetBox2(['medX','medF','medClass'],'rমধ্যক')">মুছে ফেলুন</button></div>
+    <div id="rমধ্যক" class="full-result"></div>
+  </div>
+
+  <!-- MODE -->
+  <div id="sপ্রচুরক" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field"><label>প্রশ্নের ধরন বেছে নিন</label><select id="modeType"><option value="raw">সরাসরি দেওয়া উপাত্ত</option><option value="freq">কতবার এসেছে দেওয়া আছে</option><option value="group">শ্রেণি করে দেওয়া আছে</option></select></div>
+      <div class="solver-field"><label>উপাত্তের মান</label><textarea id="modeX" placeholder="2, 3, 2, 5, 3, 2, 4"></textarea></div>
+    </div>
+    <div class="solver-grid">
+      <div class="solver-field"><label>কতবার এসেছে</label><input id="modeF" placeholder="4, 3, 1, 2"></div>
+      <div class="solver-field"><label>শ্রেণি — শ্রেণিবদ্ধ প্রশ্ন হলে</label><textarea id="modeClass" placeholder="20-29&#10;30-39&#10;40-49&#10;50-59&#10;60-69"></textarea></div>
+    </div>
+    <div class="solver-actions"><button onclick="runপ্রচুরক()">প্রচুরক নির্ণয়</button><button class="reset" onclick="resetBox2(['modeX','modeF','modeClass'],'rপ্রচুরক')">মুছে ফেলুন</button></div>
+    <div id="rপ্রচুরক" class="full-result"></div>
+  </div>
+
+  <!-- TABLE -->
+  <div id="sTable" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field"><label>উপাত্ত বা শ্রেণি</label><textarea id="tableX" placeholder="2, 3, 4, 5"></textarea></div>
+      <div class="solver-field"><label>কতবার এসেছে</label><textarea id="tableF" placeholder="4, 3, 1, 2"></textarea></div>
+    </div>
+    <div class="solver-actions"><button onclick="runTable()">ছক তৈরি করো</button><button class="reset" onclick="resetBox2(['tableX','tableF'],'rTable')">মুছে ফেলুন</button></div>
+    <div id="rTable" class="full-result"></div>
+  </div>
+
+  <!-- GRAPH -->
+  <div id="sGraph" class="solver-box">
+    <div class="solver-grid">
+      <div class="solver-field"><label>লেখচিত্রের ধরন</label>
+        <select id="graphType">
+          <option value="bar">বার লেখচিত্র (Bar Diagram)</option>
+          <option value="line">রেখা লেখচিত্র (Line Graph)</option>
+          <option value="pie">বৃত্ত লেখচিত্র (Pie Chart)</option>
+          <option value="hist">দণ্ড লেখচিত্র (Histogram)</option>
+        </select>
+      </div>
+      <div class="solver-field"><label>শিরোনাম</label><input id="graphTitle" placeholder="উদাহরণ: শিক্ষার্থীদের নম্বর"></div>
+    </div>
+    <div class="solver-grid">
+      <div class="solver-field"><label>নাম / শ্রেণি</label><textarea id="graphLabels" placeholder="বাংলা&#10;ইংরেজি&#10;গণিত&#10;বিজ্ঞান&#10;ইতিহাস"></textarea></div>
+      <div class="solver-field"><label>মান / গণসংখ্যা</label><textarea id="graphValues" placeholder="70&#10;80&#10;65&#10;90&#10;75"></textarea></div>
+    </div>
+    <div class="solver-actions"><button onclick="runGraph()">লেখচিত্র তৈরি করো</button><button class="reset" onclick="resetBox2(['graphLabels','graphValues','graphTitle'],'rGraph')">মুছে ফেলুন</button></div>
+    <div id="rGraph" class="full-result"></div>
+  </div>
+</section>
+
+
+<script>
+(function(){
+  const L$id=id=>document.getElementById(id);
+  const L$=id=>document.getElementById(id);
+  function lnums(s){return String(s||'').trim().split(/[,\s;]+/).filter(Boolean).map(Number)}
+  function lfmt(n){return Number.isFinite(n)?(Math.abs(n-Math.round(n))<1e-10?String(Math.round(n)):n.toFixed(2).replace(/0+$/,'').replace(/\.$/,'')):'—'}
+  function lines(s){return String(s||'').split(/\n/).map(x=>x.trim()).filter(Boolean)}
+  function esc2(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  function cards2(items){return '<div class="lab-cards">'+items.map(x=>`<div class="lab-card"><b>${x[0]}</b><strong>${x[1]}</strong></div>`).join('')+'</div>'}
+  function show(id,html,error=false){const e=L$(id);e.innerHTML=html;e.classList.add('show');e.style.borderColor=error?'#d99':'#83ac90'}
+  window.openLab=function(id,btn){
+    document.querySelectorAll('.lab-panel').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.lab-nav button').forEach(e=>e.classList.remove('active'));
+    L$(id).classList.add('active');btn.classList.add('active');
+  };
+  window.clearLab=function(ids,out){ids.forEach(id=>L$(id).value='');L$(out).innerHTML='';L$(out).classList.remove('show')};
+
+  window.solveLabData=function(){
+    const a=lnums(L$('labRaw').value);
+    if(!a.length||a.some(v=>!Number.isFinite(v))){show('labDataResult','সঠিক সংখ্যা লিখুন।',true);return}
+    const asc=[...a].sort((x,y)=>x-y),desc=[...asc].reverse();
+    const min=Math.min(...a),max=Math.max(...a),sum=a.reduce((p,x)=>p+x,0);
+    const freq={};a.forEach(x=>freq[x]=(freq[x]||0)+1);
+    const modeF=Math.max(...Object.values(freq));
+    const modes=Object.keys(freq).filter(k=>freq[k]===modeF).map(Number);
+    const med=asc.length%2?asc[(asc.length-1)/2]:(asc[asc.length/2-1]+asc[asc.length/2])/2;
+    show('labDataResult',
+      '<h3>উপাত্তের ধাপে ধাপে বিশ্লেষণ</h3>'+
+      `<div class="lab-step"><b>১. আরোহী ক্রম:</b> ${asc.join(', ')}</div>`+
+      `<div class="lab-step"><b>২. অবরোহী ক্রম:</b> ${desc.join(', ')}</div>`+
+      cards2([['মোট উপাত্ত (n)',a.length],['সর্বনিম্ন',lfmt(min)],['সর্বোচ্চ',lfmt(max)],['পরিসর',lfmt(max-min)],['গড়',lfmt(sum/a.length)],['মধ্যক',lfmt(med)],['প্রচুরক',modes.join(', ')||'নেই']])+
+      `<div class="lab-step"><b>৩. পরিসর সূত্র:</b> পরিসর = সর্বোচ্চ মান − সর্বনিম্ন মান = ${lfmt(max)} − ${lfmt(min)} = <b>${lfmt(max-min)}</b></div>`+
+      `<div class="lab-step"><b>৪. উপাত্তের ধরন:</b> ${esc2(L$('labDataType').value)} | নির্বাচিত ক্রম: ${esc2(L$('labOrder').value==='asc'?'আরোহী':'অবরোহী')}</div>`
+    );
+  };
+
+  function tally(n){
+    n=Math.floor(n);if(n<=0)return '—';
+    const q=Math.floor(n/5),r=n%5,parts=[];
+    for(let i=0;i<q;i++)parts.push('||||/');
+    if(r)parts.push('|'.repeat(r));
+    return parts.join(' ');
+  }
+  window.solveLabFreq=function(){
+    const x=lnums(L$('labX').value),f=lnums(L$('labF').value);
+    if(!x.length||x.length!==f.length||f.some(v=>!Number.isInteger(v)||v<0)){show('labFreqResult','x ও f সঠিকভাবে দিন। f পূর্ণসংখ্যা ও ০ বা তার বেশি হতে হবে।',true);return}
+    const n=f.reduce((a,b)=>a+b,0),fx=x.reduce((s,v,i)=>s+v*f[i],0);
+    if(!n){show('labFreqResult','মোট গণসংখ্যা ০ হতে পারবে না।',true);return}
+    let cf=0;
+    const rows=x.map((v,i)=>{cf+=f[i];return `<tr><td>${lfmt(v)}</td><td>${tally(f[i])}</td><td>${f[i]}</td><td>${cf}</td><td>${lfmt(v*f[i])}</td></tr>`}).join('');
+    show('labFreqResult','<h3>গণসংখ্যার পূর্ণ সারণি</h3>'+
+      `<table><tr><th>মান x</th><th>টালি</th><th>f</th><th>সঞ্চিত f</th><th>xf</th></tr>${rows}<tr><th>মোট</th><th></th><th>${n}</th><th>${n}</th><th>${lfmt(fx)}</th></tr></table>`+
+      `<div class="lab-step"><b>গড় সূত্র:</b> x̄ = Σfx / Σf = ${lfmt(fx)} / ${n} = <b>${lfmt(fx/n)}</b></div>`+
+      cards2([['মোট গণসংখ্যা',n],['Σfx',lfmt(fx)],['গড়',lfmt(fx/n)],['সর্বোচ্চ f',Math.max(...f)],['সর্বনিম্ন f',Math.min(...f)]])
+    );
+  };
+
+  function parseCls(s){
+    return lines(s).map(raw=>{const m=raw.match(/(-?\d+(?:\.\d+)?)\s*[-–—]\s*(-?\d+(?:\.\d+)?)/);return m?{raw,lo:+m[1],hi:+m[2]}:null}).filter(Boolean)
+  }
+  window.solveLabClass=function(){
+    const c=parseCls(L$('labClasses').value),f=lnums(L$('labClassF').value);
+    if(!c.length||c.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0)){show('labClassResult','শ্রেণি ও f সঠিকভাবে দিন।',true);return}
+    const h=c.length>1?c[1].lo-c[0].lo:c[0].hi-c[0].lo+1;
+    let cf=0,fx=0;
+    const rows=c.map((z,i)=>{const mark=(z.lo+z.hi)/2;cf+=f[i];fx+=mark*f[i];return `<tr><td>${esc2(z.raw)}</td><td>${lfmt(z.lo)}</td><td>${lfmt(z.hi)}</td><td>${lfmt(h)}</td><td>${lfmt(mark)}</td><td>${f[i]}</td><td>${cf}</td></tr>`}).join('');
+    show('labClassResult','<h3>শ্রেণিবিন্যাসের পূর্ণ ছক</h3>'+
+      `<table><tr><th>শ্রেণি</th><th>নিম্নসীমা</th><th>উচ্চসীমা</th><th>শ্রেণি-প্রস্থ</th><th>শ্রেণি-মধ্যমান</th><th>f</th><th>cf</th></tr>${rows}</table>`+
+      `<div class="lab-step"><b>শ্রেণি-মধ্যমান সূত্র:</b> (নিম্নসীমা + উচ্চসীমা) / 2</div>`+
+      `<div class="lab-step"><b>শ্রেণি-প্রস্থ:</b> ${lfmt(h)}</div>`+
+      `<div class="lab-step"><b>গড় (শ্রেণিবদ্ধ):</b> x̄ = Σfx / Σf = ${lfmt(fx)} / ${cf} = <b>${lfmt(fx/cf)}</b></div>`+
+      cards2([['মোট গণসংখ্যা',cf],['শ্রেণি-প্রস্থ',lfmt(h)],['Σfx',lfmt(fx)],['গড়',lfmt(fx/cf)]])
+    );
+  };
+
+  window.solveLabCF=function(){
+    const c=parseCls(L$('cfClasses').value),f=lnums(L$('cfF').value);
+    if(!c.length||c.length!==f.length||f.some(v=>!Number.isInteger(v)||v<0)){show('cfResult','শ্রেণি ও f সঠিকভাবে দিন।',true);return}
+    const n=f.reduce((a,b)=>a+b,0);
+    let cf=0;
+    const less=[];
+    for(let i=0;i<c.length;i++){cf+=f[i];less.push(cf)}
+    const more=[];
+    cf=0;
+    for(let i=0;i<c.length;i++){more.push(n-cf);cf+=f[i]}
+    const rows=c.map((z,i)=>`<tr><td>${esc2(z.raw)}</td><td>${f[i]}</td><td>${less[i]}</td><td>${more[i]}</td></tr>`).join('');
+    show('cfResult','<h3>Less than ও More than cumulative frequency</h3>'+
+      `<table><tr><th>শ্রেণি</th><th>f</th><th>Less than CF</th><th>More than CF</th></tr>${rows}</table>`+
+      `<div class="lab-step"><b>Less than CF:</b> উপর থেকে নিচে ধারাবাহিকভাবে f যোগ করতে হবে।</div>`+
+      `<div class="lab-step"><b>More than CF:</b> মোট গণসংখ্যা থেকে ধারাবাহিকভাবে আগের f বাদ করতে হবে।</div>`+
+      cards2([['মোট গণসংখ্যা',n],['শেষ Less than CF',less[less.length-1]],['প্রথম More than CF',more[0]]])
+    );
+  };
+
+  window.solveLabRange=function(){
+    const a=lnums(L$('rangeData').value);
+    if(!a.length||a.some(v=>!Number.isFinite(v))){show('rangeResult','সঠিক সংখ্যা লিখুন।',true);return}
+    const min=Math.min(...a),max=Math.max(...a);
+    show('rangeResult','<h3>পরিসর (Range) — ধাপে ধাপে</h3>'+
+      `<div class="lab-step"><b>১.</b> সর্বনিম্ন মান = ${lfmt(min)}</div>`+
+      `<div class="lab-step"><b>২.</b> সর্বোচ্চ মান = ${lfmt(max)}</div>`+
+      `<div class="lab-step"><b>৩.</b> পরিসর = সর্বোচ্চ − সর্বনিম্ন = ${lfmt(max)} − ${lfmt(min)} = <b>${lfmt(max-min)}</b></div>`+
+      cards2([['সর্বনিম্ন',lfmt(min)],['সর্বোচ্চ',lfmt(max)],['পরিসর',lfmt(max-min)]])
+    );
+  };
+
+  let manualMode=false,manualPts=[];
+  const canvas=L$('graphPaper');
+  function resizeCanvas(){
+    if(!canvas)return;
+    const dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;
+    canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+    const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+    drawGraphNow();
+  }
+  function drawGraphNow(){
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d'),w=canvas.clientWidth,h=canvas.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    const xs=lnums(L$('plotX').value),ys=lnums(L$('plotY').value),type=L$('plotType').value;
+    const pts=xs.length===ys.length?xs.map((x,i)=>({x,y:ys[i]})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)):[];
+    const all=[...pts,...manualPts];
+    const minX=all.length?Math.min(...all.map(p=>p.x),0):0,maxX=all.length?Math.max(...all.map(p=>p.x),10):10;
+    const minY=all.length?Math.min(...all.map(p=>p.y),0):0,maxY=all.length?Math.max(...all.map(p=>p.y),10):10;
+    const padX=Math.max(2,(maxX-minX)*.15),padY=Math.max(2,(maxY-minY)*.15);
+    const ax0=minX-padX,ax1=maxX+padX,ay0=minY-padY,ay1=maxY+padY;
+    const left=55,right=20,top=38,bottom=42,pw=w-left-right,ph=h-top-bottom;
+    const sx=x=>left+(x-ax0)/(ax1-ax0)*pw, sy=y=>top+(ay1-y)/(ay1-ay0)*ph;
+    ctx.font='12px Noto Sans Bengali, Arial';ctx.fillStyle='#174b66';ctx.textAlign='center';
+    ctx.fillText(L$('plotTitle').value||'পরিসংখ্যান গ্রাফ',w/2,18);
+    ctx.strokeStyle='#7e9aa9';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,bottom? h-bottom: h);ctx.lineTo(w-right,h-bottom);ctx.stroke();
+    const gx0=Math.ceil(ax0),gx1=Math.floor(ax1),gy0=Math.ceil(ay0),gy1=Math.floor(ay1);
+    ctx.fillStyle='#526773';ctx.font='10px Arial';
+    for(let x=gx0;x<=gx1;x++){let px=sx(x);ctx.strokeStyle='#d9e6ef';ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px,h-bottom);ctx.stroke();ctx.fillText(String(x),px,h-bottom+16)}
+    for(let y=gy0;y<=gy1;y++){let py=sy(y);ctx.strokeStyle='#d9e6ef';ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(w-right,py);ctx.stroke();ctx.textAlign='right';ctx.fillText(String(y),left-7,py+3)}
+    ctx.textAlign='center';
+    if(type==='bar'||type==='hist'){
+      const n=pts.length, bw=n?pw/n*.7:0;
+      pts.forEach((p,i)=>{const x=left+(i+.15)*pw/n, y=sy(p.y), base=sy(0);ctx.fillStyle='#3979aa';ctx.fillRect(x,Math.min(y,base),bw,Math.abs(base-y));ctx.fillStyle='#174b66';ctx.fillText(String(p.x),x+bw/2,h-bottom+29)})
+    }else{
+      if(type==='line'&&pts.length>1){ctx.strokeStyle='#2873a5';ctx.lineWidth=2.5;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(sx(p.x),sy(p.y)):ctx.moveTo(sx(p.x),sy(p.y)));ctx.stroke()}
+      pts.forEach(p=>{ctx.fillStyle='#c94b3b';ctx.beginPath();ctx.arc(sx(p.x),sy(p.y),4,0,Math.PI*2);ctx.fill()})
+      manualPts.forEach(p=>{ctx.fillStyle='#087348';ctx.beginPath();ctx.arc(sx(p.x),sy(p.y),5,0,Math.PI*2);ctx.fill()})
+    }
+    ctx.fillStyle='#526773';ctx.font='11px Noto Sans Bengali, Arial';ctx.fillText('x-অক্ষ',w-right-20,h-7);
+    ctx.save();ctx.translate(13,top+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('y-অক্ষ',0,0);ctx.restore();
+  }
+  function drawGraphNowSafe(){try{drawGraphNow()}catch(e){}}
+  window.drawLabGraph=function(){manualPts=[];drawGraphNowSafe()};
+  window.clearPlot=function(){manualPts=[];const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);drawGraphNowSafe()};
+  window.addManualPoint=function(){manualMode=!manualMode;canvas.style.cursor=manualMode?'crosshair':'default'};
+  canvas && canvas.addEventListener('click',function(e){
+    if(!manualMode)return;
+    const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,w=canvas.clientWidth,h=canvas.clientHeight;
+    const xs=lnums(L$('plotX').value),ys=lnums(L$('plotY').value);
+    const minX=xs.length?Math.min(...xs,0):0,maxX=xs.length?Math.max(...xs,10):10,minY=ys.length?Math.min(...ys,0):0,maxY=ys.length?Math.max(...ys,10):10;
+    const px=Math.max(1,(maxX-minX)*.15),py=Math.max(1,(maxY-minY)*.15);
+    const left=55,right=20,top=38,bottom=42;
+    manualPts.push({x:minX-px+(x-left)/(w-left-right)*(maxX-minX+2*px),y:maxY+py-(y-top)/(h-top-bottom)*(maxY-minY+2*py)});
+    drawGraphNowSafe();
+  });
+  window.addEventListener('resize',resizeCanvas);
+  setTimeout(resizeCanvas,100);
+})();
+</script>
+
+
+<section class="stats-lab" id="statisticsLearningLab">
+  <div class="stats-lab-head">
+    <h2>📊 পরিসংখ্যান শেখার ল্যাব — সূত্র, ছক, সঞ্চিত গণসংখ্যা ও গ্রাফ পেপার</h2>
+    <p>শিক্ষার্থী নিজের প্রশ্নের সংখ্যা বসাবে → সঠিক সূত্রে ধাপে ধাপে হিসাব → ছক → ফলাফল → লেখচিত্র।</p>
+  </div>
+
+  <div class="lab-nav">
+    <button class="active" onclick="openLab('labData',this)">১. উপাত্ত</button>
+    <button onclick="openLab('labFreq',this)">২. গণসংখ্যা</button>
+    <button onclick="openLab('labClass',this)">৩. শ্রেণি</button>
+    <button onclick="openLab('labCF',this)">৪. সঞ্চিত গণসংখ্যা</button>
+    <button onclick="openLab('labRange',this)">৫. পরিসর</button>
+    <button onclick="openLab('labGraph',this)">৬. গ্রাফ পেপার</button>
+  </div>
+
+  <div id="labData" class="lab-panel active">
+    <div class="lab-grid">
+      <div class="lab-field">
+        <label>কাঁচা উপাত্ত</label>
+        <textarea id="labRaw" placeholder="12, 7, 15, 9, 7, 18, 10, 12"></textarea>
+        <div class="lab-help">কমা/স্পেস/লাইন—যেকোনোভাবে সংখ্যা দিতে পারো।</div>
+      </div>
+      <div class="lab-field">
+        <label>উপাত্তের ধরন</label>
+        <select id="labDataType">
+          <option>প্রাথমিক উপাত্ত</option>
+          <option>মাধ্যমিক উপাত্ত</option>
+          <option>বিচ্ছিন্ন উপাত্ত</option>
+          <option>অবিচ্ছিন্ন উপাত্ত</option>
+          <option>কাঁচা উপাত্ত</option>
+          <option>সাজানো উপাত্ত</option>
+        </select>
+        <label style="margin-top:8px">ক্রম</label>
+        <select id="labOrder">
+          <option value="asc">আরোহী ক্রম (ছোট → বড়)</option>
+          <option value="desc">অবরোহী ক্রম (বড় → ছোট)</option>
+        </select>
+      </div>
+    </div>
+    <div class="lab-actions">
+      <button onclick="solveLabData()">উপাত্ত বিশ্লেষণ করো</button>
+      <button class="gray" onclick="clearLab(['labRaw'],'labDataResult')">মুছে ফেলুন</button>
+    </div>
+    <div id="labDataResult" class="lab-result"></div>
+  </div>
+
+  <div id="labFreq" class="lab-panel">
+    <div class="lab-grid">
+      <div class="lab-field"><label>উপাত্তের মান (x)</label><textarea id="labX" placeholder="2, 3, 4, 5"></textarea></div>
+      <div class="lab-field"><label>গণসংখ্যা (f)</label><textarea id="labF" placeholder="4, 3, 1, 2"></textarea></div>
+    </div>
+    <div class="lab-actions">
+      <button onclick="solveLabFreq()">গণসংখ্যা ও টালি ছক তৈরি</button>
+      <button class="gray" onclick="clearLab(['labX','labF'],'labFreqResult')">মুছে ফেলুন</button>
+    </div>
+    <div id="labFreqResult" class="lab-result"></div>
+  </div>
+
+  <div id="labClass" class="lab-panel">
+    <div class="lab-grid">
+      <div class="lab-field">
+        <label>শ্রেণি-সীমা</label>
+        <textarea id="labClasses" placeholder="20-29&#10;30-39&#10;40-49&#10;50-59"></textarea>
+        <div class="lab-help">প্রতি লাইনে একটি শ্রেণি। যেমন 20-29</div>
+      </div>
+      <div class="lab-field">
+        <label>গণসংখ্যা (f)</label>
+        <textarea id="labClassF" placeholder="3, 4, 5, 3"></textarea>
+        <div class="lab-help">শ্রেণির ক্রম অনুযায়ী f বসাও।</div>
+      </div>
+    </div>
+    <div class="lab-actions">
+      <button onclick="solveLabClass()">শ্রেণি সারণি + শ্রেণি-প্রস্থ + মধ্যমান</button>
+      <button class="gray" onclick="clearLab(['labClasses','labClassF'],'labClassResult')">মুছে ফেলুন</button>
+    </div>
+    <div id="labClassResult" class="lab-result"></div>
+  </div>
+
+  <div id="labCF" class="lab-panel">
+    <div class="lab-grid">
+      <div class="lab-field">
+        <label>শ্রেণি</label>
+        <textarea id="cfClasses" placeholder="20-29&#10;30-39&#10;40-49&#10;50-59"></textarea>
+      </div>
+      <div class="lab-field">
+        <label>গণসংখ্যা (f)</label>
+        <textarea id="cfF" placeholder="3, 4, 5, 3"></textarea>
+      </div>
+    </div>
+    <div class="lab-actions">
+      <button onclick="solveLabCF()">Less than + More than সঞ্চিত গণসংখ্যা</button>
+      <button class="gray" onclick="clearLab(['cfClasses','cfF'],'cfResult')">মুছে ফেলুন</button>
+    </div>
+    <div id="cfResult" class="lab-result"></div>
+  </div>
+
+  <div id="labRange" class="lab-panel">
+    <div class="lab-field">
+      <label>উপাত্ত</label>
+      <textarea id="rangeData" placeholder="15, 8, 21, 12, 9, 30"></textarea>
+    </div>
+    <div class="lab-actions">
+      <button onclick="solveLabRange()">সর্বোচ্চ, সর্বনিম্ন ও পরিসর নির্ণয়</button>
+      <button class="gray" onclick="clearLab(['rangeData'],'rangeResult')">মুছে ফেলুন</button>
+    </div>
+    <div id="rangeResult" class="lab-result"></div>
+  </div>
+
+  <div id="labGraph" class="lab-panel">
+    <div class="lab-grid">
+      <div class="lab-field">
+        <label>বিন্দুর নাম / x-মান</label>
+        <textarea id="plotX" placeholder="1, 2, 3, 4, 5"></textarea>
+      </div>
+      <div class="lab-field">
+        <label>y-মান / গণসংখ্যা</label>
+        <textarea id="plotY" placeholder="2, 5, 3, 7, 4"></textarea>
+      </div>
+      <div class="lab-field">
+        <label>লেখচিত্র</label>
+        <select id="plotType">
+          <option value="points">বিন্দু চিত্র</option>
+          <option value="line">বিন্দু + রেখা</option>
+          <option value="bar">বার লেখচিত্র</option>
+          <option value="hist">দণ্ড লেখচিত্র (Histogram)</option>
+        </select>
+      </div>
+      <div class="lab-field">
+        <label>শিরোনাম</label>
+        <input id="plotTitle" placeholder="আমার পরিসংখ্যান গ্রাফ">
+      </div>
+    </div>
+    <div class="lab-actions">
+      <button onclick="drawLabGraph()">সংখ্যা দিয়ে গ্রাফ আঁকো</button>
+      <button class="gray" onclick="clearPlot()">গ্রাফ পরিষ্কার</button>
+    </div>
+    <div class="paper-wrap">
+      <canvas id="graphPaper"></canvas>
+      <div class="paper-tools">
+        <button onclick="drawLabGraph()">↻ আবার আঁকো</button>
+        <button onclick="clearPlot()">✕ পরিষ্কার</button>
+        <button onclick="addManualPoint()">＋ ক্লিকের জায়গায় বিন্দু</button>
+      </div>
+      <div class="paper-note">গ্রাফ পেপারে বড় ঘর = ৫টি ছোট ঘর। “＋” চাপলে ক্যানভাসে ক্লিক করে হাতে বিন্দু বসানো যাবে।</div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+function nums(s){return String(s||'').trim().split(/[,\s;]+/).filter(Boolean).map(Number)}
+function fmt(n){return Number.isFinite(n)?(Math.abs(n-Math.round(n))<1e-9?String(Math.round(n)):n.toFixed(2).replace(/0+$/,'').replace(/\.$/,'')):'—'}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function arrLines(s){return String(s||'').split(/\n/).map(x=>x.trim()).filter(Boolean)}
+function cards(a){return a.map(x=>`<div class="answer"><b>${x[0]}</b><strong>${x[1]}</strong></div>`).join('')}
+function result(id,body,error=false){const e=$(id);e.innerHTML=body;e.classList.add('show');e.style.borderColor=error?'#d99':'#83ac90';}
+function rawমধ্যক(a){
+ let s=[...a].sort((x,y)=>x-y),n=s.length;
+ if(!n) return NaN;
+ return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;
+}
+function modes(a){
+ let m={};
+ a.forEach(x=>m[x]=(m[x]||0)+1);
+ let z=Math.max(...Object.values(m));
+ if(z<=1) return [];
+ return Object.keys(m).filter(x=>m[x]===z).map(Number).sort((a,b)=>a-b);
+}
+function parseClasses(s){
+ return arrLines(s).map(v=>{
+   let m=v.match(/(-?\d+(?:\.\d+)?)\s*[-–—]\s*(-?\d+(?:\.\d+)?)/);
+   if(!m) return null;
+   let lo=+m[1],hi=+m[2];
+   return {lo,hi,raw:v};
+ }).filter(Boolean);
+}
+function groupInfo(cls,f){
+ if(!cls.length || cls.length!==f.length) return null;
+ let n=f.reduce((a,b)=>a+b,0);
+ if(n<=0) return null;
+ let h=cls.length>1 ? cls[1].lo-cls[0].lo : cls[0].hi-cls[0].lo+1;
+ if(!Number.isFinite(h)||h<=0) h=cls[0].hi-cls[0].lo+1;
+ let marks=cls.map(z=>(z.lo+z.hi)/2);
+ let fx=marks.reduce((s,v,i)=>s+v*f[i],0);
+ let cf=0,mi=-1;
+ for(let i=0;i<f.length;i++){cf+=f[i];if(mi<0 && cf>=n/2){mi=i;break;}}
+ if(mi<0) mi=f.length-1;
+ let mc=cls[mi],prev=f.slice(0,mi).reduce((a,b)=>a+b,0);
+ let med=mc.lo+((n/2-prev)/f[mi])*h;
+ let moI=f.indexOf(Math.max(...f)),f1=f[moI],f0=f[moI-1]||0,f2=f[moI+1]||0;
+ let den=(2*f1-f0-f2);
+ let mo=den!==0 ? cls[moI].lo+((f1-f0)/den)*h : NaN;
+ return {n,h,marks,fx,med,mo,mi,cf,moI};
+}
+window.showStatBox=function(id,btn){document.querySelectorAll('.solver-box').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.solver-menu button').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active')}
+window.resetBox=function(input,out){$(input).value='';$(out).innerHTML='';$(out).classList.remove('show')}
+window.resetBox2=function(inputs,out){inputs.forEach(i=>$(i).value='');const e=$(out);e.innerHTML='';e.classList.remove('show')}
+window.toggleগড়Fields=function(){$('meanClassesField').style.display=$('meanType').value==='group'?'block':'none'}
+
+window.runAllData=function(){
+ let a=nums($('allData').value);if(!a.length||a.some(x=>!Number.isFinite(x))){result('rData','সঠিক সংখ্যা লিখুন।',true);return}
+ let sum=a.reduce((s,x)=>s+x,0),mo=modes(a),s=[...a].sort((x,y)=>x-y),freq={};a.forEach(x=>freq[x]=(freq[x]||0)+1);
+ let rows=Object.keys(freq).sort((a,b)=>a-b).map(x=>`<tr><td>${x}</td><td>${freq[x]}</td></tr>`).join('');
+ result('rData',`<h3>উপাত্তের সম্পূর্ণ বিশ্লেষণ</h3>${cards([['n',a.length],['Σx',fmt(sum)],['গড়',fmt(sum/a.length)],['মধ্যক',fmt(rawমধ্যক(a))],['প্রচুরক',mo.join(', ')]])}<div class="step"><b>১.</b> ছোট থেকে বড়: ${s.join(', ')}</div><div class="step"><b>২.</b> গড় = Σx/মোট সংখ্যা = ${fmt(sum)}/${a.length} = <b>${fmt(sum/a.length)}</b></div><div class="step"><b>৩.</b> মধ্যক = <b>${fmt(rawমধ্যক(a))}</b></div><div class="step"><b>৪.</b> প্রচুরক = <b>${mo.join(', ')}</b></div><table><tr><th>উপাত্ত</th><th>গণসংখ্যা</th></tr>${rows}</table>`);
+}
+window.tallyMark=function(n){
+  n=Math.max(0,Math.floor(Number(n)||0));
+  let groups=Math.floor(n/5), rem=n%5, out=[];
+  for(let i=0;i<groups;i++) out.push('<span class="tally-five">||||/</span>');
+  if(rem) out.push('<span class="tally-rem">'+'|'.repeat(rem)+'</span>');
+  return out.join(' ');
+}
+window.runAllFreq=function(){
+ let x=nums($('allX').value),f=nums($('allF').value);
+ if(!x.length||x.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0||!Number.isInteger(v))){result('rFreq','উপাত্ত ও গণসংখ্যা সঠিকভাবে দিন। গণসংখ্যা পূর্ণসংখ্যা ও ০ বা তার বেশি হতে হবে।',true);return}
+ let n=f.reduce((a,b)=>a+b,0),fx=x.reduce((s,v,i)=>s+v*f[i],0),vals=[];
+ x.forEach((v,i)=>{for(let j=0;j<f[i];j++)vals.push(v)});
+ if(!n){result('rFreq','মোট গণসংখ্যা ০ হতে পারবে না।',true);return}
+ let moF=Math.max(...f),mo=x.filter((v,i)=>f[i]===moF),rows=x.map((v,i)=>`<tr><td>${fmt(v)}</td><td>${fmt(f[i])}</td><td class="tally tally-big">${tallyMark(f[i])}</td><td>${fmt(v*f[i])}</td></tr>`).join('');
+ result('rFreq',`<h3>গণসংখ্যার সম্পূর্ণ সমাধান</h3>
+ <div class="step"><b>টালি চিহ্ন:</b> প্রতি ৫টি গণনা একটি গুচ্ছ হিসেবে দেখানো হয়েছে।</div>
+ <table><tr><th>উপাত্তের মান</th><th>কতবার এসেছে</th><th>টালি চিহ্ন</th><th>মান × কতবার</th></tr>${rows}<tr><th>মোট</th><th>${fmt(n)}</th><th></th><th>${fmt(fx)}</th></tr></table>
+ ${cards([['মোট গণসংখ্যা (n)',fmt(n)],['মান×কতবারের যোগফল',fmt(fx)],['গড়',fmt(fx/n)],['মধ্যক',fmt(rawমধ্যক(vals))],['প্রচুরক',moF===1?'কোনো একক প্রচুরক নেই':mo.join(', ')]])}
+ <div class="step">গড় = মান×কতবারের যোগফল/মোট কতবার = ${fmt(fx)}/${fmt(n)} = <b>${fmt(fx/n)}</b></div>
+ <div class="step">মধ্যক = <b>${fmt(rawমধ্যক(vals))}</b></div>
+ <div class="step">প্রচুরক = <b>${moF===1?'কোনো একক প্রচুরক নেই':mo.join(', ')}</b> (সর্বোচ্চ গণসংখ্যা = ${fmt(moF)})</div>`);
+}
+window.runAllClass=function(){
+ let c=parseClasses($('allClass').value),f=nums($('allClassF').value);if(!c.length||c.some(x=>!x)||c.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0)){result('rClass','শ্রেণি (যেমন 20-29) ও f সঠিকভাবে দিন।',true);return}
+ let g=groupInfo(c,f),cf=0,rows=c.map((z,i)=>{cf+=f[i];return `<tr><td>${esc(z.raw)}</td><td>${fmt(g.marks[i])}</td><td>${f[i]}</td><td>${cf}</td><td>${fmt(g.marks[i]*f[i])}</td></tr>`}).join('');
+ result('rClass',`<h3>শ্রেণিবিন্যাসের সম্পূর্ণ সমাধান</h3>${cards([['n',fmt(g.n)],['h',fmt(g.h)],['মান×কতবারের যোগফল',fmt(g.fx)],['গড়',fmt(g.fx/g.n)],['মধ্যক',fmt(g.med)],['প্রচুরক',fmt(g.mo)]])}<div class="step">শ্রেণিচিহ্ন = (নিম্নসীমা + উচ্চসীমা)/2</div><div class="step">গড় = মান×কতবারের যোগফল/মোট কতবার = ${fmt(g.fx)}/${fmt(g.n)} = <b>${fmt(g.fx/g.n)}</b></div><div class="step">মধ্যক = L + ((n/2 − cf)/f) × h = <b>${fmt(g.med)}</b></div><div class="step">প্রচুরক = L + ((f₁−f₀)/(2f₁−f₀−f₂)) × h = <b>${fmt(g.mo)}</b></div><table><tr><th>শ্রেণি</th><th>মাঝের মান</th><th>কতবার এসেছে</th><th>জমা গণসংখ্যা</th><th>মাঝের মান × কতবার</th></tr>${rows}</table>`);
+}
+window.runগড়=function(){
+ let t=$('meanType').value;
+ if(t==='raw'){let a=nums($('meanX').value);if(!a.length){result('rগড়','উপাত্ত দিন।',true);return}let s=a.reduce((p,x)=>p+x,0);result('rগড়',`<h3>অশ্রেণিবদ্ধ উপাত্তের গড়</h3><div class="step">x̄ = Σx/মোট সংখ্যা = ${fmt(s)}/${a.length} = <b>${fmt(s/a.length)}</b></div>${cards([['Σx',fmt(s)],['n',a.length],['গড়',fmt(s/a.length)]])}`)}
+ else if(t==='freq'){let x=nums($('meanX').value),f=nums($('meanF').value);if(x.length!==f.length||!x.length){result('rগড়','x ও f সঠিকভাবে দিন।',true);return}let n=f.reduce((a,b)=>a+b,0),fx=x.reduce((s,v,i)=>s+v*f[i],0);result('rগড়',`<h3>গণসংখ্যাসহ উপাত্তের গড়</h3><div class="step">x̄ = মান×কতবারের যোগফল/মোট কতবার = ${fmt(fx)}/${fmt(n)} = <b>${fmt(fx/n)}</b></div>${cards([['মোট কতবার',fmt(n)],['মান×কতবারের যোগফল',fmt(fx)],['গড়',fmt(fx/n)]])}`)}
+ else {let c=parseClasses($('meanClasses').value),f=nums($('meanF').value);if(c.length!==f.length||!c.length){result('rগড়','শ্রেণি ও f সঠিকভাবে দিন।',true);return}let g=groupInfo(c,f);result('rগড়',`<h3>শ্রেণিবদ্ধ উপাত্তের গড়</h3><div class="step">x̄ = মান×কতবারের যোগফল/মোট কতবার = ${fmt(g.fx)}/${fmt(g.n)} = <b>${fmt(g.fx/g.n)}</b></div>${cards([['মোট কতবার',fmt(g.n)],['মান×কতবারের যোগফল',fmt(g.fx)],['গড়',fmt(g.fx/g.n)]])}`)}
+}
+window.runমধ্যক=function(){
+ let t=$('medType').value;
+ if(t==='raw'){
+   let a=nums($('medX').value);
+   if(!a.length){result('rমধ্যক','উপাত্ত দিন।',true);return}
+   let s=[...a].sort((a,b)=>a-b),m=rawমধ্যক(a),n=a.length;
+   let pos=n%2?`মধ্যক অবস্থান = (${n}+1)/2 = ${(n+1)/2}`:`মধ্যকের দুই অবস্থান = ${n}/2 ও ${n}/2+1 = ${n/2} ও ${n/2+1}`;
+   result('rমধ্যক',`<h3>অশ্রেণিবদ্ধ মধ্যক — ধাপে ধাপে</h3><div class="step"><b>১.</b> ছোট থেকে বড়: ${s.join(', ')}</div><div class="step"><b>২.</b> ${pos}</div><div class="step"><b>৩.</b> মধ্যক = <b>${fmt(m)}</b></div>${cards([['n',n],['মধ্যক',fmt(m)]])}`);
+ }else if(t==='freq'){
+   let x=nums($('medX').value),f=nums($('medF').value);
+   if(!x.length||x.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0)||f.reduce((a,b)=>a+b,0)<=0){result('rমধ্যক','x ও f সঠিকভাবে দিন। f ঋণাত্মক হতে পারবে না এবং মোট f শূন্য হতে পারবে না।',true);return}
+   let pairs=x.map((v,i)=>({x:v,f:f[i]})).sort((a,b)=>a.x-b.x), n=f.reduce((a,b)=>a+b,0),cf=0,lowerIndex=-1;
+   for(let i=0;i<pairs.length;i++){cf+=pairs[i].f;if(lowerIndex<0 && cf>=n/2){lowerIndex=i;break;}}
+   let med;
+   if(n%2===1){
+     let target=(n+1)/2,run=0; for(const p of pairs){run+=p.f;if(run>=target){med=p.x;break;}}
+   }else{
+     let t1=n/2,t2=t1+1,run=0,v1=null,v2=null;
+     for(const p of pairs){let prev=run;run+=p.f;if(v1===null && t1>prev && t1<=run)v1=p.x;if(v2===null && t2>prev && t2<=run)v2=p.x;}
+     med=(v1+v2)/2;
+   }
+   let rows='',run=0;pairs.forEach(p=>{run+=p.f;rows+=`<tr><td>${fmt(p.x)}</td><td>${fmt(p.f)}</td><td>${fmt(run)}</td></tr>`});
+   result('rমধ্যক',`<h3>গণসংখ্যাসহ মধ্যক — ধাপে ধাপে</h3><div class="step"><b>১.</b> x-কে ছোট থেকে বড় সাজানো হয়েছে।</div><div class="step"><b>২.</b> মোট গণসংখ্যা, মোট সংখ্যা = <b>${fmt(n)}</b></div><div class="step"><b>৩.</b> মধ্যক = <b>${fmt(med)}</b></div>${cards([['মোট কতবার',fmt(n)],['মধ্যক',fmt(med)]])}<table><tr><th>উপাত্তের মান</th><th>কতবার এসেছে</th><th>জমা গণসংখ্যা</th></tr>${rows}</table>`);
+ }else{
+   let c=parseClasses($('medClass').value),f=nums($('medF').value);
+   if(!c.length||c.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0)){result('rমধ্যক','শ্রেণি ও f সঠিকভাবে দিন। উদাহরণ: 20-29, 30-39... এবং f: 3,4,5...',true);return}
+   let g=groupInfo(c,f);if(!g){result('rমধ্যক','সঠিক শ্রেণি ও গণসংখ্যা দিন।',true);return}
+   let prev=g.mi>0?f.slice(0,g.mi).reduce((a,b)=>a+b,0):0;
+   result('rমধ্যক',`<h3>শ্রেণিবদ্ধ মধ্যক — ধাপে ধাপে</h3><div class="step"><b>১.</b> মোট গণসংখ্যা মোট সংখ্যা = <b>${fmt(g.n)}</b>, তাই মোট সংখ্যার অর্ধেক = <b>${fmt(g.n/2)}</b></div><div class="step"><b>২.</b> মধ্যক শ্রেণি = <b>${esc(c[g.mi].raw)}</b></div><div class="step"><b>৩.</b> Md = L + ((n/2 − cf)/f) × h = ${fmt(c[g.mi].lo)} + ((${fmt(g.n/2)} − ${fmt(prev)})/${fmt(f[g.mi])}) × ${fmt(g.h)}</div><div class="step"><b>৪.</b> মধ্যক = <b>${fmt(g.med)}</b></div>${cards([['n',fmt(g.n)],['h',fmt(g.h)],['মধ্যক',fmt(g.med)]])}`);
+ }
+}
+window.runপ্রচুরক=function(){
+ let t=$('modeType').value;
+ if(t==='raw'){
+   let a=nums($('modeX').value);if(!a.length){result('rপ্রচুরক','উপাত্ত দিন।',true);return}
+   let mo=modes(a),freq={};a.forEach(v=>freq[v]=(freq[v]||0)+1);let mx=Math.max(...Object.values(freq));
+   if(!mo.length){result('rপ্রচুরক',`<h3>অশ্রেণিবদ্ধ প্রচুরক</h3><div class="step">সব মান মাত্র ১ বার করে এসেছে। তাই <b>প্রচুরক নেই (No প্রচুরক)</b>।</div>`);return}
+   result('rপ্রচুরক',`<h3>অশ্রেণিবদ্ধ প্রচুরক — ধাপে ধাপে</h3><div class="step">সর্বাধিক গণসংখ্যা = <b>${mx}</b></div><div class="step">যে মান/মানগুলো ${mx} বার এসেছে, সেগুলোই প্রচুরক = <b>${mo.join(', ')}</b></div>${cards([['প্রচুরক',mo.join(', ')],['সর্বাধিক কতবার এসেছে',mx]])}`);
+ }else if(t==='freq'){
+   let x=nums($('modeX').value),f=nums($('modeF').value);
+   if(!x.length||x.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0)){result('rপ্রচুরক','x ও f-এর সংখ্যা সমান হতে হবে এবং f ঋণাত্মক হতে পারবে না।',true);return}
+   let mx=Math.max(...f),mo=x.filter((v,i)=>f[i]===mx);
+   if(mx===0){result('rপ্রচুরক','সব f = 0; তাই প্রচুরক নির্ণয় করা যাচ্ছে না।',true);return}
+   result('rপ্রচুরক',`<h3>গণসংখ্যাসহ প্রচুরক — ধাপে ধাপে</h3><div class="step">সর্বাধিক গণসংখ্যা = <b>${fmt(mx)}</b></div><div class="step">তাই প্রচুরক = <b>${mo.join(', ')}</b></div>${cards([['প্রচুরক',mo.join(', ')],['সর্বাধিক কতবার এসেছে',fmt(mx)]])}`);
+ }else{
+   let c=parseClasses($('modeClass').value),f=nums($('modeF').value);
+   if(!c.length||c.length!==f.length||f.some(v=>!Number.isFinite(v)||v<0)){result('rপ্রচুরক','শ্রেণি ও f সঠিকভাবে দিন। উদাহরণ: 20-29, 30-39... এবং f: 3,4,5...',true);return}
+   let g=groupInfo(c,f);if(!g||g.moI<0){result('rপ্রচুরক','সঠিক শ্রেণি ও গণসংখ্যা দিন।',true);return}
+   let i=g.moI,f0=f[i-1]||0,f1=f[i],f2=f[i+1]||0,den=2*f1-f0-f2;
+   if(den===0){result('rপ্রচুরক',`<h3>শ্রেণিবদ্ধ প্রচুরক</h3><div class="step">প্রচুরক শ্রেণি = <b>${esc(c[i].raw)}</b></div><div class="step">সূত্রের হর 0 হওয়ায় প্রচুরক সূত্রে নির্দিষ্ট মান নির্ণয় করা যাচ্ছে না।</div>`,true);return}
+   result('rপ্রচুরক',`<h3>শ্রেণিবদ্ধ প্রচুরক — ধাপে ধাপে</h3><div class="step"><b>১.</b> প্রচুরক শ্রেণি = <b>${esc(c[i].raw)}</b></div><div class="step"><b>২.</b> f₁ = ${fmt(f1)}, f₀ = ${fmt(f0)}, f₂ = ${fmt(f2)}, h = ${fmt(g.h)}</div><div class="step"><b>৩.</b> Mo = L + ((f₁−f₀)/(2f₁−f₀−f₂)) × h</div><div class="step"><b>৪.</b> Mo = ${fmt(c[i].lo)} + ((${fmt(f1)}−${fmt(f0)})/(${fmt(2*f1)}−${fmt(f0)}−${fmt(f2)})) × ${fmt(g.h)} = <b>${fmt(g.mo)}</b></div>${cards([['প্রচুরক',fmt(g.mo)],['Modal class',esc(c[i].raw)]])}`);
+ }
+}
+window.runTable=function(){
+ let x=arrLines($('tableX').value),f=nums($('tableF').value);
+ if(x.length!==f.length||!x.length){
+   x=String($('tableX').value).split(/[,\s;]+/).filter(Boolean);
+   if(x.length!==f.length||!x.length){result('rTable','উপাত্ত/শ্রেণি ও গণসংখ্যার সংখ্যা সমান হতে হবে।',true);return}
+ }
+ if(f.some(v=>!Number.isFinite(v)||v<0)){result('rTable','গণসংখ্যা শূন্য বা ধনাত্মক সংখ্যা হতে হবে।',true);return}
+ function tally(n){
+   n=Math.floor(n); if(n<=0) return '—';
+   let q=Math.floor(n/5),r=n%5, parts=[];
+   for(let i=0;i<q;i++) parts.push('||||/');
+   if(r) parts.push('|'.repeat(r));
+   return parts.join(' ');
+ }
+ let cf=0,rows=x.map((v,i)=>{cf+=f[i];return `<tr><td>${esc(v)}</td><td class="tally">${tally(f[i])}</td><td>${fmt(f[i])}</td><td>${fmt(cf)}</td></tr>`}).join(''),n=f.reduce((a,b)=>a+b,0);
+ result('rTable',`<h3>টালি চিহ্নসহ গণসংখ্যার ছক</h3><div class="step">প্রতি ৫টি গণসংখ্যাকে একটি টালি-গুচ্ছ হিসেবে দেখানো হয়েছে।</div><table><tr><th>উপাত্ত/শ্রেণি</th><th>টালি চিহ্ন</th><th>গণসংখ্যা (f)</th><th>সঞ্চিত গণসংখ্যা (cf)</th></tr>${rows}<tr><th>মোট</th><th></th><th>${fmt(n)}</th><th>${fmt(n)}</th></tr></table>`);
+}
+window.runGraph=function(){
+ let labels=arrLines($('graphLabels').value),vals=nums($('graphValues').value),type=$('graphType').value,title=esc($('graphTitle').value||'পরিসংখ্যান লেখচিত্র');
+ if(labels.length!==vals.length||!labels.length||vals.some(v=>!Number.isFinite(v))){result('rGraph','নাম/শ্রেণি ও মানের সংখ্যা সমান হতে হবে।',true);return}
+ let max=Math.max(...vals,1), W=700,H=225, left=55,bottom=45,top=28,right=20,base=H-bottom,plotW=W-left-right,plotH=base-top;
+ let grid='';for(let i=0;i<=5;i++){let y=base-plotH*i/5,lab=fmt(max*i/5);grid+=`<line x1="${left}" y1="${y}" x2="${W-right}" y2="${y}" stroke="#d8e1e6"/><text x="${left-8}" y="${y+4}" text-anchor="end" font-size="10">${lab}</text>`}
+ let content='';
+ if(type==='bar'||type==='hist'){let gap=type==='hist'?0:12,w=plotW/vals.length-gap;content=vals.map((v,i)=>{let h=plotH*v/max,x=left+i*plotW/vals.length+gap/2,y=base-h;return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#3979aa" stroke="#225b86"/><text x="${x+w/2}" y="${base+18}" text-anchor="middle" font-size="10">${esc(labels[i])}</text>`}).join('')}
+ else if(type==='line'){let pts=vals.map((v,i)=>`${left+i*plotW/(vals.length-1||1)},${base-plotH*v/max}`).join(' ');content=`<polyline points="${pts}" fill="none" stroke="#2873a5" stroke-width="3"/>`+vals.map((v,i)=>{let x=left+i*plotW/(vals.length-1||1),y=base-plotH*v/max;return `<circle cx="${x}" cy="${y}" r="4" fill="#2873a5"/><text x="${x}" y="${base+18}" text-anchor="middle" font-size="10">${esc(labels[i])}</text>`}).join('')}
+ else {
+   let total=vals.reduce((a,b)=>a+b,0),cx=220,cy=112,r=78,angle=-Math.PI/2,paths='';
+   vals.forEach((v,i)=>{let a=v/total*Math.PI*2,end=angle+a,x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=a>Math.PI?1:0;paths+=`<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${['#e88467','#f0c34e','#72b77b','#75a8d0','#b28ac0','#d786a8'][i%6]}" stroke="#fff"/>`;let mid=angle+a/2;paths+=`<text x="${cx+(r*.58)*Math.cos(mid)}" y="${cy+(r*.58)*Math.sin(mid)}" text-anchor="middle" font-size="10" font-weight="700">${fmt(v/total*100)}%</text>`;angle=end});
+   content=paths+labels.map((l,i)=>`<text x="340" y="${45+i*22}" font-size="11">${esc(l)} — ${fmt(vals[i]/total*360)}°</text>`).join('');
+ }
+ let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><text x="${W/2}" y="18" text-anchor="middle" font-size="15" font-weight="800">${title}</text>${type==='pie'?content:grid+`<line x1="${left}" y1="${base}" x2="${W-right}" y2="${base}" stroke="#555"/><line x1="${left}" y1="${top}" x2="${left}" y2="${base}" stroke="#555"/>`+content}</svg>`;
+ result('rGraph',`<h3>তৈরি করা ${type==='pie'?'বৃত্ত':type==='line'?'রেখা':type==='hist'?'দণ্ড':'বার'} লেখচিত্র</h3><div class="chart-output">${svg}</div>`);
+}
+})();
+</script>
+</body>
+</html>

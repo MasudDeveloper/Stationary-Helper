@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC Algebra Master Solver - ৫০টি সৃজনশীল</title>
+    
+    <!-- KaTeX for Professional Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --success: #059669;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SolaimanLipi', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #1e293b);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+        .search-area {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            margin-bottom: 25px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 2px solid var(--accent);
+            font-size: 16px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            outline: none;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 8px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .nav-btn {
+            padding: 10px 0;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover { background: var(--accent); color: white; }
+
+        .q-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--accent);
+        }
+
+        .edit-panel {
+            background: #fefce8;
+            border: 1px dashed #facc15;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .edit-panel h4 { margin: 0 0 10px 0; color: #854d0e; font-size: 14px; }
+
+        .input-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+        .field { display: flex; align-items: center; gap: 8px; font-weight: bold; }
+        .field input { padding: 6px; border: 1px solid #d1d5db; border-radius: 6px; width: 70px; text-align: center; }
+
+        .stimulus {
+            font-size: 1.25em;
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 6px solid var(--accent);
+        }
+
+        .sub-questions { margin-bottom: 25px; }
+        .sub-questions div { margin-bottom: 12px; }
+        .q-label { font-weight: bold; color: var(--accent); margin-right: 5px; }
+
+        .sol-box {
+            display: none;
+            background: #fcfcfc;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .sol-box.visible { display: block; border-top: 4px solid var(--success); }
+
+        .step { margin-bottom: 25px; padding-left: 15px; border-left: 3px solid #cbd5e1; }
+        .step-h { font-weight: bold; color: #1e40af; margin-bottom: 8px; font-size: 1.1em; border-bottom: 1px solid #e2e8f0; display: inline-block; }
+
+        .toggle-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            background: var(--success);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .global-controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .g-btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; color: white; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .input-row { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SSC বীজগণিত সৃজনশীল সলভার (১-৫০)</h1>
+    <p>উদ্দীপক এডিট করুন এবং ক, খ, গ এর পূর্ণাঙ্গ সমাধান পান</p>
+</header>
+
+<div class="container">
+    <div class="search-area">
+        <input type="text" id="searchInput" placeholder="প্রশ্ন নম্বর বা অংকের চলক লিখে খুঁজুন..." oninput="app.filter()">
+    </div>
+
+    <div class="nav-grid" id="navGrid"></div>
+
+    <div class="global-controls">
+        <button class="g-btn" style="background: #059669;" onclick="app.toggleAll(true)">সব উত্তর দেখাও</button>
+        <button class="g-btn" style="background: #dc2626;" onclick="app.toggleAll(false)">সব উত্তর লুকাও</button>
+    </div>
+
+    <div id="questionsWrapper"></div>
+</div>
+
+<script>
+    const app = {
+        data: [],
+        
+        init() {
+            this.generateQuestions();
+            this.renderNav();
+            this.render();
+        },
+
+        generateQuestions() {
+            for (let i = 1; i <= 50; i++) {
+                let type, conf = { id: i, show: false, visible: true };
+                
+                if (i <= 10) {
+                    type = 'BASIC'; // ক্যাট ১, ২, ৫
+                    conf.v1 = 'a'; conf.v2 = 'b'; conf.n1 = i + 1; conf.n2 = i + 2;
+                } else if (i <= 25) {
+                    type = 'X_INV'; // ক্যাট ১৮ (x + 1/x)
+                    conf.v = 'x'; conf.n = i - 9;
+                } else if (i <= 35) {
+                    type = 'ABC_SUM'; // ক্যাট ৩, ১৯
+                    conf.v1 = 'a'; conf.v2 = 'b'; conf.v3 = 'c';
+                    conf.s = i - 25 + 5; conf.q = i + 10;
+                } else if (i <= 43) {
+                    type = 'ROOT_QUAD'; // p^2 - sqrt(n)p + 1 = 0
+                    conf.v = 'p'; conf.n = i + 5;
+                } else {
+                    type = 'LOG'; // ক্যাট ১৫
+                    conf.k = 'k'; conf.x = 'x'; conf.y = 'y'; conf.z = 'z';
+                }
+                this.data.push({ type, conf });
+            }
+        },
+
+        renderNav() {
+            const nav = document.getElementById('navGrid');
+            for (let i = 1; i <= 50; i++) {
+                const b = document.createElement('button');
+                b.className = 'nav-btn'; b.innerText = i;
+                b.onclick = () => {
+                    document.getElementById('searchInput').value = i;
+                    this.filter();
+                    const el = document.getElementById(`q-${i}`);
+                    if(el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
+                };
+                nav.appendChild(b);
+            }
+        },
+
+        update(id, key, val) {
+            const item = this.data.find(d => d.conf.id === id);
+            item.conf[key] = isNaN(val) || val === '' ? val : parseFloat(val);
+            this.render();
+        },
+
+        toggle(id) {
+            const item = this.data.find(d => d.conf.id === id);
+            item.conf.show = !item.conf.show;
+            this.render();
+        },
+
+        toggleAll(status) {
+            this.data.forEach(d => d.conf.show = status);
+            this.render();
+        },
+
+        filter() {
+            const s = document.getElementById('searchInput').value.toLowerCase();
+            this.data.forEach(d => {
+                const text = `প্রশ্ন ${d.conf.id} ${d.conf.v || ''} ${d.conf.v1 || ''}`.toLowerCase();
+                d.conf.visible = text.includes(s) || d.conf.id.toString() === s;
+            });
+            this.render();
+        },
+
+        // --- পূর্ণাঙ্গ সলভার ইঞ্জিন (গ সহ) ---
+        
+        solveBasic(c) {
+            const sum = c.n1 + c.n2;
+            const diff = c.n1 - c.n2;
+            const prod = c.n1 * c.n2;
+            return `
+                <div class="step"><div class="step-h">ক এর সমাধান:</div>
+                    সূত্র: $(${c.v1}+${c.v2})^2 = ${c.v1}^2 + 2${c.v1}${c.v2} + ${c.v2}^2$
+                </div>
+                <div class="step"><div class="step-h">খ এর সমাধান:</div>
+                    মান বসিয়ে, $(${c.n1}+${c.n2})^2 = ${c.n1}^2 + 2(${c.n1})(${c.n2}) + ${c.n2}^2$<br>
+                    $= ${c.n1**2} + ${2*prod} + ${c.n2**2} = ${sum**2}$ (উত্তর)
+                </div>
+                <div class="step"><div class="step-h">গ এর সমাধান:</div>
+                    আমরা জানি, $${c.v1}^2 - ${c.v2}^2 = (${c.v1}+${c.v2})(${c.v1}-${c.v2})$<br>
+                    মান বসিয়ে পাই, $(${c.n1}+${c.n2})(${c.n1}-${c.n2})$<br>
+                    $= (${sum})(${diff}) = ${sum*diff}$ (উত্তর)
+                </div>`;
+        },
+
+        solveXInv(c) {
+            const n = c.n;
+            const x2 = (n*n - 2);
+            const x3 = (n**3 - 3*n);
+            const x5 = (x2 * x3 - n);
+            return `
+                <div class="step"><div class="step-h">ক এর সমাধান:</div>
+                    দেওয়া আছে, $${c.v} + \\frac{1}{${c.v}} = ${n}$<br>
+                    বা, $\\frac{${c.v}^2+1}{${c.v}} = ${n} \\implies ${c.v}^2 - ${n}${c.v} + 1 = 0$ (দেখানো হলো)
+                </div>
+                <div class="step"><div class="step-h">খ এর সমাধান:</div>
+                    $${c.v}^3 + \\frac{1}{${c.v}^3} = (${c.v}+\\frac{1}{${c.v}})^3 - 3(${c.v}+\\frac{1}{${c.v}})$<br>
+                    $= ${n}^3 - 3(${n}) = ${x3}$ (উত্তর)
+                </div>
+                <div class="step"><div class="step-h">গ এর সমাধান:</div>
+                    আমরা জানি, $${c.v}^5 + \\frac{1}{${c.v}^5} = (${c.v}^2+\\frac{1}{${c.v}^2})(${c.v}^3+\\frac{1}{${c.v}^3}) - (${c.v}+\\frac{1}{${c.v}})$<br>
+                    এখানে, $${c.v}^2+\\frac{1}{${c.v}^2} = ${n}^2 - 2 = ${x2}$<br>
+                    $\\therefore (${x2})(${x3}) - ${n} = ${x5}$ (প্রমাণিত)
+                </div>`;
+        },
+
+        solveABC(c) {
+            const s = c.s; const q = c.q;
+            const ab2 = (s*s - q);
+            const ab = ab2 / 2;
+            const resultGa = 2*q - 2*ab;
+            return `
+                <div class="step"><div class="step-h">ক এর সমাধান:</div>
+                    সূত্র: $(${c.v1}+${c.v2}+${c.v3})^2 = ${c.v1}^2+${c.v2}^2+${c.v3}^2 + 2(${c.v1}${c.v2}+${c.v2}${c.v3}+${c.v3}${c.v1})$
+                </div>
+                <div class="step"><div class="step-h">খ এর সমাধান:</div>
+                    $2(${c.v1}${c.v2}+${c.v2}${c.v3}+${c.v3}${c.v1}) = ${s}^2 - ${q} = ${ab2}$<br>
+                    $\\therefore ${c.v1}${c.v2}+${c.v2}${c.v3}+${c.v3}${c.v1} = ${ab}$ (উত্তর)
+                </div>
+                <div class="step"><div class="step-h">গ এর সমাধান:</div>
+                    $( ${c.v1}-${c.v2} )^2 + ( ${c.v2}-${c.v3} )^2 + ( ${c.v3}-${c.v1} )^2$<br>
+                    $= 2(${c.v1}^2+${c.v2}^2+${c.v3}^2) - 2(${c.v1}${c.v2}+${c.v2}${c.v3}+${c.v3}${c.v1})$<br>
+                    $= 2(${q}) - ${ab2} = ${resultGa}$ (উত্তর)
+                </div>`;
+        },
+
+        solveRootQuad(c) {
+            const n = c.n;
+            const x2 = (n - 2);
+            const x4 = (x2*x2 - 2);
+            return `
+                <div class="step"><div class="step-h">ক এর সমাধান:</div>
+                    $${c.v}^2 - \\sqrt{${n}}${c.v} + 1 = 0 \\implies ${c.v} + \\frac{1}{${c.v}} = \\sqrt{${n}}$ (উত্তর)
+                </div>
+                <div class="step"><div class="step-h">খ এর সমাধান:</div>
+                    $${c.v}^2 + \\frac{1}{${c.v}^2} = (\\sqrt{${n}})^2 - 2 = ${n} - 2 = ${x2}$ (উত্তর)
+                </div>
+                <div class="step"><div class="step-h">গ এর সমাধান:</div>
+                    $${c.v}^4 + \\frac{1}{${c.v}^4} = (${c.v}^2+\\frac{1}{${c.v}^2})^2 - 2$<br>
+                    $= ${x2}^2 - 2 = ${x4}$ (উত্তর)
+                </div>`;
+        },
+
+        solveLog(c) {
+            return `
+                <div class="step"><div class="step-h">ক এর সমাধান:</div>
+                    সূত্র: $\\log_a M - \\log_a N = \\log_a \\frac{M}{N}$
+                </div>
+                <div class="step"><div class="step-h">খ এর সমাধান:</div>
+                    $L+M = \\log_{${c.k}} \\frac{${c.x}${c.y}}{${c.z}} + \\log_{${c.k}} \\frac{${c.y}${c.z}}{${c.x}} = \\log_{${c.k}} (\\frac{${c.x}${c.y}^2${c.z}}{${c.x}${c.z}}) = 2\\log_{${c.k}} ${c.y}$ (প্রমাণিত)
+                </div>
+                <div class="step"><div class="step-h">গ এর সমাধান:</div>
+                    $L+M+N = \\log_{${c.k}} (\\frac{${c.x}${c.y}}{${c.z}} \\cdot \\frac{${c.y}${c.z}}{${c.x}} \\cdot \\frac{${c.z}${c.x}}{${c.y}})$<br>
+                    $= \\log_{${c.k}} (${c.x}${c.y}${c.z})$ (প্রমাণিত)
+                </div>`;
+        },
+
+        render() {
+            const wrap = document.getElementById('questionsWrapper');
+            wrap.innerHTML = '';
+
+            this.data.filter(d => d.conf.visible).forEach(item => {
+                const c = item.conf;
+                const card = document.createElement('div');
+                card.className = 'q-card'; card.id = `q-${c.id}`;
+                
+                let editUI = '', stim = '', ques = '', sol = '';
+
+                if (item.type === 'BASIC') {
+                    editUI = `
+                        <div class="field">চলক ১: <input type="text" value="${c.v1}" oninput="app.update(${c.id}, 'v1', this.value)"></div>
+                        <div class="field">চলক ২: <input type="text" value="${c.v2}" oninput="app.update(${c.id}, 'v2', this.value)"></div>
+                        <div class="field">মান ১: <input type="number" value="${c.n1}" oninput="app.update(${c.id}, 'n1', this.value)"></div>
+                        <div class="field">মান ২: <input type="number" value="${c.n2}" oninput="app.update(${c.id}, 'n2', this.value)"></div>`;
+                    stim = `যদি $${c.v1} = ${c.n1}$ এবং $${c.v2} = ${c.n2}$ হয়।`;
+                    ques = `<div><span class="q-label">ক.</span> $(${c.v1}+${c.v2})^2$ এর সূত্র লেখ।</div>
+                            <div><span class="q-label">খ.</span> $(${c.v1}+${c.v2})^2$ এর মান কত?</div>
+                            <div><span class="q-label">গ.</span> $${c.v1}^2 - ${c.v2}^2$ এর মান বের কর।</div>`;
+                    sol = this.solveBasic(c);
+                }
+                else if (item.type === 'X_INV') {
+                    editUI = `
+                        <div class="field">চলক: <input type="text" value="${c.v}" oninput="app.update(${c.id}, 'v', this.value)"></div>
+                        <div class="field">মান (n): <input type="number" value="${c.n}" oninput="app.update(${c.id}, 'n', this.value)"></div>`;
+                    stim = `$${c.v} + \\frac{1}{${c.v}} = ${c.n}$ একটি বীজগণিতীয় সমীকরণ।`;
+                    ques = `<div><span class="q-label">ক.</span> দেখাও যে, $${c.v}^2 - ${c.n}${c.v} + 1 = 0$</div>
+                            <div><span class="q-label">খ.</span> $${c.v}^3 + \\frac{1}{${c.v}^3}$ এর মান কত?</div>
+                            <div><span class="q-label">গ.</span> প্রমাণ কর যে, $${c.v}^5 + \\frac{1}{${c.v}^5} = ...$</div>`;
+                    sol = this.solveXInv(c);
+                }
+                else if (item.type === 'ABC_SUM') {
+                    editUI = `
+                        <div class="field">যোগফল (S): <input type="number" value="${c.s}" oninput="app.update(${c.id}, 's', this.value)"></div>
+                        <div class="field">বর্গের যোগ (Q): <input type="number" value="${c.q}" oninput="app.update(${c.id}, 'q', this.value)"></div>`;
+                    stim = `$${c.v1}+${c.v2}+${c.v3} = ${c.s}$ এবং $${c.v1}^2+${c.v2}^2+${c.v3}^2 = ${c.q}$`;
+                    ques = `<div><span class="q-label">ক.</span> $(${c.v1}+${c.v2}+${c.v3})^2$ এর সূত্র কি?</div>
+                            <div><span class="q-label">খ.</span> $${c.v1}${c.v2}+${c.v2}${c.v3}+${c.v3}${c.v1}$ এর মান কত?</div>
+                            <div><span class="q-label">গ.</span> $(${c.v1}-${c.v2})^2+(${c.v2}-${c.v3})^2+(${c.v3}-${c.v1})^2$ এর মান কত?</div>`;
+                    sol = this.solveABC(c);
+                }
+                else if (item.type === 'ROOT_QUAD') {
+                    editUI = `<div class="field">রুটের ভিতর: <input type="number" value="${c.n}" oninput="app.update(${c.id}, 'n', this.value)"></div>`;
+                    stim = `$${c.v}^2 - \\sqrt{${c.n}}${c.v} + 1 = 0$`;
+                    ques = `<div><span class="q-label">ক.</span> $${c.v} + \\frac{1}{${c.v}}$ এর মান কত?</div>
+                            <div><span class="q-label">খ.</span> $${c.v}^2 + \\frac{1}{${c.v}^2}$ এর মান কত?</div>
+                            <div><span class="q-label">গ.</span> $${c.v}^4 + \\frac{1}{${c.v}^4}$ এর মান নির্ণয় কর।</div>`;
+                    sol = this.solveRootQuad(c);
+                }
+                else {
+                    editUI = `<div class="field">Base (k): <input type="text" value="${c.k}" oninput="app.update(${c.id}, 'k', this.value)"></div>`;
+                    stim = `$L = \\log_{${c.k}} \\frac{${c.x}${c.y}}{${c.z}}, M = \\log_{${c.k}} \\frac{${c.y}${c.z}}{${c.x}}, N = \\log_{${c.k}} \\frac{${c.z}${c.x}}{${c.y}}$`;
+                    ques = `<div><span class="q-label">ক.</span> লগারিদমের ভাগের সূত্রটি লেখ।</div>
+                            <div><span class="q-label">খ.</span> দেখাও যে, $L + M = 2\\log_{${c.k}} ${c.y}$</div>
+                            <div><span class="q-label">গ.</span> প্রমাণ কর যে, $L+M+N = \\log_{${c.k}}(${c.x}${c.y}${c.z})$</div>`;
+                    sol = this.solveLog(c);
+                }
+
+                card.innerHTML = `
+                    <h3 style="color:var(--accent); margin-top:0;">সৃজনশীল প্রশ্ন ${c.id}</h3>
+                    <div class="edit-panel">
+                        <h4>ম্যানুয়াল এডিট (Manual Edit Panel):</h4>
+                        <div class="input-row">${editUI}</div>
+                    </div>
+                    <div class="stimulus"><strong>উদ্দীপক:</strong> ${stim}</div>
+                    <div class="sub-questions">${ques}</div>
+                    <button class="toggle-btn" onclick="app.toggle(${c.id})">${c.show ? 'উত্তর লুকুও' : 'উত্তর ও সমাধান দেখাও'}</button>
+                    <div class="sol-box ${c.show ? 'visible' : ''}">${sol}</div>
+                `;
+                wrap.appendChild(card);
+            });
+            renderMathInElement(document.body, { delimiters: [{left: '$', right: '$', display: false}] });
+        }
+    };
+
+    window.onload = () => app.init();
+</script>
+
+</body>
+</html>

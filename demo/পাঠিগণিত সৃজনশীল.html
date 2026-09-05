@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC অল-ইন-ওয়ান অটো ম্যাথ সলভার</title>
+    
+    <!-- KaTeX for Math Formatting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root { --primary: #0f172a; --accent: #3b82f6; --success: #10b981; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: #1e293b; scroll-behavior: smooth; }
+        
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--accent); position: sticky; top: 0; z-index: 1000; }
+        header h1 { margin: 0; font-size: 20px; }
+
+        .container { max-width: 1200px; margin: 10px auto; padding: 0 15px; display: flex; gap: 20px; }
+
+        /* Sidebar Navigation */
+        .sidebar { width: 260px; position: sticky; top: 100px; height: calc(100vh - 120px); overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .nav-title { font-weight: bold; margin: 10px 0 5px; color: #64748b; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #eee; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 15px; }
+        .nav-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 0; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 10px; }
+        .nav-btn:hover { background: var(--accent); color: white; }
+
+        /* Main Content */
+        .content { flex: 1; }
+        .section-header { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; margin: 30px 0 15px; font-size: 1.1rem; border-left: 6px solid var(--accent); }
+
+        /* Question Card */
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        
+        /* Input Customizer */
+        .customizer { background: #f0f9ff; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; border: 1px dashed var(--accent); }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 10px; font-weight: bold; color: #64748b; }
+        .input-group input { width: 70px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-weight: bold; color: var(--accent); }
+
+        .stimulus { background: #f8fafc; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-size: 1.05rem; line-height: 1.6; border-left: 4px solid #cbd5e1; }
+        .sub-q { margin-bottom: 8px; font-size: 0.95rem; }
+        .sub-label { color: var(--accent); font-weight: bold; }
+
+        /* Solution area */
+        .sol-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; background: var(--success); color: white; font-weight: bold; cursor: pointer; }
+        .solution-area { display: none; margin-top: 15px; padding: 15px; background: #fdfdfd; border: 1px solid #bbf7d0; border-radius: 8px; }
+        .solution-area.active { display: block; }
+        .ans-row { margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+        .ans-row:last-child { border: none; }
+        .ans-title { font-weight: bold; color: var(--success); font-size: 13px; }
+
+        @media (max-width: 850px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; position: relative; height: auto; top: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SSC ম্যাথ অটো-সলভার ড্যাশবোর্ড (২০০টি সৃজনশীল)</h1>
+</header>
+
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="nav-title">১-৫০ (সংখ্যা ও লসাগু)</div>
+        <div class="grid" id="nav1"></div>
+        <div class="nav-title">৫১-১০০ (শতকরা ও লাভ-ক্ষতি)</div>
+        <div class="grid" id="nav2"></div>
+        <div class="nav-title">১০১-১৫০ (মুনাফা/সুদকষা)</div>
+        <div class="grid" id="nav3"></div>
+        <div class="nav-title">১৫১-২০০ (গতিবেগ ও ট্রেন)</div>
+        <div class="grid" id="nav4"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="mainContent"></div>
+</div>
+
+<script>
+    const data = [];
+
+    function generateData() {
+        // ১-৫০: সংখ্যার ধারণা
+        for(let i=1; i<=50; i++) {
+            data.push({
+                id: i, type: 1, typeName: "টাইপ ১: সংখ্যার ধারণা ও ল.সা.গু",
+                vars: { n: 20+i, gcf: 2+i, rem: 3 },
+                solve(v) {
+                    return {
+                        stim: `১ম $n$ সংখ্যক স্বাভাবিক সংখ্যার গণনা প্রক্রিয়ায় $n = ${v.n}$ এবং দুটি সংখ্যার অনুপাত $3:4$ যাদের গ.সা.গু $${v.gcf}$।`,
+                        subA: `১ম $n$ পদের সমষ্টি কত?`,
+                        subB: `সংখ্যা দুটির ল.সা.গু নির্ণয় করো।`,
+                        subC: `ক্ষুদ্রতম সংখ্যাটি কত যাকে $${v.gcf*3}$ ও $${v.gcf*4}$ দিয়ে ভাগ করলে $${v.rem}$ অবশিষ্ট থাকে?`,
+                        ansA: `সমষ্টি = $\\frac{${v.n}(${v.n}+1)}{2} = ${(v.n*(v.n+1))/2}$`,
+                        ansB: `সংখ্যা দুটি $${3*v.gcf}$ ও $${4*v.gcf}$। ল.সা.গু = $3 \\times 4 \\times ${v.gcf} = ${12*v.gcf}$`,
+                        ansC: `সংখ্যাটি = $(${12*v.gcf} + ${v.rem}) = ${12*v.gcf + v.rem}$`
+                    }
+                }
+            });
+        }
+
+        // ৫১-১০০: লাভ-ক্ষতি
+        for(let i=51; i<=100; i++) {
+            data.push({
+                id: i, type: 2, typeName: "টাইপ ২: শতকরা ও লাভ-ক্ষতি",
+                vars: { loss: 10 + (i%10), more: 60 + (i*2) },
+                solve(v) {
+                    let cp = (v.more * 100) / (v.loss * 2);
+                    return {
+                        stim: `একটি দ্রব্য $${v.loss}\\%$ ক্ষতিতে বিক্রি করা হলো। বিক্রয়মূল্য $${v.more}$ টাকা বেশি হলে $${v.loss}\\%$ লাভ হতো।`,
+                        subA: `৫% ক্ষতিতে বিক্রয়মূল্য কত?`,
+                        subB: `দ্রব্যটির প্রকৃত ক্রয়মূল্য কত?`,
+                        subC: `২০% লাভ করতে চাইলে কত টাকায় বিক্রি করতে হবে?`,
+                        ansA: `বিক্রয়মূল্য = $(100 - 5) = 95$ টাকা।`,
+                        ansB: `ক্রয়মূল্য = $\\frac{${v.more} \\times 100}{${v.loss*2}} = ${cp.toFixed(2)}$ টাকা।`,
+                        ansC: `বিক্রয়মূল্য = $${cp.toFixed(2)} \\times 1.20 = ${(cp*1.2).toFixed(2)}$ টাকা।`
+                    }
+                }
+            });
+        }
+
+        // ১০১-১৫০: মুনাফা (মুনাফার শতকরা মিসিং ছিল এখানে আছে)
+        for(let i=101; i<=150; i++) {
+            data.push({
+                id: i, type: 3, typeName: "টাইপ ৩: মুনাফা / সুদকষা",
+                vars: { P: 2000 + (i*10), r: 5 + (i%6), n: 3 + (i%3) },
+                solve(v) {
+                    let I = (v.P * v.n * v.r) / 100;
+                    let doubleTime = 100 / v.r;
+                    return {
+                        stim: `আসল $P = ${v.P}$ টাকা, $${v.r}\\%$ হার মুনাফায় $${v.n}$ বছরের জন্য ব্যাংকে রাখা হলো।`,
+                        subA: `মুনাফার সূত্রটি (I=Pnr) ব্যাখ্যা করো।`,
+                        subB: `উক্ত সময়ের মুনাফা ($I$) এবং মুনাফা-আসল ($A$) কত?`,
+                        subC: `উক্ত আসল কত বছরে মুনাফা-আসলে দ্বিগুণ হবে?`,
+                        ansA: `$I$ = মুনাফা, $P$ = আসল, $n$ = সময়, $r$ = মুনাফার হার।`,
+                        ansB: `মুনাফা $I = \\frac{${v.P} \\times ${v.n} \\times ${v.r}}{100} = ${I.toFixed(2)}$ টাকা। আসল-মুনাফা = $${v.P+I}$ টাকা।`,
+                        ansC: `দ্বিগুণ হতে সময় $n = \\frac{100}{r} = \\frac{100}{${v.r}} = ${doubleTime.toFixed(2)}$ বছর।`
+                    }
+                }
+            });
+        }
+
+        // ১৫১-২০০: গতিবেগ (গতিবেগ ও ট্রেন এখানে আছে)
+        for(let i=151; i<=200; i++) {
+            data.push({
+                id: i, type: 4, typeName: "টাইপ ৪: গতিবেগ, ট্রেন ও সময়",
+                vars: { speed: 40 + (i%40), length: 120 + (i%60), platform: 150 + (i%50) },
+                solve(v) {
+                    let ms = v.speed * (5/18);
+                    let tPole = v.length / ms;
+                    let tPlat = (v.length + v.platform) / ms;
+                    return {
+                        stim: `একটি ট্রেনের গতিবেগ ঘণ্টায় $${v.speed}$ কিমি এবং ট্রেনটির নিজস্ব দৈর্ঘ্য $${v.length}$ মিটার।`,
+                        subA: `কিমি/ঘণ্টাকে মি/সেকেন্ডে নেওয়ার ধ্রুবকটি কত?`,
+                        subB: `ট্রেনটি একটি খুঁটি অতিক্রম করতে কত সময় নেবে?`,
+                        subC: `ট্রেনটি $${v.platform}$ মিটার দীর্ঘ একটি সেতু অতিক্রম করতে কত সময় নেবে?`,
+                        ansA: `ধ্রুবকটি হলো $\\frac{5}{18}$।`,
+                        ansB: `গতিবেগ = $${ms.toFixed(2)}$ মি/সে। সময় = $\\frac{${v.length}}{${ms.toFixed(2)}} = ${tPole.toFixed(2)}$ সেকেন্ড।`,
+                        ansC: `মোট দূরত্ব = $${v.length+v.platform}$ মি। সময় = $\\frac{${v.length+v.platform}}{${ms.toFixed(2)}} = ${tPlat.toFixed(2)}$ সেকেন্ড।`
+                    }
+                }
+            });
+        }
+    }
+
+    const app = {
+        init() {
+            generateData();
+            this.renderNav();
+            this.renderAll();
+            this.refreshMath();
+        },
+
+        renderNav() {
+            data.forEach(q => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.innerText = q.id;
+                btn.onclick = () => document.getElementById(`card-${q.id}`).scrollIntoView({behavior:'smooth', block:'center'});
+                document.getElementById(`nav${q.type}`).appendChild(btn);
+            });
+        },
+
+        renderAll() {
+            const container = document.getElementById('mainContent');
+            let currentType = 0;
+
+            data.forEach(q => {
+                if(q.type !== currentType) {
+                    currentType = q.type;
+                    const h = document.createElement('div');
+                    h.className = 'section-header';
+                    h.innerText = q.typeName;
+                    container.appendChild(h);
+                }
+
+                const res = q.solve(q.vars);
+                let inputHTML = '';
+                for(let key in q.vars) {
+                    inputHTML += `<div class="input-group"><label>${key.toUpperCase()}</label>
+                        <input type="number" value="${q.vars[key]}" oninput="app.update(${q.id},'${key}',this.value)"></div>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-${q.id}`;
+                card.innerHTML = `
+                    <div style="font-weight:bold; color:var(--accent); font-size:12px">প্রশ্ন নং: ${q.id}</div>
+                    <div class="customizer">${inputHTML}</div>
+                    <div class="stimulus" id="stim-${q.id}">${res.stim}</div>
+                    <div class="sub-q"><span class="sub-label">(ক)</span> <span id="subA-${q.id}">${res.subA}</span></div>
+                    <div class="sub-q"><span class="sub-label">(খ)</span> <span id="subB-${q.id}">${res.subB}</span></div>
+                    <div class="sub-q"><span class="sub-label">(গ)</span> <span id="subC-${q.id}">${res.subC}</span></div>
+                    <button class="sol-btn" onclick="app.toggleSol(${q.id})">সমাধান দেখুন</button>
+                    <div class="solution-area" id="sol-${q.id}">
+                        <div class="ans-row"><span class="ans-title">উত্তর (ক):</span> <div id="ansA-${q.id}">${res.ansA}</div></div>
+                        <div class="ans-row"><span class="ans-title">উত্তর (খ):</span> <div id="ansB-${q.id}">${res.ansB}</div></div>
+                        <div class="ans-row"><span class="ans-title">উত্তর (গ):</span> <div id="ansC-${q.id}">${res.ansC}</div></div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        },
+
+        update(id, key, val) {
+            const q = data.find(x => x.id === id);
+            q.vars[key] = parseFloat(val) || 0;
+            const res = q.solve(q.vars);
+
+            document.getElementById(`stim-${id}`).innerHTML = res.stim;
+            document.getElementById(`ansA-${id}`).innerHTML = res.ansA;
+            document.getElementById(`ansB-${id}`).innerHTML = res.ansB;
+            document.getElementById(`ansC-${id}`).innerHTML = res.ansC;
+            this.refreshMath();
+        },
+
+        toggleSol(id) { document.getElementById(`sol-${id}`).classList.toggle('active'); },
+
+        refreshMath() {
+            renderMathInElement(document.body, { delimiters: [{left: "$", right: "$", display: false}] });
+        }
+    };
+
+    window.onload = () => app.init();
+</script>
+</body>
+</html>

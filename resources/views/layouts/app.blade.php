@@ -38,6 +38,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('lms.dashboard') }}" class="sidebar-link {{ request()->routeIs('lms.*') ? 'active' : '' }}" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-weight: 700;">
+                        <i class="material-icons-round" style="color: #fbbf24;">school</i><span>লার্নিং হাব (LMS) 🎓</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('saved-documents.index') }}" class="sidebar-link {{ request()->routeIs('saved-documents.*') ? 'active' : '' }}" style="background: rgba(79, 70, 229, 0.15); border: 1px solid rgba(79, 70, 229, 0.3); color: #818cf8; font-weight: 700;">
                         <i class="material-icons-round" style="color: #818cf8;">folder_special</i><span>সংরক্ষিত ফাইল (Saved)</span>
                     </a>
@@ -71,6 +76,19 @@
                         <i class="material-icons-round">account_balance_wallet</i><span>আয়-ব্যয় হিসাব</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="{{ route('accounting.solver.index') }}" class="sidebar-link {{ request()->routeIs('accounting.solver.*') ? 'active' : '' }}" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">
+                        <i class="material-icons-round" style="color: #34d399;">school</i><span>হিসাববিজ্ঞান ক্লাসরুম</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('grammar.index') }}" class="sidebar-link {{ request()->routeIs('grammar.*') ? 'active' : '' }}" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-weight: 700;">
+                        <i class="material-icons-round" style="color: #818cf8;">spellcheck</i><span>ইংরেজি গ্রামার সলভার</span>
+                    </a>
+                </li>
+
 
                 <li>
                     <a href="{{ route('accounting.memo') }}" class="sidebar-link {{ request()->routeIs('accounting.memo') || request()->routeIs('accounting.receipt') ? 'active' : '' }}">

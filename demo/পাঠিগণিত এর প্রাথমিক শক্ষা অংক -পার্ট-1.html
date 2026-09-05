@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC বীজগাণিতিক সূত্র ও সমীকরণ সলভার (২০০টি অংক)</title>
+    
+    <!-- KaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root { --primary: #0f172a; --accent: #3b82f6; --success: #10b981; --bg: #f1f5f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: #1e293b; line-height: 1.6; }
+        header { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 6px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 1.8rem; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+
+        .controls { display: flex; gap: 15px; margin-bottom: 25px; }
+        #searchInput { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #cbd5e1; font-size: 16px; outline: none; }
+
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; margin-bottom: 30px; max-height: 150px; overflow-y: auto; background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .nav-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 0; cursor: pointer; border-radius: 6px; font-weight: bold; font-size: 12px; }
+        .nav-btn:hover { background: var(--accent); color: white; }
+
+        .card { background: white; border-radius: 20px; padding: 35px; margin-bottom: 50px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
+        .q-badge { position: absolute; top: -15px; left: 30px; background: var(--accent); color: white; padding: 6px 20px; border-radius: 50px; font-weight: bold; font-size: 14px; }
+
+        .editor-section { background: #f8fafc; padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px dashed #cbd5e1; }
+        .editor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+        .edit-box { display: flex; flex-direction: column; gap: 5px; }
+        .edit-box label { font-size: 11px; font-weight: 600; color: #475569; }
+        .edit-box input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: var(--accent); font-weight: bold; }
+
+        .stimulus { background: #eff6ff; padding: 25px; border-left: 6px solid var(--accent); border-radius: 4px; margin: 25px 0; font-size: 1.1rem; }
+        
+        .btn-sol { width: 100%; padding: 18px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; background: var(--success); color: white; transition: 0.3s; }
+        .btn-sol.active { background: #ef4444; }
+
+        .solution-area { display: none; margin-top: 30px; padding: 30px; background: #fff; border: 2px solid var(--success); border-radius: 15px; }
+        .solution-area.active { display: block; }
+        .sol-h { color: var(--success); font-weight: 800; font-size: 1.2rem; display: block; margin-bottom: 12px; border-bottom: 2px solid #ecfdf5; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>বাস্তব সমস্যা সমাধানে বীজগাণিতিক সূত্র ও সমীকরণ</h1>
+    <p>২০০টি অংকের ডাইনামিক সলভার (১ - ২০০)</p>
+</header>
+
+<div class="container">
+    <div class="controls">
+        <input type="number" id="searchInput" placeholder="প্রশ্ন নম্বর লিখুন (১-২০০)..." oninput="app.render()">
+    </div>
+    <div class="nav-grid" id="navGrid"></div>
+    <div id="questionsList"></div>
+</div>
+
+<script>
+    const app = {
+        data: [],
+
+        init() {
+            this.generate200Questions();
+            this.renderNav();
+            this.render();
+        },
+
+        generate200Questions() {
+            const categories = ["বনভোজন", "শিক্ষা সফর", "ত্রাণ তহবিল", "মিলনমেলা", "সাংস্কৃতিক অনুষ্ঠান", "ক্রীড়া প্রতিযোগিতা", "নাটক", "ভ্রমণ", "সাহায্য তহবিল", "পিকনিক"];
+            
+            for (let i = 1; i <= 200; i++) {
+                let q = { id: i, show: false };
+
+                if (i <= 50) { // দেয় বা প্রাপ্য বিষয়ক
+                    q.type = 'payment';
+                    q.total = 2205 + (i-1)*200 + (i%3)*15 + (i%5)*10;
+                    q.absent = (i % 3 === 0) ? 2 : (i % 2 === 0 ? 4 : 3);
+                    q.increase = 10 + (i % 15);
+                    q.event = categories[(i - 1) % 10];
+                } 
+                else if (i <= 100) { // সময় ও কাজ
+                    q.type = 'work';
+                    q.men = 10 + (i % 10);
+                    q.days = 12 + (i % 8);
+                    q.extraMen = 2 + (i % 4);
+                } 
+                else if (i <= 150) { // সময় ও দূরত্ব
+                    q.type = 'speed';
+                    q.speed = 40 + (i - 100) * 2;
+                    q.time = 2 + (i % 4);
+                } 
+                else { // নল ও চৌবাচ্চা
+                    q.type = 'pipe';
+                    q.t1 = 10 + (i % 5);
+                    q.t2 = 15 + (i % 7);
+                }
+                this.data.push(q);
+            }
+        },
+
+        renderNav() {
+            const grid = document.getElementById('navGrid');
+            this.data.forEach(q => {
+                const b = document.createElement('button');
+                b.className = 'nav-btn'; b.innerText = q.id;
+                b.onclick = () => { document.getElementById('searchInput').value = q.id; this.render(); };
+                grid.appendChild(b);
+            });
+        },
+
+        update(id, key, val) {
+            const item = this.data.find(q => q.id === id);
+            item[key] = parseFloat(val) || 0;
+            this.render();
+        },
+
+        toggle(id) {
+            const item = this.data.find(q => q.id === id);
+            item.show = !item.show;
+            this.render();
+        },
+
+        render() {
+            const list = document.getElementById('questionsList');
+            const search = document.getElementById('searchInput').value;
+            list.innerHTML = '';
+
+            this.data.forEach(q => {
+                if (search && q.id != search) return;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                let stim = '', editBox = '', sol = '';
+
+                if (q.type === 'payment') {
+                    stim = `কোনো একটি ${q.event}ের জন্য মোট ${q.total} টাকা চাঁদা ধার্য করা হলো। কিন্তু ${q.absent} জন লোক উপস্থিত না হওয়ায় মাথাপিছু চাঁদার পরিমাণ ${q.increase} টাকা বৃদ্ধি পেল। মোট লোকের সংখ্যা কত ছিল?`;
+                    editBox = this.createEdit(q, [['total','মোট টাকা'],['absent','অনুপস্থিত'],['increase','বৃদ্ধি']]);
+                    
+                    // সলভ লজিক: kx^2 - kax - Ta = 0
+                    const a = q.increase, b = -q.increase * q.absent, c = -q.total * q.absent;
+                    const x = (-b + Math.sqrt(b*b - 4*a*c)) / (2*a);
+                    
+                    sol = `<span class="sol-h">সমাধান:</span>
+                        ধরি, মোট লোক সংখ্যা $= x$<br>
+                        শর্তমতে, $\\frac{${q.total}}{x - ${q.absent}} - \\frac{${q.total}}{x} = ${q.increase}$<br>
+                        বা, $${q.total} (\\frac{x - (x - ${q.absent})}{x(x - ${q.absent})}) = ${q.increase}$<br>
+                        বা, $${q.total} \\times ${q.absent} = ${q.increase}(x^2 - ${q.absent}x)$<br>
+                        বা, $x^2 - ${q.absent}x - ${(q.total*q.absent/q.increase).toFixed(0)} = 0$<br>
+                        সমাধান করলে, $x = ${Math.round(x)}$ (প্রায়)<br>
+                        $\\therefore$ মোট লোক সংখ্যা <b>${Math.round(x)} জন</b>।`;
+                }
+
+                else if (q.type === 'work') {
+                    stim = `${q.men} জন লোক একটি কাজ ${q.days} দিনে করতে পারে। যদি কাজটিতে আরও ${q.extraMen} জন লোক নিয়োগ করা হয়, তবে কাজটি কত দিনে শেষ হবে?`;
+                    editBox = this.createEdit(q, [['men','লোক সংখ্যা'],['days','দিন'],['extraMen','অতিরিক্ত লোক']]);
+                    const result = (q.men * q.days) / (q.men + q.extraMen);
+                    sol = `<span class="sol-h">সমাধান:</span>
+                        মোট কাজ $= ${q.men} \\times ${q.days} = ${q.men * q.days}$ জন-দিন<br>
+                        বর্তমান লোক সংখ্যা $= ${q.men} + ${q.extraMen} = ${q.men + q.extraMen}$ জন<br>
+                        $\\therefore$ প্রয়োজনীয় সময় $= \\frac{${q.men * q.days}}{${q.men + q.extraMen}} = ${result.toFixed(2)}$ দিন।`;
+                }
+
+                else if (q.type === 'speed') {
+                    if(q.id === 150) {
+                        stim = `একটি ট্রেন ঘণ্টায় ৬০ কিমি বেগে চলে ৯ সেকেন্ডে একটি খুঁটি অতিক্রম করে। ট্রেনটির দৈর্ঘ্য কত মিটার?`;
+                        sol = `<span class="sol-h">সমাধান:</span>
+                            বেগ $= 60$ কিমি/ঘণ্টা $= 60 \\times \\frac{5}{18}$ মি./সে. $= 16.67$ মি./সে.<br>
+                            সময় $= 9$ সেকেন্ড<br>
+                            $\\therefore$ দৈর্ঘ্য $= 16.67 \\times 9 = 150$ মিটার।`;
+                    } else {
+                        stim = `একটি গাড়ি ঘণ্টায় ${q.speed} কিমি বেগে চলে ${q.time} ঘণ্টায় গন্তব্যস্থানে পৌঁছায়। গাড়িটির মোট অতিক্রান্ত দূরত্ব কত?`;
+                        editBox = this.createEdit(q, [['speed','বেগ (কিমি)'],['time','সময় (ঘণ্টা)']]);
+                        sol = `<span class="sol-h">সমাধান:</span>
+                            দূরত্ব $= \\text{বেগ} \\times \\text{সময়}$<br>
+                            $= ${q.speed} \\times ${q.time} = ${q.speed * q.time}$ কিমি।`;
+                    }
+                }
+
+                else if (q.type === 'pipe') {
+                    stim = `একটি চৌবাচ্চা দুটি নল দ্বারা যথাক্রমে ${q.t1} ও ${q.t2} মিনিটে পূর্ণ হয়। নল দুটি একসাথে খুলে দিলে চৌবাচ্চাটি পূর্ণ হতে কত সময় লাগবে?`;
+                    editBox = this.createEdit(q, [['t1','১ম নল (মি.)'],['t2','২য় নল (মি.)']]);
+                    const totalTime = (q.t1 * q.t2) / (q.t1 + q.t2);
+                    sol = `<span class="sol-h">সমাধান:</span>
+                        ১ মিনিটে পূর্ণ হয় $= (\\frac{1}{${q.t1}} + \\frac{1}{${q.t2}})$ অংশ<br>
+                        $= \\frac{${q.t1} + ${q.t2}}{${q.t1} \\times ${q.t2}}$ অংশ<br>
+                        $\\therefore$ পূর্ণ হতে সময় লাগবে $= \\frac{${q.t1 * q.t2}}{${q.t1 + q.t2}} = ${totalTime.toFixed(2)}$ মিনিট।`;
+                }
+
+                card.innerHTML = `
+                    <div class="q-badge">প্রশ্ন নং: ${q.id}</div>
+                    <div class="editor-section">
+                        <div class="editor-grid">${editBox}</div>
+                    </div>
+                    <div class="stimulus">${stim}</div>
+                    <button class="btn-sol ${q.show ? 'active' : ''}" onclick="app.toggle(${q.id})">
+                        ${q.show ? 'সমাধান বন্ধ করুন' : 'সমাধান দেখুন'}
+                    </button>
+                    <div class="solution-area ${q.show ? 'active' : ''}">${sol}</div>
+                `;
+                list.appendChild(card);
+            });
+
+            renderMathInElement(document.body, { delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ]});
+        },
+
+        createEdit(conf, fields) {
+            return fields.map(f => `
+                <div class="edit-box">
+                    <label>${f[1]}</label>
+                    <input type="number" value="${conf[f[0]]}" oninput="app.update(${conf.id}, '${f[0]}', this.value)">
+                </div>
+            `).join('');
+        }
+    };
+
+    window.onload = () => app.init();
+</script>
+
+</body>
+</html>
