@@ -34,7 +34,7 @@ class OcrController extends Controller
         $costSetting = Setting::where('key', 'cost_ocr_scanner')->value('value');
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
-        if ($cost > 0 && $user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $cost > 0 && $user->credits < $cost) {
             return response()->json([
                 'error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। অনুগ্রহ করে ক্রেডিট রিচার্জ করুন।'
             ], 403);

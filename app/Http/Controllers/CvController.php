@@ -44,7 +44,7 @@ class CvController extends Controller
         
         $cost = $template->credit_cost ?? 5;
         
-        if ($user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $user->credits < $cost) {
             return response()->json([
                 'success' => false,
                 'message' => 'পর্যাপ্ত ক্রেডিট নেই! আপনার অ্যাকাউন্টে আরো ক্রেডিট যোগ করুন।'
@@ -74,7 +74,7 @@ class CvController extends Controller
 
         $costSetting = \App\Models\Setting::where('key', 'cost_cv_whatsapp_send')->value('value');
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.0;
-        if ($user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $user->credits < $cost) {
             return response()->json([
                 'success' => false,
                 'message' => 'পর্যাপ্ত ক্রেডিট নেই! আপনার অ্যাকাউন্টে আরো ক্রেডিট যোগ করুন।'

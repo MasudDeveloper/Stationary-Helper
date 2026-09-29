@@ -37,11 +37,7 @@
                         <i class="material-icons-round">dashboard</i><span>ড্যাশবোর্ড</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('lms.dashboard') }}" class="sidebar-link {{ request()->routeIs('lms.*') ? 'active' : '' }}" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-weight: 700;">
-                        <i class="material-icons-round" style="color: #fbbf24;">school</i><span>লার্নিং হাব (LMS) 🎓</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="{{ route('saved-documents.index') }}" class="sidebar-link {{ request()->routeIs('saved-documents.*') ? 'active' : '' }}" style="background: rgba(79, 70, 229, 0.15); border: 1px solid rgba(79, 70, 229, 0.3); color: #818cf8; font-weight: 700;">
                         <i class="material-icons-round" style="color: #818cf8;">folder_special</i><span>সংরক্ষিত ফাইল (Saved)</span>
@@ -71,23 +67,6 @@
                         <i class="material-icons-round">build_circle</i><span>ছবি ও পিডিএফ টুলস</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('accounting.index') }}" class="sidebar-link {{ request()->routeIs('accounting.index') ? 'active' : '' }}">
-                        <i class="material-icons-round">account_balance_wallet</i><span>আয়-ব্যয় হিসাব</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('accounting.solver.index') }}" class="sidebar-link {{ request()->routeIs('accounting.solver.*') ? 'active' : '' }}" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">
-                        <i class="material-icons-round" style="color: #34d399;">school</i><span>হিসাববিজ্ঞান ক্লাসরুম</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('grammar.index') }}" class="sidebar-link {{ request()->routeIs('grammar.*') ? 'active' : '' }}" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-weight: 700;">
-                        <i class="material-icons-round" style="color: #818cf8;">spellcheck</i><span>ইংরেজি গ্রামার সলভার</span>
-                    </a>
-                </li>
 
 
                 <li>
@@ -114,6 +93,7 @@
                         <i class="material-icons-round">quiz</i><span>প্রশ্নপত্র মেকার</span>
                     </a>
                 </li>
+                @if ((\App\Models\Setting::where('key', 'paid_service_status')->value('value') ?? 'on') !== 'off')
                 <li>
                     <a href="{{ route('subscription.index') }}" class="sidebar-link {{ request()->routeIs('subscription.*') ? 'active' : '' }}">
                         <i class="material-icons-round">workspace_premium</i><span>সাবস্ক্রিপশন প্ল্যান</span>
@@ -124,6 +104,7 @@
                         <i class="material-icons-round">payment</i><span>ক্রেডিট রিচার্জ</span>
                     </a>
                 </li>
+                @endif
                 <li>
                     <a href="{{ route('typing-test.index') }}" class="sidebar-link {{ request()->routeIs('typing-test.*') ? 'active' : '' }}">
                         <i class="material-icons-round">keyboard</i><span>টাইপিং স্পিড টেস্ট</span>
@@ -190,17 +171,19 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    @if (Auth::user()->hasActiveSubscription())
-                        <a href="{{ route('subscription.index') }}" class="credit-badge" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; display: flex; align-items: center; gap: 5px; padding: 6px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; text-decoration: none;">
-                            <i class="material-icons-round" style="font-size: 1.1rem; color: #34d399;">workspace_premium</i> 
-                            <span>Premium Active</span>
-                        </a>
-                    @else
-                        <div class="credit-badge" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--secondary-color);">
-                            <i class="material-icons-round" style="font-size: 1.1rem;">account_balance_wallet</i> 
-                            <span style="font-weight: bold; font-size: 1rem;" id="credit-balance">{{ Auth::user()->credits }}</span>
-                            <span style="font-size: 0.75rem; opacity: 0.8;">ক্রেডিট</span>
-                        </div>
+                    @if ((\App\Models\Setting::where('key', 'paid_service_status')->value('value') ?? 'on') !== 'off')
+                        @if (Auth::user()->hasActiveSubscription())
+                            <a href="{{ route('subscription.index') }}" class="credit-badge" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; display: flex; align-items: center; gap: 5px; padding: 6px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; text-decoration: none;">
+                                <i class="material-icons-round" style="font-size: 1.1rem; color: #34d399;">workspace_premium</i> 
+                                <span>Premium Active</span>
+                            </a>
+                        @else
+                            <div class="credit-badge" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--secondary-color);">
+                                <i class="material-icons-round" style="font-size: 1.1rem;">account_balance_wallet</i> 
+                                <span style="font-weight: bold; font-size: 1rem;" id="credit-balance">{{ Auth::user()->credits }}</span>
+                                <span style="font-size: 0.75rem; opacity: 0.8;">ক্রেডিট</span>
+                            </div>
+                        @endif
                     @endif
 
                     <div style="display: flex; align-items: center; gap: 15px; color: var(--text-muted);">

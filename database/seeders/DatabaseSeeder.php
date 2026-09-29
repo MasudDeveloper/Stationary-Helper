@@ -39,7 +39,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CvTemplateSeeder::class,
-            GrammarSolverSeeder::class,
         ]);
     }
 }

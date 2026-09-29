@@ -67,7 +67,7 @@ class DocumentController extends Controller
         
         $cost = $template->credit_cost ?? 5; // Default to 5 if null
         
-        if ($user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $user->credits < $cost) {
             return response()->json([
                 'success' => false,
                 'message' => 'পর্যাপ্ত ক্রেডিট নেই! আপনার অ্যাকাউন্টে আরো ক্রেডিট যোগ করুন।'
@@ -100,7 +100,7 @@ class DocumentController extends Controller
         // Optional: Deduct credit for sending via WhatsApp
         $costSetting = \App\Models\Setting::where('key', 'cost_document_whatsapp_send')->value('value');
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.0;
-        if ($user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $user->credits < $cost) {
             return response()->json([
                 'success' => false,
                 'message' => 'পর্যাপ্ত ক্রেডিট নেই! আপনার অ্যাকাউন্টে আরো ক্রেডিট যোগ করুন।'

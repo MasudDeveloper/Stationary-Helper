@@ -34,6 +34,9 @@ class AdminDashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Paid service status
+        $paidServiceStatus = \App\Models\Setting::where('key', 'paid_service_status')->value('value') ?? 'on';
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'pendingPaymentsCount',
@@ -42,7 +45,18 @@ class AdminDashboardController extends Controller
             'totalAiTemplates',
             'activeAds',
             'recentUsers',
-            'recentPayments'
+            'recentPayments',
+            'paidServiceStatus'
         ));
+    }
+
+    public function togglePaidService()
+    {
+        $setting = \App\Models\Setting::firstOrCreate(['key' => 'paid_service_status']);
+        $currentStatus = $setting->value ?? 'on';
+        $setting->value = $currentStatus === 'on' ? 'off' : 'on';
+        $setting->save();
+
+        return redirect()->back()->with('success', 'Paid service has been turned ' . strtoupper($setting->value));
     }
 }

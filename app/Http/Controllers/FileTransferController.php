@@ -27,9 +27,9 @@ class FileTransferController extends Controller
         $this->lazyCleanup();
 
         $request->validate([
-            'file' => 'required|file|max:20480', // 20MB limit
+            'file' => 'required|file|max:51200', // 50MB limit
         ], [
-            'file.max' => 'ফাইল সাইজ সর্বোচ্চ ২০ মেগাবাইট হতে পারবে।'
+            'file.max' => 'ফাইল সাইজ সর্বোচ্চ ৫০ মেগাবাইট হতে পারবে।'
         ]);
 
         $file = $request->file('file');

@@ -96,6 +96,9 @@ class User extends Authenticatable
      */
     public function hasActiveSubscription()
     {
+        if (\App\Models\Setting::where('key', 'paid_service_status')->value('value') === 'off') {
+            return true;
+        }
         return $this->subscription_expires_at && $this->subscription_expires_at->isFuture();
     }
 

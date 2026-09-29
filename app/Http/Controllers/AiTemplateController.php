@@ -127,7 +127,7 @@ class AiTemplateController extends Controller
         // Calculate credit cost
         $cost = $template->is_premium ? ($user->role === 'business' ? 1.00 : $template->credits_cost) : 0.00;
 
-        if ($user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $user->credits < $cost) {
             return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। অনুগ্রহ করে ক্রেডিট রিচার্জ করুন।'], 403);
         }
 

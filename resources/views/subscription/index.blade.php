@@ -37,7 +37,7 @@
                     </strong>
                 </p>
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">
-                    মেয়াদ শেষ হবে: <strong>{{ $user->subscription_expires_at->format('d M, Y h:i A') }}</strong>
+                    মেয়াদ শেষ হবে: <strong>{{ $user->subscription_expires_at ? $user->subscription_expires_at->format('d M, Y h:i A') : 'আনলিমিটেড (অ্যাডমিন অনুমোদিত)' }}</strong>
                 </p>
             </div>
         @endif

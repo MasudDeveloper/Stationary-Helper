@@ -5,10 +5,22 @@
 @section('content')
 <div style="margin-top: 10px;">
     <div class="glass" style="padding: 40px; margin-bottom: 40px; border-color: rgba(129, 140, 248, 0.2); border-radius: 20px;">
-        <h2 style="color: #fff; margin-bottom: 10px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
-            <i class="material-icons-round" style="color: #818cf8; font-size: 2.2rem;">waving_hand</i> স্বাগতম, অ্যাডমিন!
-        </h2>
-        <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem;">সহজ কাজ অ্যাপ্লিকেশনের সার্বিক কার্যক্রমের সংক্ষিপ্ত চিত্র</p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <h2 style="color: #fff; margin-bottom: 10px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                    <i class="material-icons-round" style="color: #818cf8; font-size: 2.2rem;">waving_hand</i> স্বাগতম, অ্যাডমিন!
+                </h2>
+                <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem;">সহজ কাজ অ্যাপ্লিকেশনের সার্বিক কার্যক্রমের সংক্ষিপ্ত চিত্র</p>
+            </div>
+            
+            <form action="{{ route('admin.toggle_paid_service') }}" method="POST" style="margin-bottom: 30px;">
+                @csrf
+                <button type="submit" class="btn {{ $paidServiceStatus === 'off' ? 'btn-danger' : 'btn-primary' }}" style="display: flex; align-items: center; gap: 8px; border-radius: 50px; padding: 10px 20px; font-weight: bold; background: {{ $paidServiceStatus === 'off' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)' }}; color: {{ $paidServiceStatus === 'off' ? '#f87171' : '#34d399' }}; border: 1px solid {{ $paidServiceStatus === 'off' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(16, 185, 129, 0.4)' }};">
+                    <i class="material-icons-round">{{ $paidServiceStatus === 'off' ? 'money_off' : 'attach_money' }}</i>
+                    {{ $paidServiceStatus === 'off' ? 'Paid Service OFF' : 'Paid Service ON' }}
+                </button>
+            </form>
+        </div>
 
         <!-- Stats Grid -->
         <div class="grid-3" style="margin-bottom: 40px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">

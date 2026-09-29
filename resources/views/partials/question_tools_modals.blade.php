@@ -326,3 +326,75 @@ function fixAllBijoyInForm() {
     }
 }
 </script>
+
+<!-- Accounting Table Insert Modal for Question Builder -->
+<div class="modal fade" id="accountingTableInsertModal" tabindex="-1" aria-labelledby="accountingTableInsertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: #0f172a; color: #f8fafc; border: 1px solid rgba(236, 72, 153, 0.4);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);">
+                <h5 class="modal-title d-flex align-items-center gap-2 text-pink-400" id="accountingTableInsertModalLabel" style="font-weight: 700;">
+                    <i class="material-icons-round">table_chart</i> প্রশ্নপত্রে হিসাববিজ্ঞান ছক সংযুক্ত করুন (Insert Accounting Table)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <x-accounting.master-table-picker />
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বন্ধ করুন</button>
+                <button type="button" class="btn btn-success fw-bold" onclick="insertAccountingTableToQuestion()">
+                    <i class="material-icons-round align-middle me-1">add_to_photos</i> প্রশ্নপত্রের উদ্দীপকে ছক যোগ করুন
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function insertAccountingTableToQuestion() {
+    const previewBox = document.getElementById('accounting_live_preview_box');
+    if (!previewBox) return;
+
+    const tableHTML = previewBox.innerHTML;
+    if (!tableHTML || tableHTML.includes('ড্রপডাউন থেকে')) {
+        alert('দয়া করে প্রথমে একটি ছক নির্বাচন করুন!');
+        return;
+    }
+
+    // Check which input box is currently active (CQ Stem, MCQ Question, or Text Content)
+    let targetTextarea = null;
+    const cqStem = document.getElementById('cq_stem');
+    const mcqQ = document.getElementById('mcq_question');
+    const textC = document.getElementById('text_content');
+
+    if (cqStem && cqStem.offsetParent !== null) {
+        targetTextarea = cqStem;
+    } else if (mcqQ && mcqQ.offsetParent !== null) {
+        targetTextarea = mcqQ;
+    } else if (textC && textC.offsetParent !== null) {
+        targetTextarea = textC;
+    }
+
+    if (targetTextarea) {
+        targetTextarea.value += (targetTextarea.value ? '\n\n' : '') + tableHTML;
+        const modalEl = document.getElementById('accountingTableInsertModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'ছক সফলভাবে যুক্ত করা হয়েছে!',
+                text: 'হিসাববিজ্ঞান ছকটি প্রশ্নপত্রের ইনপুট ফিল্ডে ইনসার্ট হয়েছে।',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            alert('ছকটি প্রশ্নপত্রে ইনসার্ট করা হয়েছে!');
+        }
+    } else {
+        alert('কোনো সক্রিয় প্রশ্নের টেক্সট ফিল্ড পাওয়া যায়নি।');
+    }
+}
+</script>
+

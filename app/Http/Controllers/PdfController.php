@@ -140,7 +140,7 @@ class PdfController extends Controller
         $costSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
-        if ($cost > 0 && $user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $cost > 0 && $user->credits < $cost) {
             return response()->json(['success' => false, 'message' => 'অপর্যাপ্ত ক্রেডিট! দয়া করে রিচার্জ করুন।']);
         }
 
@@ -179,7 +179,7 @@ class PdfController extends Controller
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
         // Check credit before processing
-        if ($cost > 0 && $user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $cost > 0 && $user->credits < $cost) {
             return response()->json(['success' => false, 'message' => 'অপর্যাপ্ত ক্রেডিট! দয়া করে রিচার্জ করুন।'], 403);
         }
 

@@ -59,9 +59,6 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // LMS Dashboard Route
-    Route::get('/lms', [\App\Http\Controllers\LmsDashboardController::class, 'index'])->name('lms.dashboard');
-
     // Quick Share Routes
     Route::get('/quick-share', [FileTransferController::class, 'index'])->name('share.index');
     Route::post('/quick-share/upload', [FileTransferController::class, 'store'])->name('share.upload');
@@ -111,11 +108,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/saved-documents/{id}', [SavedDocumentController::class, 'show'])->name('saved-documents.show');
     Route::post('/saved-documents/{id}/delete', [SavedDocumentController::class, 'destroy'])->name('saved-documents.delete');
 
-    // Accounting Solver Routes
-    Route::get('/accounting-solver', [\App\Http\Controllers\AccountingSolverController::class, 'index'])->name('accounting.solver.index');
-    Route::get('/accounting-solver/{id}', [\App\Http\Controllers\AccountingSolverController::class, 'show'])->name('accounting.solver.show');
-    Route::post('/accounting-solver/{id}/verify', [\App\Http\Controllers\AccountingSolverController::class, 'verify'])->name('accounting.solver.verify');
-
     // Accounting Routes
     Route::get('/accounting', [AccountingController::class, 'index'])->name('accounting.index');
     Route::post('/accounting/store', [AccountingController::class, 'storeTransaction'])->name('accounting.store');
@@ -160,23 +152,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/questions/store', [QuestionController::class, 'store'])->name('questions.store');
     Route::get('/questions/{id}', [QuestionController::class, 'show'])->name('questions.show');
     Route::post('/questions/{id}/delete', [QuestionController::class, 'destroy'])->name('questions.delete');
-
-    // English Grammar Classroom Routes
-    Route::get('/grammar-classroom', [\App\Http\Controllers\GrammarController::class, 'index'])->name('grammar.index');
-    Route::get('/grammar-classroom/tense', [\App\Http\Controllers\GrammarController::class, 'tenseHub'])->name('grammar.tense');
-    Route::get('/grammar-classroom/narration', [\App\Http\Controllers\GrammarController::class, 'narrationHub'])->name('grammar.narration');
-    Route::get('/grammar-classroom/narration-solver', [\App\Http\Controllers\GrammarController::class, 'narrationSolver'])->name('grammar.narration_solver');
-    Route::get('/grammar-classroom/parts-of-speech', [\App\Http\Controllers\GrammarController::class, 'partsOfSpeechHub'])->name('grammar.parts_of_speech');
-    Route::get('/grammar-classroom/articles', [\App\Http\Controllers\GrammarController::class, 'articlesHub'])->name('grammar.articles');
-    Route::get('/grammar-classroom/right-of-verb', [\App\Http\Controllers\GrammarController::class, 'rightOfVerbHub'])->name('grammar.right_of_verb');
-    Route::get('/grammar-classroom/right-form-of-verbs', [\App\Http\Controllers\GrammarController::class, 'rightFormOfVerbsSolver'])->name('grammar.right_form_of_verbs');
-    Route::get('/grammar-classroom/checker', [\App\Http\Controllers\GrammarController::class, 'checker'])->name('grammar.checker');
-    Route::get('/grammar-classroom/lessons/{id}', [\App\Http\Controllers\GrammarController::class, 'show'])->name('grammar.show');
-    Route::post('/grammar-classroom/lessons/{id}/quiz/submit', [\App\Http\Controllers\GrammarController::class, 'submitQuiz'])->name('grammar.quiz.submit');
-
-    // Mathematics Classroom Routes
-    Route::get('/math-classroom', [\App\Http\Controllers\MathController::class, 'index'])->name('math.index');
-    Route::get('/math-classroom/lessons/{id}', [\App\Http\Controllers\MathController::class, 'show'])->name('math.show');
 
     // PDF Editor & Tools Routes
     Route::get('/pdf/editor', [PdfController::class, 'editor'])->name('pdf.editor');
@@ -246,6 +221,7 @@ Route::middleware('auth')->group(function () {
     // Admin Control Panel routes (only for admins)
     Route::middleware(\App\Http\Middleware\IsAdmin::class)->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::post('/dashboard/toggle-paid-service', [AdminDashboardController::class, 'togglePaidService'])->name('admin.toggle_paid_service');
         
         // Users Management
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
@@ -299,21 +275,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/pdf-tools', [AdminPdfToolController::class, 'index'])->name('admin.pdf_tools');
         Route::post('/pdf-tools/{id}/toggle', [AdminPdfToolController::class, 'toggle'])->name('admin.pdf_tools.toggle');
 
-        // Accounting Solver Admin Routes
-        Route::resource('accounting-solver', \App\Http\Controllers\Admin\AdminAccountingSolverController::class, ['as' => 'admin'])->except(['show']);
-
-        // Grammar Solver Admin Routes
-        Route::resource('grammar-lessons', \App\Http\Controllers\Admin\AdminGrammarController::class, ['as' => 'admin'])->except(['show']);
-        Route::get('/grammar-lessons/{id}/exercises', [\App\Http\Controllers\Admin\AdminGrammarController::class, 'exercises'])->name('admin.grammar-lessons.exercises');
-        Route::post('/grammar-lessons/{id}/exercises/store', [\App\Http\Controllers\Admin\AdminGrammarController::class, 'storeExercise'])->name('admin.grammar-lessons.exercises.store');
-        Route::post('/grammar-lessons/exercises/{id}/delete', [\App\Http\Controllers\Admin\AdminGrammarController::class, 'destroyExercise'])->name('admin.grammar-lessons.exercises.delete');
-
-        // Math Solver Admin Routes
-        Route::resource('math-lessons', \App\Http\Controllers\Admin\AdminMathController::class, ['as' => 'admin'])->except(['show']);
-        Route::get('/math-lessons/{id}/exercises', [\App\Http\Controllers\Admin\AdminMathController::class, 'exercises'])->name('admin.math-lessons.exercises');
-        Route::post('/math-lessons/{id}/exercises/store', [\App\Http\Controllers\Admin\AdminMathController::class, 'storeExercise'])->name('admin.math-lessons.exercises.store');
-        Route::post('/math-lessons/exercises/{id}/update', [\App\Http\Controllers\Admin\AdminMathController::class, 'updateExercise'])->name('admin.math-lessons.exercises.update');
-        Route::post('/math-lessons/exercises/{id}/delete', [\App\Http\Controllers\Admin\AdminMathController::class, 'destroyExercise'])->name('admin.math-lessons.exercises.delete');
 
         // Typing Tests
         Route::resource('typing-test', \App\Http\Controllers\Admin\TypingTestController::class, ['as' => 'admin'])->except(['show']);

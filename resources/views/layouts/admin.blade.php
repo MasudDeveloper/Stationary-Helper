@@ -171,21 +171,7 @@
                         <i class="material-icons-round">collections</i>এআই টেমপ্লেট কন্ট্রোল
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.accounting-solver.index') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.accounting-solver.*') ? 'active' : '' }}">
-                        <i class="material-icons-round">school</i>হিসাববিজ্ঞান ক্লাসরুম
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.grammar-lessons.index') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.grammar-lessons.*') ? 'active' : '' }}">
-                        <i class="material-icons-round">g_translate</i>ইংরেজি গ্রামার
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.math-lessons.index') }}" class="sidebar-link admin-link {{ request()->routeIs('admin.math-lessons.*') ? 'active' : '' }}">
-                        <i class="material-icons-round">calculate</i>গণিত ক্লাসরুম
-                    </a>
-                </li>
+
 
 
                 <li class="sidebar-section-title">ন্যাভিগেশন</li>

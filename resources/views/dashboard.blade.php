@@ -75,9 +75,11 @@
                 </a>
                 
                 @if(Auth::user()->account_type !== 'business')
-                <a href="{{ route('business.upgrade') }}" class="btn btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-radius: 6px; font-weight: 600; font-size: 0.85rem; padding: 6px 15px; display: flex; align-items: center; gap: 5px; margin-left: auto;">
-                    <i class="material-icons-round" style="font-size: 1rem;">storefront</i> Upgrade to Business
-                </a>
+                    @if ((\App\Models\Setting::where('key', 'paid_service_status')->value('value') ?? 'on') !== 'off')
+                    <a href="{{ route('business.upgrade') }}" class="btn btn-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-radius: 6px; font-weight: 600; font-size: 0.85rem; padding: 6px 15px; display: flex; align-items: center; gap: 5px; margin-left: auto;">
+                        <i class="material-icons-round" style="font-size: 1rem;">storefront</i> Upgrade to Business
+                    </a>
+                    @endif
                 @else
                 <a href="{{ route('shopkeeper.orders.index') }}" class="btn btn-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border-radius: 6px; font-weight: 600; font-size: 0.85rem; padding: 6px 15px; display: flex; align-items: center; gap: 5px; margin-left: auto;">
                     <i class="material-icons-round" style="font-size: 1rem;">assignment</i> আমার অর্ডারসমূহ
@@ -86,6 +88,7 @@
             </div>
         </div>
 
+        @if ((\App\Models\Setting::where('key', 'paid_service_status')->value('value') ?? 'on') !== 'off')
         <!-- Credit Balance -->
         <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px;">
             <div>
@@ -108,6 +111,30 @@
                 </a>
             </div>
         </div>
+        @else
+        <!-- Free Mode Info -->
+        <div class="glass glass-interactive" style="display: flex; flex-direction: column; justify-content: space-between; padding: 30px; border-left: 5px solid #10b981;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: #fff; font-weight: 700; font-size: 1.2rem; margin: 0;">সিস্টেম স্ট্যাটাস</h3>
+                    <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="material-icons-round" style="font-size: 1.2rem;">volunteer_activism</i>
+                    </div>
+                </div>
+
+                <h1 style="font-size: 2.5rem; color: #10b981; margin: 0 0 8px 0; font-weight: 700; line-height: 1;">
+                    ১০০% ফ্রি!
+                </h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">বর্তমানে সিস্টেমের সকল সার্ভিস সম্পূর্ণ ফ্রিতে ব্যবহার করা যাচ্ছে। কোনো রিচার্জ বা সাবস্ক্রিপশন প্ল্যানের প্রয়োজন নেই।</p>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; text-align: center;">
+                    <i class="material-icons-round" style="font-size: 1.2rem; vertical-align: middle;">check_circle</i> আনলিমিটেড ব্যবহার করুন
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 
     <!-- Refer & Earn -->

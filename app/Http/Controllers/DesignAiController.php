@@ -38,7 +38,7 @@ class DesignAiController extends Controller
         $costSetting = \App\Models\Setting::where('key', 'ai_image_cost')->value('value');
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 0.00;
 
-        if ($cost > 0 && $user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $cost > 0 && $user->credits < $cost) {
             return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। প্রতিটি ছবি জেনারেট করতে ' . $cost . ' ক্রেডিট প্রয়োজন। অনুগ্রহ করে রিচার্জ করুন।'], 403);
         }
 
@@ -71,7 +71,7 @@ class DesignAiController extends Controller
         $costSetting = \App\Models\Setting::where('key', 'cost_bg_removal')->value('value');
         $cost = ($costSetting !== null && $costSetting !== '') ? (float) $costSetting : 5.00;
 
-        if ($cost > 0 && $user->credits < $cost) {
+        if (!$user->hasActiveSubscription() && $cost > 0 && $user->credits < $cost) {
             return response()->json(['error' => 'আপনার পর্যাপ্ত ক্রেডিট নেই। ব্যাকগ্রাউন্ড রিমুভ করতে ' . $cost . ' ক্রেডিট প্রয়োজন।'], 403);
         }
 

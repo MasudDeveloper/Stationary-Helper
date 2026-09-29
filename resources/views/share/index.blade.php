@@ -31,7 +31,7 @@
                 <i class="material-icons-round">cloud_upload</i>
             </div>
             <h3>ফাইল আপলোড করতে এখানে ক্লিক করুন</h3>
-            <p>অথবা ফাইলটি টেনে এনে এখানে ছেড়ে দিন (সর্বোচ্চ ২০ মেগাবাইট)</p>
+            <p>অথবা ফাইলটি টেনে এনে এখানে ছেড়ে দিন (সর্বোচ্চ ৫০ মেগাবাইট)</p>
             <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
         </div>
 
@@ -323,9 +323,9 @@ function handleFileSelect(e) {
 }
 
 function uploadFile(file) {
-    // Check file size (20MB)
-    if (file.size > 20 * 1024 * 1024) {
-        alert('ফাইল সাইজ ২০ মেগাবাইটের বেশি হতে পারবে না।');
+    // Check file size (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+        alert('ফাইল সাইজ ৫০ মেগাবাইটের বেশি হতে পারবে না।');
         return;
     }
 
