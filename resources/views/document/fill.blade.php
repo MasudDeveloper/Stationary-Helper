@@ -146,7 +146,10 @@ $marginRightInch = $template->margin_right ?? 1.0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            width: var(--page-w, 210mm);
+            max-width: var(--page-w, 210mm);
+            min-width: var(--page-w, 210mm);
+            margin: 0 auto;
             transition: transform 0.2s ease;
         }
 
@@ -175,6 +178,11 @@ $marginRightInch = $template->margin_right ?? 1.0;
 
         .a4-paper * {
             box-sizing: border-box;
+        }
+
+        .a4-paper img,
+        .a4-paper table {
+            max-width: 100% !important;
         }
 
         .a4-paper:last-child {
@@ -855,25 +863,31 @@ $marginRightInch = $template->margin_right ?? 1.0;
             if (!pane || !scaleWrapper || papers.length === 0) return;
 
             if (window.innerWidth <= 900) {
-                const paneWidth = pane.clientWidth - 24; // accounts for padding
-                const baseWidth = papers[0].offsetWidth || 794; // ~210mm in px
+                pane.style.overflowX = 'hidden';
+                const paneWidth = pane.clientWidth - 10; // 5px padding left & right
+                const paperWidthPx = papers[0].offsetWidth || 794; // 210mm base width
 
-                if (paneWidth > 0 && paneWidth < baseWidth) {
-                    const scaleFactor = paneWidth / baseWidth;
+                if (paneWidth > 0 && paneWidth < paperWidthPx) {
+                    const scaleFactor = paneWidth / paperWidthPx;
                     scaleWrapper.style.transform = `scale(${scaleFactor})`;
                     scaleWrapper.style.transformOrigin = 'top center';
                     
-                    // Adjust height offset to avoid whitespace gaps on scaled mobile view
-                    const totalUnscaledHeight = Array.from(papers).reduce((sum, p) => sum + p.offsetHeight + 30, 0);
+                    let totalUnscaledHeight = 0;
+                    papers.forEach(p => {
+                        totalUnscaledHeight += (p.offsetHeight || 1123) + 30;
+                    });
                     const totalScaledHeight = totalUnscaledHeight * scaleFactor;
-                    scaleWrapper.style.marginBottom = `-${totalUnscaledHeight - totalScaledHeight}px`;
+                    scaleWrapper.style.height = `${totalScaledHeight}px`;
+                    scaleWrapper.style.marginBottom = '0px';
                 } else {
                     scaleWrapper.style.transform = 'none';
-                    scaleWrapper.style.marginBottom = '0';
+                    scaleWrapper.style.height = 'auto';
+                    scaleWrapper.style.marginBottom = '0px';
                 }
             } else {
                 scaleWrapper.style.transform = 'none';
-                scaleWrapper.style.marginBottom = '0';
+                scaleWrapper.style.height = 'auto';
+                scaleWrapper.style.marginBottom = '0px';
             }
         }
 
