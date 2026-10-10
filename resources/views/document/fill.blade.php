@@ -398,28 +398,39 @@ $marginRightInch = $template->margin_right ?? 1.0;
             background: #4b5563;
         }
 
-        /* Toggle Sidebar Button */
+        /* Fixed Toggle Sidebar Button (PC View) */
         .toggle-sidebar-btn {
-            position: absolute;
-            left: -40px;
+            position: fixed;
+            right: 450px;
             top: 20px;
-            width: 40px;
-            height: 40px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
+            width: 42px;
+            height: 42px;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
             border-right: none;
             border-radius: 8px 0 0 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 15;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
-            color: #374151;
+            z-index: 999;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+            color: #1e293b;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, color 0.2s;
         }
 
         .toggle-sidebar-btn:hover {
-            background: #f9fafb;
+            background: #f1f5f9;
+            color: #3b82f6;
+        }
+
+        .form-sidebar.collapsed + .toggle-sidebar-btn,
+        body.sidebar-is-collapsed .toggle-sidebar-btn {
+            right: 0px;
+            border-right: 1.5px solid #3b82f6;
+            border-radius: 8px 0 0 8px;
+            background: #3b82f6;
+            color: #ffffff;
         }
 
         .watermark {
@@ -720,12 +731,12 @@ $marginRightInch = $template->margin_right ?? 1.0;
         </div>
 
 
-    <!-- Form Sidebar -->
-    <div class="form-sidebar" id="form-sidebar">
-        <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
-            <i class="material-icons-round" id="toggle-icon">chevron_right</i>
-        </button>
+    <!-- Form Sidebar & Toggle Button (PC) -->
+    <button class="toggle-sidebar-btn" id="toggle-sidebar-btn" onclick="toggleSidebar()" title="ফরম লুকান / খুলুন">
+        <i class="material-icons-round" id="toggle-icon">chevron_right</i>
+    </button>
 
+    <div class="form-sidebar" id="form-sidebar">
         <div class="sidebar-content">
             <div class="sidebar-header">
                 <div>
@@ -812,15 +823,25 @@ $marginRightInch = $template->margin_right ?? 1.0;
         function toggleSidebar() {
             const sidebar = document.getElementById('form-sidebar');
             const icon = document.getElementById('toggle-icon');
+            const toggleBtn = document.getElementById('toggle-sidebar-btn');
+            
             sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-is-collapsed', sidebar.classList.contains('collapsed'));
 
-            if (icon) {
-                if (sidebar.classList.contains('collapsed')) {
-                    icon.innerText = 'chevron_left';
-                } else {
-                    icon.innerText = 'chevron_right';
+            if (sidebar.classList.contains('collapsed')) {
+                if (icon) icon.innerText = 'chevron_left';
+                if (toggleBtn) {
+                    toggleBtn.style.right = '0px';
+                    toggleBtn.title = 'ফরমটি খুলুন';
+                }
+            } else {
+                if (icon) icon.innerText = 'chevron_right';
+                if (toggleBtn) {
+                    toggleBtn.style.right = '450px';
+                    toggleBtn.title = 'ফরমটি লুকান';
                 }
             }
+            setTimeout(autoFitMobilePages, 300);
         }
 
         function openMobileTab(tabName) {
@@ -864,13 +885,18 @@ $marginRightInch = $template->margin_right ?? 1.0;
 
             if (window.innerWidth <= 900) {
                 pane.style.overflowX = 'hidden';
-                const paneWidth = pane.clientWidth - 10; // 5px padding left & right
+                pane.style.display = 'block';
+                const paneWidth = pane.clientWidth - 20; // 10px padding left & right
                 const paperWidthPx = papers[0].offsetWidth || 794; // 210mm base width
 
                 if (paneWidth > 0 && paneWidth < paperWidthPx) {
                     const scaleFactor = paneWidth / paperWidthPx;
+                    const leftOffset = Math.max(0, (pane.clientWidth - (paperWidthPx * scaleFactor)) / 2);
+
+                    scaleWrapper.style.position = 'relative';
+                    scaleWrapper.style.left = `${leftOffset}px`;
+                    scaleWrapper.style.transformOrigin = 'top left';
                     scaleWrapper.style.transform = `scale(${scaleFactor})`;
-                    scaleWrapper.style.transformOrigin = 'top center';
                     
                     let totalUnscaledHeight = 0;
                     papers.forEach(p => {
@@ -882,11 +908,14 @@ $marginRightInch = $template->margin_right ?? 1.0;
                 } else {
                     scaleWrapper.style.transform = 'none';
                     scaleWrapper.style.height = 'auto';
+                    scaleWrapper.style.left = '0px';
                     scaleWrapper.style.marginBottom = '0px';
                 }
             } else {
+                pane.style.display = 'flex';
                 scaleWrapper.style.transform = 'none';
                 scaleWrapper.style.height = 'auto';
+                scaleWrapper.style.left = '0px';
                 scaleWrapper.style.marginBottom = '0px';
             }
         }
