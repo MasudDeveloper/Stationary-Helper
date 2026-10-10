@@ -34,14 +34,28 @@ $marginRightInch = $template->margin_right ?? 1.0;
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ $template->name }} - penghor.com</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts including Bangla Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
+        @font-face {
+            font-family: 'Kalpurush';
+            src: url('https://cdn.jsdelivr.net/gh/rohit-singh-dev/bangla-fonts@main/Kalpurush.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('https://cdn.jsdelivr.net/gh/rohit-singh-dev/bangla-fonts@main/SolaimanLipi.ttf') format('truetype');
+            font-display: swap;
+        }
+
         /* Base Reset */
         * {
             box-sizing: border-box;
@@ -50,10 +64,13 @@ $marginRightInch = $template->margin_right ?? 1.0;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'Inter', sans-serif;
             background: #f3f4f6;
             color: #111827;
-            overflow: hidden;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         .layout-wrapper {
@@ -63,12 +80,74 @@ $marginRightInch = $template->margin_right ?? 1.0;
             position: relative;
         }
 
+        /* Mobile Top Bar */
+        .mobile-top-bar {
+            display: none;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .mobile-top-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .mobile-nav-pills {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mobile-pill-btn {
+            background: rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-pill-btn.active {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #3b82f6;
+        }
+
         /* Left Side: Document Preview */
         .doc-preview-pane {
             flex: 1;
             overflow: auto;
-            /* Allows scrolling in both directions */
             padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            background: #e2e8f0;
+        }
+
+        .page-scale-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            transition: transform 0.2s ease;
         }
 
         .a4-paper {
@@ -80,8 +159,8 @@ $marginRightInch = $template->margin_right ?? 1.0;
             padding-bottom: var(--page-margin-bottom, 1.0in) !important;
             padding-left: var(--page-margin-left, 1.0in) !important;
             padding-right: var(--page-margin-right, 1.0in) !important;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-family: 'Kalpurush', Arial, sans-serif;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            font-family: 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', 'SolaimanLipi', Arial, sans-serif;
             font-size: 16pt;
             line-height: 1.6;
             color: #000;
@@ -90,6 +169,12 @@ $marginRightInch = $template->margin_right ?? 1.0;
             outline: none;
             page-break-after: always;
             break-after: page;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .a4-paper * {
+            box-sizing: border-box;
         }
 
         .a4-paper:last-child {
@@ -104,6 +189,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
             box-shadow: none !important;
             height: {{ $pdfPageHeight }} !important;
             overflow: hidden !important;
+            transform: none !important;
         }
 
         @media print {
@@ -121,6 +207,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
                 break-inside: avoid !important;
                 page-break-after: avoid !important;
                 break-after: avoid !important;
+                transform: none !important;
             }
 
             .a4-paper+.a4-paper {
@@ -129,13 +216,9 @@ $marginRightInch = $template->margin_right ?? 1.0;
             }
         }
 
-
-
         .placeholder-highlight {
             background-color: #e0f2fe;
-            /* sky-100 */
             color: #0369a1;
-            /* sky-700 */
             padding: 2px 6px;
             border-radius: 4px;
             border: 1px dashed #7dd3fc;
@@ -145,7 +228,6 @@ $marginRightInch = $template->margin_right ?? 1.0;
         }
 
         body.no-watermark .placeholder-highlight {
-            /* Keep highlights visible on screen even in no-watermark mode */
             background-color: #e0f2fe;
             color: #0369a1;
             padding: 2px 6px;
@@ -174,7 +256,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
             width: 450px;
             background: #fff;
             border-left: 1px solid #e5e7eb;
-            transition: width 0.3s ease;
+            transition: all 0.3s ease;
             position: relative;
             z-index: 10;
         }
@@ -182,6 +264,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
         .form-sidebar.collapsed {
             width: 0;
             border-left: none;
+            overflow: hidden;
         }
 
         .sidebar-content {
@@ -193,9 +276,9 @@ $marginRightInch = $template->margin_right ?? 1.0;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 16px 20px;
             border-bottom: 1px solid #e5e7eb;
-            background: #f9fafb;
+            background: #f8fafc;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -226,15 +309,21 @@ $marginRightInch = $template->margin_right ?? 1.0;
             overflow-y: auto;
         }
 
+        .field-label {
+            font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+            line-height: 1.4;
+        }
+
         .form-control,
         .dynamic-input {
             width: 100%;
-            padding: 12px 14px;
+            min-height: 44px;
+            padding: 10px 14px;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             font-size: 0.95rem;
             transition: all 0.2s ease;
-            font-family: 'Inter', 'Kalpurush', Arial, sans-serif;
+            font-family: 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
             background: #f8fafc;
             color: #1e293b;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -254,9 +343,9 @@ $marginRightInch = $template->margin_right ?? 1.0;
         }
 
         .sidebar-footer {
-            padding: 20px;
+            padding: 16px 20px;
             border-top: 1px solid #e5e7eb;
-            background: #f9fafb;
+            background: #f8fafc;
         }
 
         .btn-primary {
@@ -265,7 +354,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
             border: none;
             padding: 10px 20px;
             border-radius: 6px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -273,6 +362,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
             gap: 8px;
             width: 100%;
             transition: background 0.2s;
+            font-family: 'Hind Siliguri', sans-serif;
         }
 
         .btn-primary:hover {
@@ -285,7 +375,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
             border: none;
             padding: 10px 20px;
             border-radius: 6px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -293,6 +383,7 @@ $marginRightInch = $template->margin_right ?? 1.0;
             gap: 8px;
             width: 100%;
             transition: background 0.2s;
+            font-family: 'Hind Siliguri', sans-serif;
         }
 
         .btn-secondary:hover {
@@ -358,14 +449,84 @@ $marginRightInch = $template->margin_right ?? 1.0;
             display: none !important;
         }
 
-        /* Responsive */
+        /* Responsive Mobile Styles */
         @media (max-width: 900px) {
+            body {
+                overflow: auto;
+            }
+            .layout-wrapper {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow: visible;
+            }
+            .mobile-top-bar {
+                display: flex;
+            }
+            .doc-preview-pane {
+                padding: 15px 10px 90px 10px;
+                min-height: calc(100vh - 60px);
+                overflow-x: hidden;
+                width: 100%;
+            }
             .form-sidebar {
-                position: absolute;
-                right: 0;
+                position: fixed;
                 top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100vw !important;
+                height: 100vh !important;
+                z-index: 1000;
+                background: #ffffff;
+                border-left: none;
+                box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.2);
+                transform: translateY(0);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .form-sidebar.collapsed {
+                transform: translateY(100%);
+                width: 100vw !important;
+            }
+            .sidebar-content {
+                width: 100% !important;
+                max-width: 100% !important;
                 height: 100%;
-                box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+            }
+            .toggle-sidebar-btn {
+                display: none;
+            }
+            .mobile-floating-bar {
+                position: fixed;
+                bottom: 16px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 990;
+                display: flex;
+                gap: 8px;
+                background: #0f172a;
+                padding: 6px 12px;
+                border-radius: 30px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+                border: 1px solid rgba(255,255,255,0.15);
+            }
+            .mobile-float-btn {
+                background: rgba(255,255,255,0.1);
+                color: #f8fafc;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                font-family: 'Hind Siliguri', sans-serif;
+            }
+            .mobile-float-btn.active {
+                background: #3b82f6;
+                color: #ffffff;
             }
         }
 
@@ -499,36 +660,56 @@ $marginRightInch = $template->margin_right ?? 1.0;
 
 <body class="no-watermark">
 
-    <div class="layout-wrapper">
-        <!-- Document Preview -->
-        <div class="doc-preview-pane">
-            <div id="printable-doc-container" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}">
-                @php
-                $previewContent = $template->content;
-                foreach ($fields as $field) {
-                $safeFieldId = base64_encode($field);
-                $previewContent = str_replace('['.$field.']', '<span class="placeholder-highlight" data-field="'.$safeFieldId.'">'.$field.'</span>', $previewContent);
-                }
-
-                // Split template content by page breaks using hash # delimiters to avoid slash escaping issues
-                $pagesContent = preg_split('#<img[^>]*class="mce-pagebreak"[^>]*>|<p[^>]*class="mce-pagebreak"[^>]*>.*?</p>|<div[^>]*class="mce-pagebreak"[^>]*>.*?</div>|<!-- pagebreak -->#is', $previewContent);
-                @endphp
-
-                                    @foreach($pagesContent as $index => $pageHtml)
-                                    @php
-                                    // Filter out empty page residues left by pagebreak tag splits
-                                    $stripped = trim(strip_tags($pageHtml));
-                                    $stripped = str_replace(['&nbsp;', "\r", "\n", "\t", ' '], '', $stripped);
-                                    $hasContent = !empty($stripped) || str_contains($pageHtml, '<img') || str_contains($pageHtml, '<table' ) || str_contains($pageHtml, '<iframe' ) || str_contains($pageHtml, '<hr' );
-                                        @endphp
-                                        @if($hasContent)
-                                        <div class="a4-paper" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}" style="--page-w: {{ $pageWidth }}; --page-h: {{ $pageHeight }};">
-                                        {!! $pageHtml !!}
-            </div>
-            @endif
-            @endforeach
+    <!-- Mobile Top Navigation Bar -->
+    <div class="mobile-top-bar">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <a href="{{ route('document.index') }}" style="color: #fff; text-decoration: none; display: flex; align-items: center;">
+                <i class="material-icons-round">arrow_back</i>
+            </a>
+            <div class="mobile-top-title">{{ $template->name }}</div>
+        </div>
+        <div class="mobile-nav-pills">
+            <button class="mobile-pill-btn" onclick="openMobileTab('preview')" id="mobilePillPreview">
+                <i class="material-icons-round" style="font-size: 16px;">description</i> প্রিভিউ
+            </button>
+            <button class="mobile-pill-btn active" onclick="openMobileTab('form')" id="mobilePillForm">
+                <i class="material-icons-round" style="font-size: 16px;">edit</i> তথ্য দিন
+            </button>
         </div>
     </div>
+
+    <div class="layout-wrapper">
+        <!-- Document Preview -->
+        <div class="doc-preview-pane" id="doc-preview-pane">
+            <div class="page-scale-wrapper" id="page-scale-wrapper">
+                <div id="printable-doc-container" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                    @php
+                    $previewContent = $template->content;
+                    foreach ($fields as $field) {
+                    $safeFieldId = base64_encode($field);
+                    $previewContent = str_replace('['.$field.']', '<span class="placeholder-highlight" data-field="'.$safeFieldId.'">'.$field.'</span>', $previewContent);
+                    }
+
+                    // Split template content by page breaks using hash # delimiters to avoid slash escaping issues
+                    $pagesContent = preg_split('#<img[^>]*class="mce-pagebreak"[^>]*>|<p[^>]*class="mce-pagebreak"[^>]*>.*?</p>|<div[^>]*class="mce-pagebreak"[^>]*>.*?</div>|<!-- pagebreak -->#is', $previewContent);
+                    @endphp
+
+                    @foreach($pagesContent as $index => $pageHtml)
+                    @php
+                    // Filter out empty page residues left by pagebreak tag splits
+                    $stripped = trim(strip_tags($pageHtml));
+                    $stripped = str_replace(['&nbsp;', "\r", "\n", "\t", ' '], '', $stripped);
+                    $hasContent = !empty($stripped) || str_contains($pageHtml, '<img') || str_contains($pageHtml, '<table' ) || str_contains($pageHtml, '<iframe' ) || str_contains($pageHtml, '<hr' );
+                    @endphp
+                    @if($hasContent)
+                    <div class="a4-paper" data-size="{{ $pageSize }}" data-orientation="{{ $orientation }}" style="--page-w: {{ $pageWidth }}; --page-h: {{ $pageHeight }};">
+                        {!! $pageHtml !!}
+                    </div>
+                    @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
 
 
     <!-- Form Sidebar -->
@@ -544,21 +725,21 @@ $marginRightInch = $template->margin_right ?? 1.0;
                     <p style="color: #6b7280; font-size: 0.85rem;">ফরমটি পূরণ করুন</p>
                 </div>
                 <!-- Back/Close Button -->
-                <a href="{{ route('document.index') }}" class="close-btn" title="Back to Documents">
-                    <i class="material-icons-round" style="font-size: 18px;">close</i>
-                </a>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="close-btn" onclick="openMobileTab('preview')" title="Close Drawer" style="background: #64748b;">
+                        <i class="material-icons-round" style="font-size: 18px;">expand_more</i>
+                    </button>
+                    <a href="{{ route('document.index') }}" class="close-btn" title="Back to Documents">
+                        <i class="material-icons-round" style="font-size: 18px;">close</i>
+                    </a>
+                </div>
             </div>
 
             <div class="sidebar-body">
-
-
-
-
-
                 <!-- Global Font Toggle -->
-                <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
-                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Label Font:</span>
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; user-select: none; color: #fff; font-weight: 500;">
+                <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; background: #f1f5f9; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Bijoy Font Support:</span>
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; user-select: none; color: #1e293b; font-weight: 600;">
                         <input type="checkbox" id="bijoyLabelToggle" onchange="document.querySelectorAll('.field-label').forEach(el => el.classList.toggle('bijoy-label-force', this.checked))" style="accent-color: #3b82f6; width: 16px; height: 16px;">
                         Use Bijoy (SutonnyMJ)
                     </label>
@@ -576,10 +757,10 @@ $marginRightInch = $template->margin_right ?? 1.0;
                 $labelClass = $isBijoy ? 'field-label bijoy-label-auto' : 'field-label';
                 @endphp
                 <div style="margin-bottom: 20px;">
-                    <label class="{{ $labelClass }}" style="font-weight: 500; color: #374151; font-size: 0.9rem; margin-bottom: 5px; display: block;">
+                    <label class="{{ $labelClass }}" style="font-weight: 600; color: #374151; font-size: 0.95rem; margin-bottom: 6px; display: block;">
                         {!! $field !!}
                     </label>
-                    <input type="text" class="form-control dynamic-input" data-target="{{ $safeFieldId }}" data-real-key="{{ $field }}" placeholder="Enter data..." value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
+                    <input type="text" class="form-control dynamic-input" data-target="{{ $safeFieldId }}" data-real-key="{{ $field }}" placeholder="তথ্য লিখুন..." value="{{ $savedData[$field] ?? '' }}" oninput="updatePreview(this)">
                 </div>
                 @endforeach
             </div>
@@ -592,9 +773,9 @@ $marginRightInch = $template->margin_right ?? 1.0;
                     <button id="saveDocBtn" data-id="{{ $template->id }}" data-type="document" data-title="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #4f46e5; color: #fff;">
                         <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">save</i> সংরক্ষণ করুন (Save)
                     </button>
-                        <button id="finalPrintBtn" data-id="{{ $template->id }}" data-cost="{{ Auth::user()->hasActiveSubscription() ? 0 : ($template->credit_cost ?? 5) }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
-                            <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ {{ Auth::user()->hasActiveSubscription() ? '' : '(ক্রেডিট লাগবে)' }}
-                        </button>
+                    <button id="finalPrintBtn" data-id="{{ $template->id }}" data-cost="{{ Auth::user()->hasActiveSubscription() ? 0 : ($template->credit_cost ?? 5) }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600;">
+                        <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">print</i> ফাইনাল প্রিন্ট/সেভ {{ Auth::user()->hasActiveSubscription() ? '' : '(ক্রেডিট লাগবে)' }}
+                    </button>
                     @if((\App\Models\Setting::where('key', 'whatsapp_module_status')->value('value') ?? 'enabled') === 'enabled')
                     <button id="whatsappBtn" data-id="{{ $template->id }}" data-cost="{{ Auth::user()->hasActiveSubscription() ? 0 : ($whatsappCost ?? 5) }}" data-name="{{ $template->name }}" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 600; background: #25D366; color: #fff;">
                         <i class="material-icons-round" style="vertical-align: middle; margin-right: 5px;">chat</i> WhatsApp-এ পাঠান
@@ -606,18 +787,98 @@ $marginRightInch = $template->margin_right ?? 1.0;
     </div>
     </div>
 
+    <!-- Mobile Floating Bottom Action Bar -->
+    <div class="mobile-floating-bar no-print">
+        <button class="mobile-float-btn" onclick="openMobileTab('form')" id="mobileFloatFormBtn">
+            <i class="material-icons-round" style="font-size: 18px;">edit_note</i> ফরম পূরণ
+        </button>
+        <button class="mobile-float-btn active" onclick="openMobileTab('preview')" id="mobileFloatPreviewBtn">
+            <i class="material-icons-round" style="font-size: 18px;">visibility</i> প্রিভিউ
+        </button>
+        <button class="mobile-float-btn" onclick="openMobileTab('actions')" id="mobileFloatActionBtn">
+            <i class="material-icons-round" style="font-size: 18px;">print</i> প্রিন্ট/সেভ
+        </button>
+    </div>
+
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('form-sidebar');
             const icon = document.getElementById('toggle-icon');
             sidebar.classList.toggle('collapsed');
 
-            if (sidebar.classList.contains('collapsed')) {
-                icon.innerText = 'chevron_left';
-            } else {
-                icon.innerText = 'chevron_right';
+            if (icon) {
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.innerText = 'chevron_left';
+                } else {
+                    icon.innerText = 'chevron_right';
+                }
             }
         }
+
+        function openMobileTab(tabName) {
+            const sidebar = document.getElementById('form-sidebar');
+            const previewPill = document.getElementById('mobilePillPreview');
+            const formPill = document.getElementById('mobilePillForm');
+            const floatForm = document.getElementById('mobileFloatFormBtn');
+            const floatPreview = document.getElementById('mobileFloatPreviewBtn');
+            const floatAction = document.getElementById('mobileFloatActionBtn');
+
+            if (tabName === 'form') {
+                sidebar.classList.remove('collapsed');
+                if (formPill) formPill.classList.add('active');
+                if (previewPill) previewPill.classList.remove('active');
+                if (floatForm) floatForm.classList.add('active');
+                if (floatPreview) floatPreview.classList.remove('active');
+                if (floatAction) floatAction.classList.remove('active');
+            } else if (tabName === 'preview') {
+                sidebar.classList.add('collapsed');
+                if (previewPill) previewPill.classList.add('active');
+                if (formPill) formPill.classList.remove('active');
+                if (floatPreview) floatPreview.classList.add('active');
+                if (floatForm) floatForm.classList.remove('active');
+                if (floatAction) floatAction.classList.remove('active');
+            } else if (tabName === 'actions') {
+                sidebar.classList.remove('collapsed');
+                if (floatAction) floatAction.classList.add('active');
+                if (floatForm) floatForm.classList.remove('active');
+                if (floatPreview) floatPreview.classList.remove('active');
+                // Scroll sidebar body to bottom actions
+                const sidebarBody = document.querySelector('.sidebar-body');
+                if (sidebarBody) sidebarBody.scrollTop = sidebarBody.scrollHeight;
+            }
+        }
+
+        function autoFitMobilePages() {
+            const pane = document.getElementById('doc-preview-pane');
+            const scaleWrapper = document.getElementById('page-scale-wrapper');
+            const papers = document.querySelectorAll('.a4-paper');
+            if (!pane || !scaleWrapper || papers.length === 0) return;
+
+            if (window.innerWidth <= 900) {
+                const paneWidth = pane.clientWidth - 24; // accounts for padding
+                const baseWidth = papers[0].offsetWidth || 794; // ~210mm in px
+
+                if (paneWidth > 0 && paneWidth < baseWidth) {
+                    const scaleFactor = paneWidth / baseWidth;
+                    scaleWrapper.style.transform = `scale(${scaleFactor})`;
+                    scaleWrapper.style.transformOrigin = 'top center';
+                    
+                    // Adjust height offset to avoid whitespace gaps on scaled mobile view
+                    const totalUnscaledHeight = Array.from(papers).reduce((sum, p) => sum + p.offsetHeight + 30, 0);
+                    const totalScaledHeight = totalUnscaledHeight * scaleFactor;
+                    scaleWrapper.style.marginBottom = `-${totalUnscaledHeight - totalScaledHeight}px`;
+                } else {
+                    scaleWrapper.style.transform = 'none';
+                    scaleWrapper.style.marginBottom = '0';
+                }
+            } else {
+                scaleWrapper.style.transform = 'none';
+                scaleWrapper.style.marginBottom = '0';
+            }
+        }
+
+        window.addEventListener('resize', autoFitMobilePages);
+        window.addEventListener('orientationchange', autoFitMobilePages);
 
         function updatePreview(inputElement) {
             const safeFieldId = inputElement.getAttribute('data-target');
@@ -646,8 +907,10 @@ $marginRightInch = $template->margin_right ?? 1.0;
         // Initialize: check screen size for default collapse & pre-fill inputs
         document.addEventListener('DOMContentLoaded', () => {
             if (window.innerWidth <= 900) {
-                toggleSidebar(); // Auto-collapse on small screens
+                openMobileTab('form'); // Open form drawer by default on mobile for easy form filling
             }
+            autoFitMobilePages();
+            setTimeout(autoFitMobilePages, 300);
 
 
             document.querySelectorAll('.dynamic-input').forEach(input => {

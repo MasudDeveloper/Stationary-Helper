@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'এডিটর - penghor.com')
 
@@ -79,11 +79,16 @@
     
     .ql-container {
         border: none !important;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', 'SolaimanLipi', Arial, sans-serif;
+        font-size: 16pt;
+        line-height: 1.6;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
     
     .ql-editor {
         padding: 20mm; /* Default margin */
+        font-family: 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', 'SolaimanLipi', Arial, sans-serif;
     }
 
 
